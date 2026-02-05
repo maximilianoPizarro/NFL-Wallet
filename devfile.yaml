@@ -46,7 +46,7 @@ components:
         - name: ASPNETCORE_URLS
           value: http://*:8080
       endpoints:
-        - name: api-buffalo-bills
+        - name: buffalo-bills
           targetPort: 8080
           protocol: http
 
@@ -65,7 +65,7 @@ components:
         - name: ASPNETCORE_URLS
           value: http://*:8080
       endpoints:
-        - name: api-las-vegas-raiders
+        - name: raiders
           targetPort: 8080
           protocol: http
 
@@ -100,72 +100,48 @@ commands:
       component: api-customers
       workingDir: ${PROJECT_SOURCE}
       commandLine: kill $(pidof dotnet 2>/dev/null); dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
-    group:
-      kind: build
-      isDefault: false
 
   - id: run-api-customers
     exec:
       component: api-customers
       workingDir: ${PROJECT_SOURCE}
       commandLine: dotnet run -c $CONFIGURATION --no-build --project $STARTUP_PROJECT --no-launch-profile
-    group:
-      kind: run
-      isDefault: false
 
   - id: build-api-buffalo-bills
     exec:
       component: api-buffalo-bills
       workingDir: ${PROJECT_SOURCE}
       commandLine: kill $(pidof dotnet 2>/dev/null); dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
-    group:
-      kind: build
-      isDefault: false
 
   - id: run-api-buffalo-bills
     exec:
       component: api-buffalo-bills
       workingDir: ${PROJECT_SOURCE}
       commandLine: dotnet run -c $CONFIGURATION --no-build --project $STARTUP_PROJECT --no-launch-profile
-    group:
-      kind: run
-      isDefault: false
 
   - id: build-api-las-vegas-raiders
     exec:
       component: api-las-vegas-raiders
       workingDir: ${PROJECT_SOURCE}
       commandLine: kill $(pidof dotnet 2>/dev/null); dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
-    group:
-      kind: build
-      isDefault: false
 
   - id: run-api-las-vegas-raiders
     exec:
       component: api-las-vegas-raiders
       workingDir: ${PROJECT_SOURCE}
       commandLine: dotnet run -c $CONFIGURATION --no-build --project $STARTUP_PROJECT --no-launch-profile
-    group:
-      kind: run
-      isDefault: false
 
   - id: build-webapp
     exec:
       component: webapp
       workingDir: ${PROJECT_SOURCE}
       commandLine: kill $(pidof dotnet 2>/dev/null); dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
-    group:
-      kind: build
-      isDefault: true
 
   - id: run-webapp
     exec:
       component: webapp
       workingDir: ${PROJECT_SOURCE}
       commandLine: dotnet run -c $CONFIGURATION --no-build --project $STARTUP_PROJECT --no-launch-profile
-    group:
-      kind: run
-      isDefault: true
 
   - id: build-all
     composite:
@@ -174,9 +150,6 @@ commands:
         - build-api-buffalo-bills
         - build-api-las-vegas-raiders
         - build-webapp
-      group:
-        kind: build
-        isDefault: false
 
   - id: run-all
     composite:
@@ -186,6 +159,3 @@ commands:
         - run-api-buffalo-bills
         - run-api-las-vegas-raiders
         - run-webapp
-      group:
-        kind: run
-        isDefault: false
