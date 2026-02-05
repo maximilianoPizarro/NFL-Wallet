@@ -2,8 +2,9 @@
 # Red Hat–inspired branding
 title: NFL Stadium Wallet
 description: "Centralized digital wallet for NFL stadiums. Pay, load balance, and manage your money at Buffalo Bills and Las Vegas Raiders venues."
-baseurl: ""  # Use "/NFL-Wallet" if the repo is GitHub Pages project site (user.github.io/NFL-Wallet)
-url: ""      # e.g. "https://youruser.github.io"
+# Required for GitHub Pages project site: https://maximilianopizarro.github.io/NFL-Wallet/
+baseurl: "/NFL-Wallet"
+url: "https://maximilianopizarro.github.io"
 markdown: kramdown
 highlighter: rouge
 kramdown:
