@@ -8,8 +8,6 @@ builder.Services.AddDbContext<CustomersDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=customers.db"));
 
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 // Keycloak/OpenID: uncomment and configure when using authentication
 // builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -99,7 +99,7 @@ commands:
     exec:
       component: api-customers
       workingDir: ${PROJECT_SOURCE}
-      commandLine: kill $(pidof dotnet 2>/dev/null); dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
+      commandLine: dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
 
   - id: run-api-customers
     exec:
@@ -111,7 +111,7 @@ commands:
     exec:
       component: api-buffalo-bills
       workingDir: ${PROJECT_SOURCE}
-      commandLine: kill $(pidof dotnet 2>/dev/null); dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
+      commandLine: dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
 
   - id: run-api-buffalo-bills
     exec:
@@ -123,7 +123,7 @@ commands:
     exec:
       component: api-las-vegas-raiders
       workingDir: ${PROJECT_SOURCE}
-      commandLine: kill $(pidof dotnet 2>/dev/null); dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
+      commandLine: dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
 
   - id: run-api-las-vegas-raiders
     exec:
@@ -135,7 +135,7 @@ commands:
     exec:
       component: webapp
       workingDir: ${PROJECT_SOURCE}
-      commandLine: kill $(pidof dotnet 2>/dev/null); dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
+      commandLine: dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
 
   - id: run-webapp
     exec:
@@ -159,3 +159,9 @@ commands:
         - run-api-buffalo-bills
         - run-api-las-vegas-raiders
         - run-webapp
+
+  - id: build-and-run
+    composite:
+      commands:
+        - build-all
+        - run-all
