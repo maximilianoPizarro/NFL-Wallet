@@ -27,7 +27,7 @@ components:
         - name: ASPNETCORE_URLS
           value: http://*:8080
       endpoints:
-        - name: api-customers
+        - name: customers
           targetPort: 8080
           protocol: http
 
@@ -46,7 +46,7 @@ components:
         - name: ASPNETCORE_URLS
           value: http://*:8080
       endpoints:
-        - name: buffalo-bills
+        - name: bills
           targetPort: 8080
           protocol: http
 
