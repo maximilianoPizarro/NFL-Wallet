@@ -24,15 +24,15 @@
                 </div>
                 <p class="small text-muted mt-2 mb-0">Updated: {{ formatDate(billsBalance.updatedAt) }}</p>
                 <div class="nfl-wallet-actions">
-                  <button type="button" class="nfl-action-btn" @click="showLoadBills = !showLoadBills">Cargar saldo</button>
-                  <button type="button" class="nfl-action-btn nfl-action-qr" @click="showQR('bills')">Compartir QR</button>
+                  <button type="button" class="nfl-action-btn" @click="showLoadBills = !showLoadBills">Load balance</button>
+                  <button type="button" class="nfl-action-btn nfl-action-qr" @click="showQR('bills')">Share QR</button>
                 </div>
                 <div v-if="showLoadBills" class="nfl-load-form">
-                  <label>Monto (USD)</label>
+                  <label>Amount (USD)</label>
                   <input v-model.number="loadBillsAmount" type="number" min="0" step="0.01" placeholder="0.00" />
-                  <span class="nfl-mock-card">Tarjeta mock: **** **** **** 1234</span>
+                  <span class="nfl-mock-card">Mock card: **** **** **** 1234</span>
                   <button type="button" class="nfl-submit-btn" :disabled="loadBillsSubmitting || !(loadBillsAmount > 0)" @click="submitLoad('bills')">
-                    {{ loadBillsSubmitting ? 'Cargando...' : 'Cargar' }}
+                    {{ loadBillsSubmitting ? 'Loading...' : 'Load' }}
                   </button>
                   <p v-if="loadBillsError" class="nfl-form-error">{{ loadBillsError }}</p>
                 </div>
@@ -64,15 +64,15 @@
                 </div>
                 <p class="small text-muted mt-2 mb-0">Updated: {{ formatDate(raidersBalance.updatedAt) }}</p>
                 <div class="nfl-wallet-actions">
-                  <button type="button" class="nfl-action-btn" @click="showLoadRaiders = !showLoadRaiders">Cargar saldo</button>
-                  <button type="button" class="nfl-action-btn nfl-action-qr" @click="showQR('raiders')">Compartir QR</button>
+                  <button type="button" class="nfl-action-btn" @click="showLoadRaiders = !showLoadRaiders">Load balance</button>
+                  <button type="button" class="nfl-action-btn nfl-action-qr" @click="showQR('raiders')">Share QR</button>
                 </div>
                 <div v-if="showLoadRaiders" class="nfl-load-form">
-                  <label>Monto (USD)</label>
+                  <label>Amount (USD)</label>
                   <input v-model.number="loadRaidersAmount" type="number" min="0" step="0.01" placeholder="0.00" />
-                  <span class="nfl-mock-card">Tarjeta mock: **** **** **** 1234</span>
+                  <span class="nfl-mock-card">Mock card: **** **** **** 1234</span>
                   <button type="button" class="nfl-submit-btn" :disabled="loadRaidersSubmitting || !(loadRaidersAmount > 0)" @click="submitLoad('raiders')">
-                    {{ loadRaidersSubmitting ? 'Cargando...' : 'Cargar' }}
+                    {{ loadRaidersSubmitting ? 'Loading...' : 'Load' }}
                   </button>
                   <p v-if="loadRaidersError" class="nfl-form-error">{{ loadRaidersError }}</p>
                 </div>
@@ -93,10 +93,10 @@
       <!-- QR modal -->
       <div v-if="qrWallet" class="nfl-qr-overlay" @click.self="qrWallet = null">
         <div class="nfl-qr-modal">
-          <h3>Escanear para pagar desde {{ qrWallet === 'bills' ? 'Buffalo Bills' : 'Las Vegas Raiders' }}</h3>
+          <h3>Scan to pay from {{ qrWallet === 'bills' ? 'Buffalo Bills' : 'Las Vegas Raiders' }}</h3>
           <img :src="qrDataUrl" alt="QR" class="nfl-qr-img" />
           <p class="nfl-qr-url">{{ payUrl }}</p>
-          <button type="button" class="nfl-action-btn" @click="qrWallet = null">Cerrar</button>
+          <button type="button" class="nfl-action-btn" @click="qrWallet = null">Close</button>
         </div>
       </div>
     </template>
@@ -178,7 +178,7 @@ async function submitLoad(wallet) {
       loadRaidersAmount.value = ''
     }
   } catch (e) {
-    const msg = e.message || 'Error al cargar saldo'
+    const msg = e.message || 'Error loading balance'
     if (isBills) loadBillsError.value = msg
     else loadRaidersError.value = msg
   } finally {

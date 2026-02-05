@@ -6,19 +6,19 @@
     </div>
     <div v-else class="card pay-qr-card" :class="walletType === 'bills' ? 'nfl-card-bills' : 'nfl-card-raiders'">
       <div class="card-header">
-        Pagar desde {{ walletLabel }}
+        Pay from {{ walletLabel }}
       </div>
       <div class="card-body">
         <p class="pay-qr-meta">Customer ID: {{ customerId }}</p>
         <div class="pay-qr-form">
-          <label>Monto a descontar (USD)</label>
+          <label>Amount to deduct (USD)</label>
           <input v-model.number="amount" type="number" min="0" step="0.01" placeholder="0.00" class="pay-qr-input" />
           <button type="button" class="pay-qr-btn" :disabled="loading || !isAmountValid" @click="confirmPay">
-            {{ loading ? 'Procesando...' : 'Confirmar pago' }}
+            {{ loading ? 'Processing...' : 'Confirm payment' }}
           </button>
         </div>
         <p v-if="error" class="pay-qr-error">{{ error }}</p>
-        <p v-if="success" class="pay-qr-success">Pago realizado. Nuevo saldo: {{ successBalance }}</p>
+        <p v-if="success" class="pay-qr-success">Payment successful. New balance: {{ successBalance }}</p>
       </div>
     </div>
   </div>
@@ -62,7 +62,7 @@ async function confirmPay() {
     success.value = 'OK'
     successBalance.value = `${balance.currency} ${Number(balance.availableBalance).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
   } catch (e) {
-    error.value = e.message || 'Error al procesar el pago'
+    error.value = e.message || 'Error processing payment'
   } finally {
     loading.value = false
   }

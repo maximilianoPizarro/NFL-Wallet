@@ -33,12 +33,18 @@ components:
         - name: api-customers
           targetPort: 8080
           protocol: http
+          exposure: public
+          path: /api-customers
         - name: api-bills
           targetPort: 8081
           protocol: http
+          exposure: public
+          path: /api-bills
         - name: api-raiders
           targetPort: 8082
           protocol: http
+          exposure: public
+          path: /api-raiders
 
   - name: webapp
     container:
@@ -47,12 +53,16 @@ components:
       mountSources: true
       memoryLimit: 1Gi
       env:
+        # Relative paths: browser calls same origin, Vite proxies to apis component (DNS: apis)
         - name: VITE_API_CUSTOMERS_URL
-          value: http://localhost:8080/api
+          value: /api-customers
         - name: VITE_API_BILLS_URL
-          value: http://localhost:8081/api
+          value: /api-bills
         - name: VITE_API_RAIDERS_URL
-          value: http://localhost:8082/api
+          value: /api-raiders
+        # In Dev Spaces, proxy API requests to the apis component (K8s service name)
+        - name: PROXY_API_HOST
+          value: apis
       endpoints:
         - name: webapp
           targetPort: 5173
