@@ -5,6 +5,7 @@ metadata:
   labels:
     app: api-bills
     app.kubernetes.io/component: api-bills
+    runtime: dotnet
 spec:
   replicas: {{ .Values.apiBills.replicaCount }}
   selector:
@@ -14,6 +15,7 @@ spec:
     metadata:
       labels:
         app: api-bills
+        runtime: dotnet
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:

@@ -1,0 +1,24 @@
+{{- if .Values.webapp.route.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: webapp
+  labels:
+    app: webapp
+    runtime: nodejs
+spec:
+  to:
+    kind: Service
+    name: webapp
+    weight: 100
+  port:
+    targetPort: http
+  {{- if .Values.webapp.route.host }}
+  host: {{ .Values.webapp.route.host | quote }}
+  {{- end }}
+  {{- if .Values.webapp.route.tls.termination }}
+  tls:
+    termination: {{ .Values.webapp.route.tls.termination }}
+  {{- end }}
+  wildcardPolicy: None
+{{- end }}

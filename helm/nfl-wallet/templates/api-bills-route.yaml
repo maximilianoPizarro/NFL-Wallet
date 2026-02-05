@@ -1,0 +1,17 @@
+{{- if .Values.apiRoutes.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: api-bills
+  labels:
+    app: api-bills
+    runtime: dotnet
+spec:
+  to:
+    kind: Service
+    name: api-bills
+    weight: 100
+  port:
+    targetPort: http
+  wildcardPolicy: None
+{{- end }}

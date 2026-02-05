@@ -4,6 +4,7 @@ metadata:
   name: webapp
   labels:
     app: webapp
+    runtime: nodejs
 spec:
   type: ClusterIP
   ports:

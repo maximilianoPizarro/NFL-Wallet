@@ -1,0 +1,17 @@
+{{- if .Values.apiRoutes.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: api-raiders
+  labels:
+    app: api-raiders
+    runtime: dotnet
+spec:
+  to:
+    kind: Service
+    name: api-raiders
+    weight: 100
+  port:
+    targetPort: http
+  wildcardPolicy: None
+{{- end }}

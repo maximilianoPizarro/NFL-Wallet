@@ -4,6 +4,7 @@ description: NFL Stadium Wallet - Vue frontend and three .NET 8 APIs (Customers,
 type: application
 version: 0.1.0
 appVersion: "1.0.0"
+icon: https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/National_Football_League_logo.svg/250px-National_Football_League_logo.svg.png
 keywords:
   - nfl
   - wallet

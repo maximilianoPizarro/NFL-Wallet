@@ -4,6 +4,7 @@ metadata:
   name: api-bills
   labels:
     app: api-bills
+    runtime: dotnet
 spec:
   type: ClusterIP
   ports:

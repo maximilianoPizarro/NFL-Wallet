@@ -20,9 +20,10 @@ USER root
 RUN rm -rf /var/www/html/*
 COPY --from=builder /app/dist /var/www/html
 COPY httpd.conf /etc/httpd/conf.d/nfl-wallet.conf
-# UBI default user is 1001; use it so httpd can read content and write ModSecurity log
+# UBI default user is 1001; use it so httpd can read content
 RUN chown -R 1001:1001 /var/www/html
-RUN mkdir -p /var/log/httpd && touch /var/log/httpd/modsec_debug.log && chown 1001:1001 /var/log/httpd/modsec_debug.log
+# Disable ModSecurity so httpd starts on OpenShift (random UID cannot write to /var/log/httpd/modsec_debug.log)
+RUN mv /etc/httpd/conf.d/mod_security.conf /etc/httpd/conf.d/mod_security.conf.disabled 2>/dev/null || true
 # Disable SSL conf so httpd starts without certs (we serve HTTP only on 8080)
 RUN mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf.disabled 2>/dev/null || true
 USER 1001

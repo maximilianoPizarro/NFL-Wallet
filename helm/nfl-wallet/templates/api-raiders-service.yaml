@@ -4,6 +4,7 @@ metadata:
   name: api-raiders
   labels:
     app: api-raiders
+    runtime: dotnet
 spec:
   type: ClusterIP
   ports:

@@ -5,6 +5,7 @@ metadata:
   labels:
     app: webapp
     app.kubernetes.io/component: webapp
+    runtime: nodejs
 spec:
   replicas: {{ .Values.webapp.replicaCount }}
   selector:
@@ -14,6 +15,7 @@ spec:
     metadata:
       labels:
         app: webapp
+        runtime: nodejs
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:

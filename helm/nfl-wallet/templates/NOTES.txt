@@ -6,9 +6,25 @@ Services (ClusterIP):
   api-raiders   : port 8082 (TCP)
   webapp        : port 5173 (TCP)
 
-To access the app, expose the webapp service (e.g. Route/Ingress) and set
-values.webapp.apiCustomersUrl, apiBillsUrl, apiRaidersUrl to the public API URLs
-so the browser can call them (each base URL must end with /api).
+{{- if .Values.webapp.route.enabled }}
 
-Example upgrade with API URLs (replace with your Ingress hosts):
-  helm upgrade nfl-wallet ./helm/nfl-wallet -n <namespace> --set webapp.apiCustomersUrl=http://api-customers.example.com/api --set webapp.apiBillsUrl=http://api-bills.example.com/api --set webapp.apiRaidersUrl=http://api-raiders.example.com/api
+A Route for the webapp has been created. Get the URL with:
+  oc get route webapp -n {{ .Release.Namespace }}
+
+If you see "Unexpected token '<', \"<!DOCTYPE\"... is not valid JSON": the app is
+requesting API data from the webapp host and receiving index.html. Set the three
+API base URLs (each ending with /api) so the browser calls the API Routes:
+
+  oc get route  # note the HOST for api-customers, api-bills, api-raiders (create them or enable apiRoutes.enabled and reinstall)
+  helm upgrade {{ .Release.Name }} <path-to-chart> -n {{ .Release.Namespace }} \
+    --set webapp.apiCustomersUrl=https://<api-customers-route-host>/api \
+    --set webapp.apiBillsUrl=https://<api-bills-route-host>/api \
+    --set webapp.apiRaidersUrl=https://<api-raiders-route-host>/api \
+    --reuse-values
+{{- else }}
+
+To expose the webapp, enable the Route: --set webapp.route.enabled=true
+{{- end }}
+
+To disable the webapp Route on next upgrade: --set webapp.route.enabled=false
+Optional: enable API Routes so all four have URLs: --set apiRoutes.enabled=true
