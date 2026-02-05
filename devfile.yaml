@@ -1,15 +1,13 @@
-# NFL Stadium Wallet - Devfile for Red Hat OpenShift Dev Spaces
-# Architecture: Vue 3 (frontend) + 3 .NET 8 APIs (ApiCustomers, ApiWalletBuffaloBills, ApiWalletLasVegasRaiders)
-# This devfile runs the frontend in the workspace; run the APIs locally or via podman-compose.
+# NFL Stadium Wallet - Red Hat OpenShift Dev Spaces
+# Two components: apis (UBI + .NET 8, git, oc) and webapp (Node 20 for Vue frontend)
 schemaVersion: 2.2.2
 metadata:
   name: nfl-wallet
   displayName: NFL Stadium Wallet
   description: |
-    Full-stack NFL Stadium Wallet: Vue 3 + Vite frontend and three .NET 8.0 APIs.
-    - Frontend: Vue 3, Vite, vue-router (run in this workspace).
-    - APIs: ApiCustomers, ApiWalletBuffaloBills, ApiWalletLasVegasRaiders (run locally or via podman-compose).
-    Each API exposes Swagger at /api/swagger and allows CORS from the frontend origins.
+    Full-stack: Vue 3 + Vite frontend and three .NET 8.0 APIs.
+    - apis: UBI-based container with .NET 8, git, oc (build/run the 3 APIs).
+    - webapp: Node 20 (build/run the frontend).
   icon: https://raw.githubusercontent.com/dotnet/brand/main/logo/dotnet-logo.png
   tags:
     - Vue
@@ -20,6 +18,30 @@ metadata:
   version: 1.0.0
 
 components:
+  # UBI-based: .NET 8, git, and standard tools (oc when running in OpenShift Dev Spaces)
+  - name: apis
+    container:
+      image: registry.access.redhat.com/ubi8/dotnet-80:latest
+      args: ["tail", "-f", "/dev/null"]
+      mountSources: true
+      memoryLimit: 2Gi
+      env:
+        - name: ASPNETCORE_URLS
+          value: http://*:8080
+        - name: CONFIGURATION
+          value: Debug
+      endpoints:
+        - name: api-customers
+          targetPort: 8080
+          protocol: http
+        - name: api-bills
+          targetPort: 8081
+          protocol: http
+        - name: api-raiders
+          targetPort: 8082
+          protocol: http
+
+  # Frontend: Node 20 (Vue 3 + Vite)
   - name: webapp
     container:
       image: registry.access.redhat.com/ubi8/nodejs-20:latest
@@ -27,7 +49,6 @@ components:
       mountSources: true
       memoryLimit: 1Gi
       env:
-        # Frontend calls these API base URLs from the browser (same host as dev server or where APIs are exposed)
         - name: VITE_API_CUSTOMERS_URL
           value: http://localhost:8080/api
         - name: VITE_API_BILLS_URL
@@ -40,14 +61,35 @@ components:
           protocol: http
 
 commands:
+  # ---- Frontend (webapp) ----
   - id: build
     exec:
       component: webapp
       workingDir: ${PROJECT_SOURCE}/frontend
-      commandLine: npm install
+      commandLine: sh -c "npm install && (chmod -R +x node_modules/.bin 2>/dev/null || true) && npm run build"
 
   - id: run
     exec:
       component: webapp
       workingDir: ${PROJECT_SOURCE}/frontend
-      commandLine: npm run dev
+      commandLine: sh -c "(chmod -R +x node_modules/.bin 2>/dev/null || true); npx vite"
+
+  # ---- APIs (apis / UBI + .NET) ----
+  - id: build-apis
+    exec:
+      component: apis
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: >
+        dotnet build ApiCustomers/ApiCustomers.csproj -c $CONFIGURATION
+        && dotnet build ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c $CONFIGURATION
+        && dotnet build ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c $CONFIGURATION
+
+  - id: run-apis
+    exec:
+      component: apis
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: >
+        sh -c "ASPNETCORE_URLS=http://*:8080 dotnet run --project ApiCustomers/ApiCustomers.csproj -c Debug --no-build &
+        ASPNETCORE_URLS=http://*:8081 dotnet run --project ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c Debug --no-build &
+        ASPNETCORE_URLS=http://*:8082 dotnet run --project ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c Debug --no-build &
+        wait"

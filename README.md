@@ -149,12 +149,21 @@ SQLite data is persisted in named volumes. The frontend image is built with Node
 
 ### Red Hat OpenShift Dev Spaces
 
-Use the included **devfile** (`devfile.yaml`). The workspace runs only the **frontend** (Vue 3 + Vite).
+The **devfile** (`devfile.yaml`) defines two components:
 
-- **Build:** run the `build` command (installs npm dependencies in `frontend/`).
-- **Run:** run the `run` command (starts the Vue dev server on port 5173).
+| Component | Image | Purpose |
+|-----------|--------|---------|
+| **apis** | UBI8 .NET 8.0 | Git, oc (when in Dev Spaces), and the three .NET APIs. Build and run the backend here. |
+| **webapp** | UBI8 Node.js 20 | Vue 3 + Vite frontend. Build and run the UI here. |
 
-**APIs:** Run the three .NET APIs outside the devfile (e.g. `dotnet run` in separate terminals or `podman-compose up` for the API services only). Set `VITE_API_*` in the devfile to match where the APIs are reachable (e.g. `http://localhost:8080/api`, `8081`, `8082`). CORS is configured to allow requests from `http://localhost:5160` and `http://localhost:5173`.
+**Commands:**
+
+- **build** (webapp): `npm install`, fix permissions on `node_modules/.bin`, and `npm run build`.
+- **run** (webapp): start the Vite dev server with `npx vite` (port 5173).
+- **build-apis** (apis): build the three .NET projects (ApiCustomers, ApiWalletBuffaloBills, ApiWalletLasVegasRaiders).
+- **run-apis** (apis): start the three APIs in the background on ports 8080, 8081, 8082.
+
+**Suggested order:** Run **build-apis** then **run-apis** in the `apis` container; run **build** then **run** in the `webapp` container. Frontend env vars `VITE_API_*` point to `localhost:8080`, `8081`, `8082`. CORS allows requests from the dev server origin.
 
 ---
 
@@ -170,7 +179,7 @@ Use the included **devfile** (`devfile.yaml`). The workspace runs only the **fro
 │   └── src/
 ├── NFL-Wallet.sln             # .NET solution (three APIs)
 ├── podman-compose.yml         # Full stack: frontend + 3 APIs (Podman)
-├── devfile.yaml               # Red Hat Dev Spaces — frontend only (Vue dev server)
+├── devfile.yaml               # Red Hat Dev Spaces — apis (UBI + .NET) + webapp (Node), build/run both
 └── README.md
 ```
 
