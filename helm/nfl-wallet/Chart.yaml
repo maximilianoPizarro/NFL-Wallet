@@ -10,6 +10,21 @@ keywords:
   - wallet
   - vue
   - dotnet
+  - gateway-api
+  - kuadrant
+  - istio
 maintainers:
   - name: Maximiliano Pizarro
     email: mapizarr@redhat.com
+annotations:
+  artifacthub.io/category: integration-delivery
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/links: |
+    - name: Documentation
+      url: https://maximilianopizarro.github.io/NFL-Wallet/
+    - name: Source
+      url: https://github.com/maximilianopizarro/NFL-Wallet
+  artifacthub.io/changes: |
+    - Gateway API HTTPRoutes with optional hostnames for all routes (webapp, api-customers, api-bills, api-raiders)
+    - Kuadrant AuthPolicy and RateLimitPolicy for /api-bills
+    - Optional single gateway route (gateway.route.enabled=false) when platform creates the route

@@ -53,8 +53,9 @@ A single front-end application talks to a **Customers API** (for identity and cu
 
 - [Architecture]({{ '/architecture.html' | relative_url }}) — Components, Podman Compose, and Dev Spaces
 - [Deployment]({{ '/deployment.html' | relative_url }}) — Helm chart install and values
-- [Connectivity Link]({{ '/connectivity-link.html' | relative_url }}) — Gateway and HTTPRoute commands
+- [Connectivity Link]({{ '/connectivity-link.html' | relative_url }}) — Gateway, HTTPRoutes, Kuadrant AuthPolicy and RateLimitPolicy
 - [Security]({{ '/security.html' | relative_url }}) — API keys and Istio AuthorizationPolicy (e.g. `api-raiders-require-apikey`)
+- [Publish to Artifact Hub]({{ '/artifact-hub.html' | relative_url }}) — Package the chart and list it on Artifact Hub
 - [**GitHub repository**]({{ site.github_repo }}) — Source code
 
 ## Technology Stack

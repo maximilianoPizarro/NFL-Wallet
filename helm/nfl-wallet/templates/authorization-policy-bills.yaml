@@ -1,4 +1,6 @@
-{{- if eq (include "nfl-wallet.authPolicy.requireFor" (dict "root" . "key" "requireForBills")) "true" }}
+{{- $billsAuth := index (index .Values.gateway "authPolicy" | default dict) "bills" | default dict -}}
+{{- $useKuadrantAuthBills := and .Values.gateway.enabled $billsAuth.enabled -}}
+{{- if and (eq (include "nfl-wallet.authPolicy.requireFor" (dict "root" . "key" "requireForBills")) "true") (not $useKuadrantAuthBills) }}
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:

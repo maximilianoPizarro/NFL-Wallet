@@ -95,6 +95,17 @@ To generate the chart package (`.tgz`) and `index.yaml` inside the `docs/` folde
 
 To use a different repo URL, set `HELM_REPO_URL` (e.g. `export HELM_REPO_URL=https://youruser.github.io/NFL-Wallet`) before running the script.
 
+### Publish to Artifact Hub
+
+To list the chart on [Artifact Hub](https://artifacthub.io):
+
+1. **Package and publish the repo** (steps above) so the chart is available at a public URL (e.g. GitHub Pages).
+2. In **Artifact Hub**, sign in → **Control panel** → **Repositories** → **Add** → choose **Helm**.
+3. Enter the **repository URL** (e.g. `https://maximilianopizarro.github.io/NFL-Wallet`).
+4. Save. Artifact Hub indexes the chart and shows it in search; the chart’s `Chart.yaml` already includes Artifact Hub annotations (category, license, links, changes).
+
+See the docs site: [Publish to Artifact Hub](https://maximilianopizarro.github.io/NFL-Wallet/artifact-hub.html) for the full steps (including optional Verified Publisher).
+
 With default values, the webapp Apache proxies `/api-customers`, `/api-bills`, and `/api-raiders` to the internal API services, so only the webapp Route is needed and the "Unexpected token '<'" error is avoided.
 
 ### Topology view (OpenShift)

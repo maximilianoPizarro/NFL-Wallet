@@ -24,5 +24,6 @@ Open `http://localhost:4000` (or the URL Jekyll prints). For a project site, set
 - **Home** — Purpose (centralized wallet for stadiums), overview, quick links.
 - **Architecture** — Components, Podman Compose, Red Hat OpenShift Dev Spaces.
 - **Deployment** — Helm chart install and main values.
-- **Connectivity Link** — Gateway API and HTTPRoute commands (`--set gateway.enabled=true`, etc.).
+- **Connectivity Link** — Gateway API, HTTPRoutes, hostnames, Kuadrant AuthPolicy and RateLimitPolicy, and diagram (connectivity link with auth and limit).
 - **Security** — API keys and Istio AuthorizationPolicy (e.g. `api-raiders-require-apikey` YAML and scenario).
+- **Publish to Artifact Hub** — Steps to package the Helm chart and add the repo to Artifact Hub.

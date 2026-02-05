@@ -83,6 +83,10 @@ gateway:
   className: istio
   # Optional: name of existing Gateway to attach HTTPRoutes to; if empty, a Gateway resource is created.
   existingGatewayName: ""
+  # Hostnames for the gateway (e.g. OpenShift Route host). When using Kuadrant AuthPolicy/RateLimitPolicy, set this
+  # so the AuthConfig gets the correct host and becomes "linked" (fixes "No hosts linked to the resource" / Enforced: False).
+  # Example: ["nfl-gateway-nfl-wallet.apps.cluster-xxx.sandbox.opentlc.com"]
+  hostnames: []
   # Rate limit for /api-bills at connectivity link (Istio EnvoyFilter on api-bills workload). No app code change.
   rateLimitBills:
     enabled: false
@@ -101,9 +105,20 @@ gateway:
         - operator: matches
           selector: request.path
           value: /api-bills
+  # Kuadrant AuthPolicy for /api-bills: require X-API-Key header (OPA), custom 403 body. Requires Kuadrant operator.
+  # When enabled, Istio AuthorizationPolicy for bills is not created (Kuadrant enforces at gateway).
+  authPolicy:
+    enabled: false
+    bills:
+      enabled: false
+      # JSON body for 403 when X-API-Key is missing or empty
+      unauthorizedBody: '{"error":"Forbidden","message":"Missing or invalid X-API-Key header."}'
   # OpenShift Route to expose the Gateway with Edge + Redirect (when gateway.enabled).
+  # Set enabled: false if the platform already creates a gateway route (e.g. nfl-gateway -> nfl-wallet-gateway-istio)
+  # so you only have one gateway URL.
   route:
     enabled: true
+    name: ""   # default nfl-wallet-gateway; override to match platform route if needed
     host: ""
     tls:
       termination: edge

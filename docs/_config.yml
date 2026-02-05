@@ -34,6 +34,7 @@ header_pages:
   - deployment.md
   - connectivity-link.md
   - security.md
+  - artifact-hub.md
 
 include:
   - National_Football_League_logo.png
@@ -49,6 +50,7 @@ include:
   - wallet4.png
   - walletlanding.png
   - "connectivity link.png"
+  - "connectivity link with auth and limit.png"
 
 exclude:
   - Gemfile

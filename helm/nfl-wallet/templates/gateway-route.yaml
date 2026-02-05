@@ -1,8 +1,10 @@
 {{- if and .Values.gateway.enabled .Values.gateway.route.enabled }}
+# OpenShift Route for the Gateway. Set gateway.route.enabled=false if the platform already
+# creates a route for the gateway (e.g. nfl-gateway -> nfl-wallet-gateway-istio) to avoid two gateway URLs.
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: nfl-wallet-gateway
+  name: {{ .Values.gateway.route.name | default "nfl-wallet-gateway" }}
   labels:
     app.kubernetes.io/component: gateway
 spec:
