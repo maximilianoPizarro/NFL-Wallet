@@ -95,66 +95,37 @@ components:
           protocol: http
 
 commands:
-  - id: build-api-customers
+  - id: build
     exec:
-      component: api-customers
+      component: webapp
       workingDir: ${PROJECT_SOURCE}
-      commandLine: dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
+      commandLine: dotnet build -c $CONFIGURATION /p:UseSharedCompilation=false
 
   - id: run-api-customers
     exec:
       component: api-customers
-      workingDir: ${PROJECT_SOURCE}/ApiCustomers
-      commandLine: dotnet run -c $CONFIGURATION --no-build --no-launch-profile
-
-  - id: build-api-buffalo-bills
-    exec:
-      component: api-buffalo-bills
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
+      workingDir: ${PROJECT_SOURCE}/ApiCustomers/bin/Debug/net8.0
+      commandLine: dotnet ApiCustomers.dll
 
   - id: run-api-buffalo-bills
     exec:
       component: api-buffalo-bills
-      workingDir: ${PROJECT_SOURCE}/ApiWalletBuffaloBills
-      commandLine: dotnet run -c $CONFIGURATION --no-build --no-launch-profile
-
-  - id: build-api-las-vegas-raiders
-    exec:
-      component: api-las-vegas-raiders
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
+      workingDir: ${PROJECT_SOURCE}/ApiWalletBuffaloBills/bin/Debug/net8.0
+      commandLine: dotnet ApiWalletBuffaloBills.dll
 
   - id: run-api-las-vegas-raiders
     exec:
       component: api-las-vegas-raiders
-      workingDir: ${PROJECT_SOURCE}/ApiWalletLasVegasRaiders
-      commandLine: dotnet run -c $CONFIGURATION --no-build --no-launch-profile
-
-  - id: build-webapp
-    exec:
-      component: webapp
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
+      workingDir: ${PROJECT_SOURCE}/ApiWalletLasVegasRaiders/bin/Debug/net8.0
+      commandLine: dotnet ApiWalletLasVegasRaiders.dll
 
   - id: run-webapp
     exec:
       component: webapp
-      workingDir: ${PROJECT_SOURCE}/WebApp
-      commandLine: dotnet run -c $CONFIGURATION --no-build --no-launch-profile
+      workingDir: ${PROJECT_SOURCE}/WebApp/bin/Debug/net8.0
+      commandLine: dotnet WebApp.dll
 
-  - id: build-solution
-    exec:
-      component: webapp
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: dotnet build -c $CONFIGURATION NFL-Wallet.sln /p:UseSharedCompilation=false
-
-  - id: build-all
-    composite:
-      commands:
-        - build-solution
-
-  - id: run-all
+  - id: run
     composite:
       parallel: true
       commands:
@@ -162,9 +133,3 @@ commands:
         - run-api-buffalo-bills
         - run-api-las-vegas-raiders
         - run-webapp
-
-  - id: build-and-run
-    composite:
-      commands:
-        - build-all
-        - run-all
