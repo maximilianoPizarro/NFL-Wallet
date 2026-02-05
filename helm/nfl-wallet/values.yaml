@@ -83,6 +83,24 @@ gateway:
   className: istio
   # Optional: name of existing Gateway to attach HTTPRoutes to; if empty, a Gateway resource is created.
   existingGatewayName: ""
+  # Rate limit for /api-bills at connectivity link (Istio EnvoyFilter on api-bills workload). No app code change.
+  rateLimitBills:
+    enabled: false
+    permitLimit: 100
+    fillIntervalSeconds: 60
+  # Kuadrant RateLimitPolicy for /api-bills (targets HTTPRoute nfl-wallet-api-bills). Requires Kuadrant operator.
+  rateLimitPolicy:
+    enabled: false
+    bills:
+      limit: 100
+      window: 1m
+      # Optional: counter expressions (e.g. ["auth.identity.username"] for per-user; leave empty for global)
+      counterExpressions: []
+      # Optional: conditions (list of { operator, selector, value }); path condition is applied by default
+      conditions:
+        - operator: matches
+          selector: request.path
+          value: /api-bills
   # OpenShift Route to expose the Gateway with Edge + Redirect (when gateway.enabled).
   route:
     enabled: true

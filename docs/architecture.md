@@ -39,8 +39,8 @@ podman-compose up -d --build
 
 The webapp is built with build args so it points to `http://localhost:5001/api`, `http://localhost:5002/api`, and `http://localhost:5003/api` for the three APIs. Data is persisted in named volumes.
 
-![Podman Compose]({{ '/podman.png' | relative_url }}){: .doc-img}
-*Running the stack with Podman Compose.*
+[![Podman Compose]({{ '/podman.png' | relative_url }})]({{ '/podman.png' | relative_url }}){: .doc-img-link}
+*Running the stack with Podman Compose. Click to enlarge.*
 
 ---
 
@@ -54,11 +54,11 @@ The repo includes a **devfile.yaml** for **Red Hat OpenShift Dev Spaces** (and c
 
 This allows developing and testing the centralized wallet in a cloud IDE without installing .NET or Node locally.
 
-![OpenShift Dev Spaces]({{ '/devspaces.png' | relative_url }}){: .doc-img}
-*Dev Spaces workspace.*
+[![OpenShift Dev Spaces]({{ '/devspaces.png' | relative_url }})]({{ '/devspaces.png' | relative_url }}){: .doc-img-link}
+*Dev Spaces workspace. Click to enlarge.*
 
-![Dev Spaces run]({{ '/devspaces2.png' | relative_url }}){: .doc-img}
+[![Dev Spaces run]({{ '/devspaces2.png' | relative_url }})]({{ '/devspaces2.png' | relative_url }}){: .doc-img-link}
 *Build and run in Dev Spaces.*
 
-![Dev Spaces app]({{ '/devspaces3.png' | relative_url }}){: .doc-img}
+[![Dev Spaces app]({{ '/devspaces3.png' | relative_url }})]({{ '/devspaces3.png' | relative_url }}){: .doc-img-link}
 *App running from Dev Spaces.*

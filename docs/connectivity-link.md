@@ -62,7 +62,72 @@ helm upgrade nfl-wallet ./helm/nfl-wallet -n nfl-wallet --set gateway.enabled=tr
 
 The frontend remains available via the webapp Route as before; the gateway Route provides an alternate entry point for the same backends.
 
+### Kuadrant RateLimitPolicy (opcional)
+
+Si tienes el **operador Kuadrant** instalado en el clúster, puedes activar un límite de tasa para `/api-bills` (por defecto 100 peticiones por minuto):
+
+```bash
+helm upgrade nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
+  --set gateway.enabled=true \
+  --set gateway.rateLimitPolicy.enabled=true
+```
+
+Valores relacionados: `gateway.rateLimitPolicy.bills.limit` (default `100`), `gateway.rateLimitPolicy.bills.window` (default `1m`).
+
+### Cómo probar el rate limit
+
+1. **Desplegar con gateway y rate limit activados** (y Kuadrant instalado):
+
+   ```bash
+   helm upgrade nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
+     --set gateway.enabled=true \
+     --set gateway.rateLimitPolicy.enabled=true
+   ```
+
+   Si usas API key en las APIs, incluye el header en las peticiones (ej. `-H "X-API-Key: tu-apikey"`).
+
+2. **Obtener la URL del gateway** (OpenShift):
+
+   ```bash
+   oc get route -n nfl-wallet -l app.kubernetes.io/component=gateway -o jsonpath='{.items[0].spec.host}'
+   ```
+
+   O listar rutas y usar la que apunte al gateway: `oc get route -n nfl-wallet`.
+
+3. **Enviar muchas peticiones a `/api-bills`** hasta superar el límite (por defecto 100 en 1 minuto). Ejemplo en PowerShell:
+
+   ```powershell
+   $host = "nfl-wallet-gateway-nfl-wallet.apps.tu-dominio.com"   # reemplaza por tu host
+   $url = "https://$host/api-bills/"
+   1..105 | ForEach-Object {
+     $r = Invoke-WebRequest -Uri $url -Method GET -UseBasicParsing -Headers @{ "X-API-Key" = "test" } -ErrorAction SilentlyContinue
+     Write-Host "$_ : $($r.StatusCode)"
+   }
+   ```
+
+   En Bash:
+
+   ```bash
+   HOST="nfl-wallet-gateway-nfl-wallet.apps.tu-dominio.com"
+   for i in $(seq 1 105); do
+     code=$(curl -s -o /dev/null -w "%{http_code}" -H "X-API-Key: test" "https://$HOST/api-bills/")
+     echo "$i : $code"
+   done
+   ```
+
+   Las primeras ~100 respuestas deberían ser **200**; a partir del límite verás **429** (Too Many Requests).
+
+4. **Comprobar el estado del RateLimitPolicy**:
+
+   ```bash
+   kubectl get ratelimitpolicy -n nfl-wallet
+   kubectl describe ratelimitpolicy nfl-wallet-api-bills-ratelimit -n nfl-wallet
+   ```
+
+   El recurso debe estar aplicado y, si Kuadrant está correctamente configurado, el límite se aplicará en el gateway.
+
 ### Connectivity Link overview
 
-![Connectivity Link]({{ '/connectivity link.png' | relative_url | replace: ' ', '%20' }}){: .doc-img}
-*Gateway API and HTTPRoutes (Connectivity Link) exposing the webapp and APIs.*
+{% assign conn_img = '/connectivity link.png' | relative_url | replace: ' ', '%20' %}
+[![Connectivity Link]({{ conn_img }})]({{ conn_img }}){: .doc-img-link}
+*Gateway API and HTTPRoutes (Connectivity Link) exposing the webapp and APIs. Click to enlarge.*

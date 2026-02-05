@@ -5,6 +5,7 @@ description: "Centralized digital wallet for NFL stadiums. Pay, load balance, an
 # Required for GitHub Pages project site: https://maximilianopizarro.github.io/NFL-Wallet/
 baseurl: "/NFL-Wallet"
 url: "https://maximilianopizarro.github.io"
+github_repo: "https://github.com/maximilianopizarro/NFL-Wallet"
 markdown: kramdown
 highlighter: rouge
 kramdown:

@@ -54,9 +54,46 @@ helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet --set webapp.route.enabl
 | `gateway.route.enabled` | OpenShift Route for the Gateway (Edge + Redirect) | `true` when gateway.enabled |
 | `gateway.route.host` | Gateway Route host | `""` |
 | `gateway.route.targetPort` | Gateway Service port (name or number) | `http` |
+| `gateway.rateLimitBills.enabled` | Istio EnvoyFilter rate limit for api-bills workload | `false` |
+| `gateway.rateLimitBills.permitLimit`, `fillIntervalSeconds` | Token bucket (Istio) | `100`, `60` |
+| `gateway.rateLimitPolicy.enabled` | Kuadrant RateLimitPolicy for HTTPRoute nfl-wallet-api-bills | `false` |
+| `gateway.rateLimitPolicy.bills.limit`, `window` | Kuadrant: limit and window (e.g. `100`, `1m`) | `100`, `1m` |
+| `gateway.rateLimitPolicy.bills.conditions`, `counterExpressions` | Kuadrant: conditions and counters (optional) | path `/api-bills`, `[]` |
 | `authorizationPolicy.enabled` | Istio AuthorizationPolicy: require `X-API-Key` header | `false` |
 | `authorizationPolicy.requireForCustomers` / `requireForBills` / `requireForRaiders` | Apply policy only to these APIs (when enabled) | `true` each |
 | `topology.applicationName` | Application name for OpenShift Topology grouping (`app.kubernetes.io/part-of`) | `nfl-wallet` |
+
+### Package chart and publish to docs (GitHub Pages Helm repo)
+
+To generate the chart package (`.tgz`) and `index.yaml` inside the `docs/` folder so they can be served as a Helm repo via GitHub Pages:
+
+1. **From the repo root**, run:
+
+   **Linux/macOS:**
+   ```bash
+   chmod +x scripts/helm-package-docs.sh
+   ./scripts/helm-package-docs.sh
+   ```
+
+   **Windows (PowerShell):**
+   ```powershell
+   .\scripts\helm-package-docs.ps1
+   ```
+
+2. This will:
+   - Run `helm package helm/nfl-wallet --destination docs/` → creates `docs/nfl-wallet-<version>.tgz`
+   - Run `helm repo index docs --url https://maximilianopizarro.github.io/NFL-Wallet [--merge docs/index.yaml]` → creates or updates `docs/index.yaml`
+
+3. **Commit and push** `docs/nfl-wallet-*.tgz` and `docs/index.yaml`.
+
+4. Users can add the repo and install:
+   ```bash
+   helm repo add nfl-wallet https://maximilianopizarro.github.io/NFL-Wallet
+   helm repo update
+   helm install nfl-wallet nfl-wallet/nfl-wallet -n nfl-wallet
+   ```
+
+To use a different repo URL, set `HELM_REPO_URL` (e.g. `export HELM_REPO_URL=https://youruser.github.io/NFL-Wallet`) before running the script.
 
 With default values, the webapp Apache proxies `/api-customers`, `/api-bills`, and `/api-raiders` to the internal API services, so only the webapp Route is needed and the "Unexpected token '<'" error is avoided.
 
@@ -100,7 +137,11 @@ helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
   --set gateway.existingGatewayName=my-gateway
 ```
 
-3. **What gets created**: a `Gateway` (if not using `existingGatewayName`), four `HTTPRoute`s—one for the **webapp** (path `/`) and three for the APIs (`/api-customers`, `/api-bills`, `/api-raiders`)—and an **OpenShift Route** `nfl-wallet-gateway` with TLS Edge + Redirect to expose the Gateway. Each API HTTPRoute uses a **URLRewrite** filter so that `/api-customers`, `/api-bills`, `/api-raiders` are rewritten to `/api` before reaching the backends (fixes 404 when calling e.g. `https://gateway-host/api-customers/Customers`). The frontend remains exposed via the webapp Route. You can disable the gateway Route with `--set gateway.route.enabled=false` if traffic is already entering through another path.
+3. **Rate limit at connectivity link (no app code change):**
+   - **Kuadrant:** Set `gateway.rateLimitPolicy.enabled: true` (and `gateway.enabled: true`). The chart creates a `RateLimitPolicy` (kuadrant.io/v1) that targets the HTTPRoute `nfl-wallet-api-bills`, with configurable limit/window and optional conditions and counters (e.g. per-user with `auth.identity.username`). Requires [Kuadrant](https://docs.kuadrant.io/) operator installed.
+   - **Istio only:** Set `gateway.rateLimitBills.enabled: true` for an EnvoyFilter-based local rate limit on the api-bills workload.
+
+4. **What gets created**: a `Gateway` (if not using `existingGatewayName`), four `HTTPRoute`s—one for the **webapp** (path `/`) and three for the APIs (`/api-customers`, `/api-bills`, `/api-raiders`)—and an **OpenShift Route** `nfl-wallet-gateway` with TLS Edge + Redirect to expose the Gateway. Each API HTTPRoute uses a **URLRewrite** filter so that `/api-customers`, `/api-bills`, `/api-raiders` are rewritten to `/api` before reaching the backends (fixes 404 when calling e.g. `https://gateway-host/api-customers/Customers`). The frontend remains exposed via the webapp Route. You can disable the gateway Route with `--set gateway.route.enabled=false` if traffic is already entering through another path.
 
 ### Upgrade (gateway + API key auth for Raiders)
 

@@ -22,19 +22,21 @@ A single front-end application talks to a **Customers API** (for identity and cu
 
 ### Wallet app (landing and flows)
 
-![Wallet landing]({{ '/walletlanding.png' | relative_url }}){: .doc-img .doc-img--s}
+<p class="doc-img-expand-hint">Click any image to open full size.</p>
+
+[![Wallet landing]({{ '/walletlanding.png' | relative_url }})]({{ '/walletlanding.png' | relative_url }}){: .doc-img-link}
 *Landing page.*
 
-![Wallet customer list]({{ '/wallet.png' | relative_url }}){: .doc-img .doc-img--s}
+[![Wallet customer list]({{ '/wallet.png' | relative_url }})]({{ '/wallet.png' | relative_url }}){: .doc-img-link}
 *Customer list.*
 
-![Wallet balances]({{ '/wallet2.png' | relative_url }}){: .doc-img .doc-img--s}
+[![Wallet balances]({{ '/wallet2.png' | relative_url }})]({{ '/wallet2.png' | relative_url }}){: .doc-img-link}
 *Customer wallets — Buffalo Bills and Las Vegas Raiders.*
 
-![Wallet pay flow]({{ '/wallet3.png' | relative_url }}){: .doc-img .doc-img--s}
+[![Wallet pay flow]({{ '/wallet3.png' | relative_url }})]({{ '/wallet3.png' | relative_url }}){: .doc-img-link}
 *Pay from QR flow.*
 
-![Wallet load]({{ '/wallet4.png' | relative_url }}){: .doc-img .doc-img--s}
+[![Wallet load]({{ '/wallet4.png' | relative_url }})]({{ '/wallet4.png' | relative_url }}){: .doc-img-link}
 *Load balance.*
 
 ## What You Can Do With This Solution
@@ -53,6 +55,7 @@ A single front-end application talks to a **Customers API** (for identity and cu
 - [Deployment]({{ '/deployment.html' | relative_url }}) — Helm chart install and values
 - [Connectivity Link]({{ '/connectivity-link.html' | relative_url }}) — Gateway and HTTPRoute commands
 - [Security]({{ '/security.html' | relative_url }}) — API keys and Istio AuthorizationPolicy (e.g. `api-raiders-require-apikey`)
+- [**GitHub repository**]({{ site.github_repo }}) — Source code
 
 ## Technology Stack
 

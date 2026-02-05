@@ -23,6 +23,9 @@
       <a href="{{ '/deployment.html' | relative_url }}">Deployment</a>
       <a href="{{ '/connectivity-link.html' | relative_url }}">Connectivity Link</a>
       <a href="{{ '/security.html' | relative_url }}">Security</a>
+      {% if site.github_repo %}
+      <a href="{{ site.github_repo }}" target="_blank" rel="noopener" aria-label="GitHub repository">GitHub</a>
+      {% endif %}
     </nav>
   </header>
   <main class="wrapper">
@@ -32,6 +35,15 @@
   </main>
   <footer class="site-footer">
     NFL Stadium Wallet — Built with Vue 3 and .NET 8. Documentation styled with Red Hat branding.
+    {% if site.github_repo %}
+    · <a href="{{ site.github_repo }}" target="_blank" rel="noopener">Repository</a>
+    {% endif %}
   </footer>
+  <script>
+    document.querySelectorAll('.doc-img-link').forEach(function(a) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener');
+    });
+  </script>
 </body>
 </html>

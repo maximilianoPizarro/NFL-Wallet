@@ -1,0 +1,29 @@
+{{- if and .Values.gateway.enabled .Values.gateway.rateLimitPolicy.enabled }}
+apiVersion: kuadrant.io/v1
+kind: RateLimitPolicy
+metadata:
+  name: nfl-wallet-api-bills-ratelimit
+  labels:
+    app: api-bills
+    app.kubernetes.io/component: ratelimitpolicy
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: nfl-wallet-api-bills
+  limits:
+    bills-api-limit:
+      {{- with .Values.gateway.rateLimitPolicy.bills.conditions }}
+      conditions:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.gateway.rateLimitPolicy.bills.counterExpressions }}
+      counters:
+        {{- range . }}
+        - expression: {{ . | quote }}
+        {{- end }}
+      {{- end }}
+      rates:
+        - limit: {{ .Values.gateway.rateLimitPolicy.bills.limit | default 100 }}
+          window: {{ .Values.gateway.rateLimitPolicy.bills.window | default "1m" }}
+{{- end }}
