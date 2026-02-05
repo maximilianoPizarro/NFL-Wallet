@@ -5,6 +5,8 @@ metadata:
   labels:
     app: api-raiders
     app.kubernetes.io/component: api-raiders
+    app.kubernetes.io/runtime: dotnet
+    app.openshift.io/runtime: dotnet
     runtime: dotnet
 spec:
   replicas: {{ .Values.apiRaiders.replicaCount }}
@@ -15,6 +17,8 @@ spec:
     metadata:
       labels:
         app: api-raiders
+        app.kubernetes.io/runtime: dotnet
+        app.openshift.io/runtime: dotnet
         runtime: dotnet
     spec:
       {{- with .Values.global.imagePullSecrets }}
@@ -30,6 +34,13 @@ spec:
               value: "http://*:8080"
             - name: ConnectionStrings__DefaultConnection
               value: "Data Source=/app/data/lasvegasraiders.db"
+            {{- if and .Values.apiKeys.enabled .Values.apiKeys.raiders }}
+            - name: ApiKey
+              valueFrom:
+                secretKeyRef:
+                  name: nfl-wallet-api-keys
+                  key: api-key-raiders
+            {{- end }}
           ports:
             - name: http
               containerPort: 8080

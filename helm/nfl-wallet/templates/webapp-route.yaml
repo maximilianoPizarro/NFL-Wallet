@@ -5,6 +5,7 @@ metadata:
   name: webapp
   labels:
     app: webapp
+    app.kubernetes.io/component: webapp
     runtime: nodejs
 spec:
   to:
@@ -19,6 +20,9 @@ spec:
   {{- if .Values.webapp.route.tls.termination }}
   tls:
     termination: {{ .Values.webapp.route.tls.termination }}
+    {{- if .Values.webapp.route.tls.insecureEdgeTerminationPolicy }}
+    insecureEdgeTerminationPolicy: {{ .Values.webapp.route.tls.insecureEdgeTerminationPolicy }}
+    {{- end }}
   {{- end }}
   wildcardPolicy: None
 {{- end }}

@@ -34,9 +34,16 @@ spec:
               mountPath: /var/www/html/config.json
               subPath: config.json
               readOnly: true
+            - name: proxy-config
+              mountPath: /etc/httpd/conf.d/nfl-wallet-proxy.conf
+              subPath: nfl-wallet-proxy.conf
+              readOnly: true
           resources:
             {{- toYaml .Values.webapp.resources | nindent 12 }}
       volumes:
         - name: config
           configMap:
             name: webapp-config
+        - name: proxy-config
+          configMap:
+            name: webapp-proxy

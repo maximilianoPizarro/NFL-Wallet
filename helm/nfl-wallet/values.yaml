@@ -8,10 +8,6 @@ global:
 # Override these if using a different Quay namespace
 imageNamespace: maximilianopizarro
 
-# Optional: create OpenShift Routes for the three APIs (so you have URLs for webapp.api*Url)
-apiRoutes:
-  enabled: false
-
 apiCustomers:
   image: nfl-wallet-api-customers
   tag: latest
@@ -58,9 +54,31 @@ webapp:
     # Optional: override host (default: webapp-<release-name>.<cluster-apps-domain>)
     host: ""
     tls:
-      # Set to "edge", "passthrough", or "reencrypt" for TLS; "" for no TLS
-      termination: ""
-  # API base URLs for browser (must end with /api). Set after API Routes exist to avoid "Unexpected token '<'" (HTML instead of JSON)
+      # Edge termination + redirect HTTP -> HTTPS
+      termination: edge
+      # Redirect: send HTTP to HTTPS; None or Allow
+      insecureEdgeTerminationPolicy: Redirect
+  # API base URLs (optional). Leave empty: webapp proxies /api-customers, /api-bills, /api-raiders to internal services.
   apiCustomersUrl: ""
   apiBillsUrl: ""
   apiRaidersUrl: ""
+
+# API key security: one key per API. Leave empty to disable validation (e.g. local dev).
+apiKeys:
+  enabled: false
+  # Set in values or via --set; for production use a Secret (e.g. sealed-secrets). Keys are injected as env into each API.
+  customers: ""
+  bills: ""
+  raiders: ""
+
+# Gateway API (HTTPRoute connectivity). Enable when cluster has Gateway API + implementation (e.g. Istio, OpenShift Gateway).
+gateway:
+  enabled: false
+  # Gateway class name (e.g. istio, openshift-gateway)
+  className: istio
+  # Optional: name of existing Gateway to attach HTTPRoutes to; if empty, a Gateway resource is created.
+  existingGatewayName: ""
+
+# Istio AuthorizationPolicy: require X-API-Key header when apiKeys.enabled.
+authorizationPolicy:
+  enabled: false

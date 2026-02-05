@@ -6,25 +6,15 @@ Services (ClusterIP):
   api-raiders   : port 8082 (TCP)
   webapp        : port 5173 (TCP)
 
+Only the webapp has a Route. The webapp Apache proxies /api-customers, /api-bills, /api-raiders to the internal API services, so the browser uses the same origin and you avoid "Unexpected token '<'" (HTML instead of JSON).
+
 {{- if .Values.webapp.route.enabled }}
 
-A Route for the webapp has been created. Get the URL with:
+Webapp Route URL:
   oc get route webapp -n {{ .Release.Namespace }}
-
-If you see "Unexpected token '<', \"<!DOCTYPE\"... is not valid JSON": the app is
-requesting API data from the webapp host and receiving index.html. Set the three
-API base URLs (each ending with /api) so the browser calls the API Routes:
-
-  oc get route  # note the HOST for api-customers, api-bills, api-raiders (create them or enable apiRoutes.enabled and reinstall)
-  helm upgrade {{ .Release.Name }} <path-to-chart> -n {{ .Release.Namespace }} \
-    --set webapp.apiCustomersUrl=https://<api-customers-route-host>/api \
-    --set webapp.apiBillsUrl=https://<api-bills-route-host>/api \
-    --set webapp.apiRaidersUrl=https://<api-raiders-route-host>/api \
-    --reuse-values
 {{- else }}
 
-To expose the webapp, enable the Route: --set webapp.route.enabled=true
+To expose the webapp: --set webapp.route.enabled=true
 {{- end }}
 
-To disable the webapp Route on next upgrade: --set webapp.route.enabled=false
-Optional: enable API Routes so all four have URLs: --set apiRoutes.enabled=true
+To disable the webapp Route: --set webapp.route.enabled=false

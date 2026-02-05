@@ -1,0 +1,17 @@
+{{- if .Values.authorizationPolicy.enabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: api-bills-require-apikey
+  labels:
+    app: api-bills
+spec:
+  selector:
+    matchLabels:
+      app: api-bills
+  action: ALLOW
+  rules:
+    - when:
+        - key: request.headers[x-api-key]
+          values: ["*"]
+{{- end }}

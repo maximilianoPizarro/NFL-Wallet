@@ -26,6 +26,9 @@ RUN chown -R 1001:1001 /var/www/html
 RUN mv /etc/httpd/conf.d/mod_security.conf /etc/httpd/conf.d/mod_security.conf.disabled 2>/dev/null || true
 # Disable SSL conf so httpd starts without certs (we serve HTTP only on 8080)
 RUN mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf.disabled 2>/dev/null || true
+# Enable proxy for Helm: webapp proxies /api-customers, /api-bills, /api-raiders to internal services
+RUN echo 'LoadModule proxy_module modules/mod_proxy.so' > /etc/httpd/conf.modules.d/00-proxy.conf && \
+    echo 'LoadModule proxy_http_module modules/mod_proxy_http.so' >> /etc/httpd/conf.modules.d/00-proxy.conf
 USER 1001
 EXPOSE 8080
 CMD ["httpd", "-D", "FOREGROUND"]

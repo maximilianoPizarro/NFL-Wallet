@@ -13,6 +13,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "NFL Wallet - Customers API", Version = "v1", Description = "Customer data for NFL Stadium Wallet." });
+    c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "X-API-Key",
+        Type = SecuritySchemeType.ApiKey,
+        Description = "API Key to authorize requests. Set in Swagger to test."
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "ApiKey" } }, Array.Empty<string>() }
+    });
 });
 
 var corsOrigins = builder.Configuration["Cors:AllowedOrigins"] ?? "http://localhost:5160,http://localhost:5173";
@@ -55,6 +66,20 @@ using (var scope = app.Services.CreateScope())
 
 app.UsePathBase("/api");
 app.UseRouting();
+var apiKey = builder.Configuration["ApiKey"];
+if (!string.IsNullOrWhiteSpace(apiKey))
+{
+    app.Use(async (ctx, next) =>
+    {
+        if (ctx.Request.Headers.TryGetValue("X-API-Key", out var key) && key == apiKey)
+        {
+            await next(ctx);
+            return;
+        }
+        ctx.Response.StatusCode = 401;
+        await ctx.Response.WriteAsync("Missing or invalid X-API-Key.");
+    });
+}
 app.UseCors();
 app.UseSwagger();
 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Customers API v1"); });

@@ -1,0 +1,17 @@
+{{- if .Values.authorizationPolicy.enabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: api-raiders-require-apikey
+  labels:
+    app: api-raiders
+spec:
+  selector:
+    matchLabels:
+      app: api-raiders
+  action: ALLOW
+  rules:
+    - when:
+        - key: request.headers[x-api-key]
+          values: ["*"]
+{{- end }}

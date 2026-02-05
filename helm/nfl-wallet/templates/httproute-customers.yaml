@@ -1,0 +1,20 @@
+{{- if .Values.gateway.enabled }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: nfl-wallet-api-customers
+  labels:
+    app: api-customers
+    app.kubernetes.io/component: httproute
+spec:
+  parentRefs:
+    - name: {{ .Values.gateway.existingGatewayName | default "nfl-wallet-gateway" }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api-customers
+      backendRefs:
+        - name: api-customers
+          port: {{ .Values.apiCustomers.service.port }}
+{{- end }}
