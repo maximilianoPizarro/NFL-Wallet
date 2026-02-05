@@ -1,6 +1,14 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 var customersBaseUrl = builder.Configuration["Api:CustomersBaseUrl"] ?? "http://localhost:5001/api";
 var buffaloBillsBaseUrl = builder.Configuration["Api:BuffaloBillsBaseUrl"] ?? "http://localhost:5002/api";
@@ -24,6 +32,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();

@@ -10,7 +10,9 @@
         @foreach (var c in Model)
         {
             <a asp-action="CustomerWallets" asp-route-id="@c.Id" class="list-group-item list-group-item-action">
-                <strong>@c.LastName, @c.FirstName</strong> — @c.Email
+                <span class="nfl-customer-name"><strong>@c.LastName, @c.FirstName</strong></span>
+                <span class="nfl-customer-email">@c.Email</span>
+                <span class="nfl-customer-action">View wallets &rarr;</span>
             </a>
         }
     </div>

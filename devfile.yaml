@@ -35,7 +35,7 @@ components:
       endpoints:
         - name: webapp
           targetPort: 8083
-          protocol: http
+          protocol: https
 
 commands:
   - id: build
