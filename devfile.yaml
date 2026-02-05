@@ -93,43 +93,34 @@ components:
         - name: webapp
           targetPort: 8083
           protocol: http
+        - name: customers
+          targetPort: 8080
+          protocol: http
+        - name: bills
+          targetPort: 8081
+          protocol: http
+        - name: raiders
+          targetPort: 8082
+          protocol: http
 
 commands:
   - id: build
     exec:
       component: webapp
       workingDir: ${PROJECT_SOURCE}
-      commandLine: dotnet build -c $CONFIGURATION /p:UseSharedCompilation=false
-
-  - id: run-api-customers
-    exec:
-      component: api-customers
-      workingDir: ${PROJECT_SOURCE}/ApiCustomers/bin/Debug/net8.0
-      commandLine: dotnet ApiCustomers.dll
-
-  - id: run-api-buffalo-bills
-    exec:
-      component: api-buffalo-bills
-      workingDir: ${PROJECT_SOURCE}/ApiWalletBuffaloBills/bin/Debug/net8.0
-      commandLine: dotnet ApiWalletBuffaloBills.dll
-
-  - id: run-api-las-vegas-raiders
-    exec:
-      component: api-las-vegas-raiders
-      workingDir: ${PROJECT_SOURCE}/ApiWalletLasVegasRaiders/bin/Debug/net8.0
-      commandLine: dotnet ApiWalletLasVegasRaiders.dll
-
-  - id: run-webapp
-    exec:
-      component: webapp
-      workingDir: ${PROJECT_SOURCE}/WebApp/bin/Debug/net8.0
-      commandLine: dotnet WebApp.dll
+      commandLine: >
+        dotnet build ApiCustomers/ApiCustomers.csproj -c $CONFIGURATION /p:UseSharedCompilation=false &&
+        dotnet build ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c $CONFIGURATION /p:UseSharedCompilation=false &&
+        dotnet build ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c $CONFIGURATION /p:UseSharedCompilation=false &&
+        dotnet build WebApp/WebApp.csproj -c $CONFIGURATION /p:UseSharedCompilation=false
 
   - id: run
-    composite:
-      parallel: true
-      commands:
-        - run-api-customers
-        - run-api-buffalo-bills
-        - run-api-las-vegas-raiders
-        - run-webapp
+    exec:
+      component: webapp
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: >
+        ASPNETCORE_URLS=http://*:8080 dotnet ApiCustomers/bin/Debug/net8.0/ApiCustomers.dll &
+        ASPNETCORE_URLS=http://*:8081 dotnet ApiWalletBuffaloBills/bin/Debug/net8.0/ApiWalletBuffaloBills.dll &
+        ASPNETCORE_URLS=http://*:8082 dotnet ApiWalletLasVegasRaiders/bin/Debug/net8.0/ApiWalletLasVegasRaiders.dll &
+        Api__CustomersBaseUrl=http://localhost:8080/api Api__BuffaloBillsBaseUrl=http://localhost:8081/api Api__LasVegasRaidersBaseUrl=http://localhost:8082/api ASPNETCORE_URLS=http://*:8083 dotnet WebApp/bin/Debug/net8.0/WebApp.dll &
+        wait
