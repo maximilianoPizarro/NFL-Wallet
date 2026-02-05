@@ -29,22 +29,20 @@ components:
         # Allow all origins so frontend (e.g. OpenShift webapp route) can call these APIs
         - name: CORS__AllowedOrigins
           value: "*"
+      # No path: APIs serve at /api (e.g. /api/Customers, /api/Wallet/...). Public URLs are .../api/Customers, .../api/Wallet/...
       endpoints:
         - name: api-customers
           targetPort: 8080
           protocol: http
           exposure: public
-          path: /api-customers
         - name: api-bills
           targetPort: 8081
           protocol: http
           exposure: public
-          path: /api-bills
         - name: api-raiders
           targetPort: 8082
           protocol: http
           exposure: public
-          path: /api-raiders
 
   - name: webapp
     container:

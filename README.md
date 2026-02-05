@@ -194,7 +194,7 @@ The **devfile** (`devfile.yaml`) defines two components:
 
 ## Configuration
 
-- **Frontend API URLs:** The app reads base URLs in this order: (1) runtime **`/config.json`** (same origin), (2) build-time `VITE_API_*` env. Use **`frontend/public/config.json`** with `apiCustomersUrl`, `apiBillsUrl`, `apiRaidersUrl` when the frontend is served from a different host (e.g. OpenShift) so the browser can call the public API routes.
+- **Frontend API URLs:** The app reads base URLs in this order: (1) runtime **`/config.json`** (same origin), (2) build-time `VITE_API_*` env. Each base URL must **end with `/api`** (e.g. `http://...api-customers.../api`), because the APIs serve at `/api/Customers` and `/api/Wallet/...` — not at `/api-customers` or `/api-bills` on the host. Use **`frontend/public/config.json`** with `apiCustomersUrl`, `apiBillsUrl`, `apiRaidersUrl` when the frontend is served from a different host (e.g. OpenShift).
 - **CORS (APIs):** Configurable via **`Cors:AllowedOrigins`** in `appsettings.json` or env **`CORS__AllowedOrigins`** (comma-separated list). Use `*` to allow any origin (e.g. in the devfile the apis component sets `CORS__AllowedOrigins=*`).
 - **Databases:** Each API uses a **SQLite** file; connection string is configurable (e.g. `ConnectionStrings:DefaultConnection`). Seed data is applied on first run when the DB is empty.
 - **Authentication:** The solution is prepared for **OpenID Connect / Keycloak**; add and configure the authentication middleware in each project as needed.
