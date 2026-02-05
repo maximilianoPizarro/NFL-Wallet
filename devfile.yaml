@@ -12,63 +12,6 @@ metadata:
   version: 1.0.0
 
 components:
-  - name: api-customers
-    container:
-      image: registry.access.redhat.com/ubi8/dotnet-80:8.0-13
-      args: ["tail", "-f", "/dev/null"]
-      mountSources: true
-      env:
-        - name: CONFIGURATION
-          value: Debug
-        - name: STARTUP_PROJECT
-          value: ApiCustomers/ApiCustomers.csproj
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
-        - name: ASPNETCORE_URLS
-          value: http://*:8080
-      endpoints:
-        - name: customers
-          targetPort: 8080
-          protocol: http
-
-  - name: api-buffalo-bills
-    container:
-      image: registry.access.redhat.com/ubi8/dotnet-80:8.0-13
-      args: ["tail", "-f", "/dev/null"]
-      mountSources: true
-      env:
-        - name: CONFIGURATION
-          value: Debug
-        - name: STARTUP_PROJECT
-          value: ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
-        - name: ASPNETCORE_URLS
-          value: http://*:8081
-      endpoints:
-        - name: bills
-          targetPort: 8081
-          protocol: http
-
-  - name: api-las-vegas-raiders
-    container:
-      image: registry.access.redhat.com/ubi8/dotnet-80:8.0-13
-      args: ["tail", "-f", "/dev/null"]
-      mountSources: true
-      env:
-        - name: CONFIGURATION
-          value: Debug
-        - name: STARTUP_PROJECT
-          value: ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
-        - name: ASPNETCORE_URLS
-          value: http://*:8082
-      endpoints:
-        - name: raiders
-          targetPort: 8082
-          protocol: http
-
   - name: webapp
     container:
       image: registry.access.redhat.com/ubi8/dotnet-80:8.0-13
@@ -84,11 +27,11 @@ components:
         - name: ASPNETCORE_URLS
           value: http://*:8083
         - name: Api__CustomersBaseUrl
-          value: http://api-customers:8080/api
+          value: http://localhost:8080/api
         - name: Api__BuffaloBillsBaseUrl
-          value: http://api-buffalo-bills:8081/api
+          value: http://localhost:8081/api
         - name: Api__LasVegasRaidersBaseUrl
-          value: http://api-las-vegas-raiders:8082/api
+          value: http://localhost:8082/api
       endpoints:
         - name: webapp
           targetPort: 8083
