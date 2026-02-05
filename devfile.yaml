@@ -104,8 +104,8 @@ commands:
   - id: run-api-customers
     exec:
       component: api-customers
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: dotnet run -c $CONFIGURATION --no-build --project $STARTUP_PROJECT --no-launch-profile
+      workingDir: ${PROJECT_SOURCE}/ApiCustomers
+      commandLine: dotnet run -c $CONFIGURATION --no-build --no-launch-profile
 
   - id: build-api-buffalo-bills
     exec:
@@ -116,8 +116,8 @@ commands:
   - id: run-api-buffalo-bills
     exec:
       component: api-buffalo-bills
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: dotnet run -c $CONFIGURATION --no-build --project $STARTUP_PROJECT --no-launch-profile
+      workingDir: ${PROJECT_SOURCE}/ApiWalletBuffaloBills
+      commandLine: dotnet run -c $CONFIGURATION --no-build --no-launch-profile
 
   - id: build-api-las-vegas-raiders
     exec:
@@ -128,8 +128,8 @@ commands:
   - id: run-api-las-vegas-raiders
     exec:
       component: api-las-vegas-raiders
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: dotnet run -c $CONFIGURATION --no-build --project $STARTUP_PROJECT --no-launch-profile
+      workingDir: ${PROJECT_SOURCE}/ApiWalletLasVegasRaiders
+      commandLine: dotnet run -c $CONFIGURATION --no-build --no-launch-profile
 
   - id: build-webapp
     exec:
@@ -140,16 +140,19 @@ commands:
   - id: run-webapp
     exec:
       component: webapp
+      workingDir: ${PROJECT_SOURCE}/WebApp
+      commandLine: dotnet run -c $CONFIGURATION --no-build --no-launch-profile
+
+  - id: build-solution
+    exec:
+      component: webapp
       workingDir: ${PROJECT_SOURCE}
-      commandLine: dotnet run -c $CONFIGURATION --no-build --project $STARTUP_PROJECT --no-launch-profile
+      commandLine: dotnet build -c $CONFIGURATION NFL-Wallet.sln /p:UseSharedCompilation=false
 
   - id: build-all
     composite:
       commands:
-        - build-api-customers
-        - build-api-buffalo-bills
-        - build-api-las-vegas-raiders
-        - build-webapp
+        - build-solution
 
   - id: run-all
     composite:
