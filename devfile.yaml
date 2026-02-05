@@ -51,17 +51,13 @@ components:
       mountSources: true
       memoryLimit: 1Gi
       env:
-        # Relative paths: browser calls same origin, Vite proxies to apis component (DNS: apis)
-        - name: VITE_API_CUSTOMERS_URL
-          value: /api-customers
-        - name: VITE_API_BILLS_URL
-          value: /api-bills
-        - name: VITE_API_RAIDERS_URL
-          value: /api-raiders
-        # K8s service name for the apis component (DevWorkspace often uses <workspace>-<component>)
-        # If ENOTFOUND, run in apis terminal: oc get svc -l app.kubernetes.io/component=apis (or similar) and set this to that name
-        - name: PROXY_API_HOST
-          value: nfl-wallet-apis
+        # Public API URLs (browser calls these directly; no proxy). Replace with your cluster URLs if different.
+        - name: API_CUSTOMERS_URL
+          value: http://kube-admin-nfl-wallet-api-customers.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/api
+        - name: API_BILLS_URL
+          value: http://kube-admin-nfl-wallet-api-bills.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/api
+        - name: API_RAIDERS_URL
+          value: http://kube-admin-nfl-wallet-api-raiders.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com/api
       endpoints:
         - name: webapp
           targetPort: 5173
@@ -95,14 +91,15 @@ commands:
     exec:
       component: apis
       workingDir: ${PROJECT_SOURCE}
-      # nohup so APIs keep running after this command exits; then sleep so they can bind to ports
-      commandLine: sh -c "dotnet build ApiCustomers/ApiCustomers.csproj -c Debug --nologo -v q && dotnet build ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c Debug --nologo -v q && dotnet build ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c Debug --nologo -v q && nohup dotnet run --project ApiCustomers/ApiCustomers.csproj -c Debug --no-build --urls http://*:8080 >/tmp/api-customers.log 2>&1 & nohup dotnet run --project ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c Debug --no-build --urls http://*:8081 >/tmp/api-bills.log 2>&1 & nohup dotnet run --project ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c Debug --no-build --urls http://*:8082 >/tmp/api-raiders.log 2>&1 & sleep 4 && echo APIs started on 8080, 8081, 8082"
+      # bash + disown so APIs keep running after this command exits (DevWorkspace may kill children of sh)
+      commandLine: bash -c "dotnet build ApiCustomers/ApiCustomers.csproj -c Debug --nologo -v q && dotnet build ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c Debug --nologo -v q && dotnet build ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c Debug --nologo -v q && ( nohup dotnet run --project ApiCustomers/ApiCustomers.csproj -c Debug --no-build --urls http://*:8080 >>/tmp/api-customers.log 2>&1 & nohup dotnet run --project ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c Debug --no-build --urls http://*:8081 >>/tmp/api-bills.log 2>&1 & nohup dotnet run --project ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c Debug --no-build --urls http://*:8082 >>/tmp/api-raiders.log 2>&1 & ); disown -a; sleep 4; echo APIs started on 8080, 8081, 8082"
 
   - id: run-frontend
     exec:
       component: webapp
       workingDir: ${PROJECT_SOURCE}/frontend
-      commandLine: sh -c "(chmod -R +x node_modules/.bin 2>/dev/null || true); npx vite"
+      # Write config.json from env so the app calls public API URLs (no proxy, no ENOTFOUND)
+      commandLine: sh -c "node -e \"const c=process.env; require('fs').writeFileSync('public/config.json', JSON.stringify({apiCustomersUrl:c.API_CUSTOMERS_URL||'',apiBillsUrl:c.API_BILLS_URL||'',apiRaidersUrl:c.API_RAIDERS_URL||''}))\" && (chmod -R +x node_modules/.bin 2>/dev/null || true) && npx vite"
 
   - id: run
     composite:

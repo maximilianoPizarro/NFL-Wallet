@@ -165,9 +165,38 @@ The **devfile** (`devfile.yaml`) defines two components:
 
 **Suggested order:** Run **build-apis** then **run-apis** in the `apis` container; run **build** then **run** in the `webapp` container.
 
-**How the frontend reaches the APIs in Dev Spaces:** The browser cannot call `localhost:8080` (that would be the user’s machine). The devfile sets `VITE_API_*` to **relative paths** (`/api-customers`, `/api-bills`, `/api-raiders`) and `PROXY_API_HOST=nfl-wallet-apis`. The Vite dev server proxies those paths to the **apis** component using that Kubernetes service name (ports 8080, 8081, 8082). If you see `getaddrinfo ENOTFOUND`, the service name may differ: in the **apis** terminal run `oc get svc` and set `PROXY_API_HOST` in the webapp component to that name (e.g. `kube-admin-nfl-wallet-apis`), then restart run-frontend. The three API endpoints use `exposure: public` and `path` for optional direct access. CORS on the apis component allows the webapp origin (`*` in the devfile).
+**How the frontend reaches the APIs in Dev Spaces:** The browser cannot call `localhost:8080` (that would be the user’s machine). The webapp component sets **public API URLs** in env (`API_CUSTOMERS_URL`, `API_BILLS_URL`, `API_RAIDERS_URL`). When you run **run-frontend**, it writes `frontend/public/config.json` from those env vars so the browser calls the APIs directly (no proxy, no ENOTFOUND). If your cluster URLs differ, edit those env vars in the devfile and restart run-frontend. CORS on the apis component allows the webapp origin (`*`).
 
-**If run-apis does not start the APIs:** The devfile uses `nohup` so the .NET processes keep running after the command exits. If they still do not start, run the same `dotnet run` commands manually in a terminal in the **apis** container (after build); start the three APIs on 8080, 8081, 8082.
+**If run-apis does not start the APIs:** The devfile uses **bash** and **disown** so the .NET processes keep running after the command exits. If they still do not start, run the same `dotnet run` commands manually in a terminal in the **apis** container (after build); start the three APIs on 8080, 8081, 8082.
+
+### Build images and push to Quay.io
+
+From the repository root:
+
+```bash
+./build-push-quay.sh [quay-namespace]
+```
+
+Default namespace: `maximilianopizarro`. Requires `podman` and being logged in to Quay (`podman login quay.io`). Images pushed:
+
+- `nfl-wallet-api-customers`, `nfl-api-bills`, `nfl-wallet-api-raiders`, `nfl-wallet-webapp`
+
+### Helm chart (Kubernetes / OpenShift)
+
+The **`helm/nfl-wallet`** chart deploys the four components with this layout:
+
+| Service        | Service port | Pod (container) port |
+|----------------|--------------|------------------------|
+| api-customers  | 8080         | 8080                  |
+| api-bills      | 8081         | 8080                  |
+| api-raiders    | 8082         | 8080                  |
+| webapp         | 5173         | 8080                  |
+
+```bash
+helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet
+```
+
+See **`helm/nfl-wallet/README.md`** for values and setting API URLs for the browser (e.g. when using Ingress).
 
 ---
 
@@ -184,6 +213,8 @@ The **devfile** (`devfile.yaml`) defines two components:
 ├── NFL-Wallet.sln             # .NET solution (three APIs)
 ├── podman-compose.yml         # Full stack: frontend + 3 APIs (Podman)
 ├── devfile.yaml               # Red Hat Dev Spaces — apis (UBI + .NET) + webapp (Node), build/run both
+├── build-push-quay.sh         # Build all images and push to quay.io
+├── helm/nfl-wallet/           # Helm chart — api-customers, api-bills, api-raiders, webapp
 └── README.md
 ```
 

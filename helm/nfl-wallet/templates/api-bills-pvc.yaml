@@ -1,0 +1,14 @@
+{{- if .Values.apiBills.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: api-bills-data
+  labels:
+    app: api-bills
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.apiBills.persistence.size }}
+{{- end }}

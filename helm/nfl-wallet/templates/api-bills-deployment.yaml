@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-bills
+  labels:
+    app: api-bills
+    app.kubernetes.io/component: api-bills
+spec:
+  replicas: {{ .Values.apiBills.replicaCount }}
+  selector:
+    matchLabels:
+      app: api-bills
+  template:
+    metadata:
+      labels:
+        app: api-bills
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: api-bills
+          image: "{{ include "nfl-wallet.image" (dict "root" . "image" .Values.apiBills.image "tag" .Values.apiBills.tag) }}"
+          imagePullPolicy: Always
+          env:
+            - name: ASPNETCORE_URLS
+              value: "http://*:8080"
+            - name: ConnectionStrings__DefaultConnection
+              value: "Data Source=/app/data/buffalobills.db"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          {{- if .Values.apiBills.persistence.enabled }}
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          {{- end }}
+          resources:
+            {{- toYaml .Values.apiBills.resources | nindent 12 }}
+      {{- if .Values.apiBills.persistence.enabled }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: api-bills-data
+      {{- end }}

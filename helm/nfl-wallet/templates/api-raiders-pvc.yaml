@@ -1,0 +1,14 @@
+{{- if .Values.apiRaiders.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: api-raiders-data
+  labels:
+    app: api-raiders
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.apiRaiders.persistence.size }}
+{{- end }}

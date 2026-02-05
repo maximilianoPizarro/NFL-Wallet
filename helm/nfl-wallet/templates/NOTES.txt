@@ -1,0 +1,14 @@
+NFL Stadium Wallet has been installed.
+
+Services (ClusterIP):
+  api-customers : port 8080 (TCP)
+  api-bills     : port 8081 (TCP)
+  api-raiders   : port 8082 (TCP)
+  webapp        : port 5173 (TCP)
+
+To access the app, expose the webapp service (e.g. Route/Ingress) and set
+values.webapp.apiCustomersUrl, apiBillsUrl, apiRaidersUrl to the public API URLs
+so the browser can call them (each base URL must end with /api).
+
+Example upgrade with API URLs (replace with your Ingress hosts):
+  helm upgrade nfl-wallet ./helm/nfl-wallet -n <namespace> --set webapp.apiCustomersUrl=http://api-customers.example.com/api --set webapp.apiBillsUrl=http://api-bills.example.com/api --set webapp.apiRaidersUrl=http://api-raiders.example.com/api

@@ -1,0 +1,54 @@
+# Default values for nfl-wallet
+# Service/port layout: api-customers 8080, api-bills 8081, api-raiders 8082, webapp 5173
+
+global:
+  imageRegistry: quay.io
+  imagePullSecrets: []
+
+# Override these if using a different Quay namespace
+imageNamespace: maximilianopizarro
+
+apiCustomers:
+  image: nfl-wallet-api-customers
+  tag: latest
+  replicaCount: 1
+  service:
+    port: 8080  # Service port 8080, Pod targetPort 8080
+  resources: {}
+  persistence:
+    enabled: true
+    size: 1Gi
+
+apiBills:
+  image: nfl-api-bills
+  tag: latest
+  replicaCount: 1
+  service:
+    port: 8081  # Service port 8081, Pod targetPort 8080
+  resources: {}
+  persistence:
+    enabled: true
+    size: 1Gi
+
+apiRaiders:
+  image: nfl-wallet-api-raiders
+  tag: latest
+  replicaCount: 1
+  service:
+    port: 8082  # Service port 8082, Pod targetPort 8080
+  resources: {}
+  persistence:
+    enabled: true
+    size: 1Gi
+
+webapp:
+  image: nfl-wallet-webapp
+  tag: latest
+  replicaCount: 1
+  service:
+    port: 5173  # Service port 5173, Pod targetPort 8080
+  resources: {}
+  # API base URLs for browser (set when Ingress/routes are known)
+  apiCustomersUrl: ""
+  apiBillsUrl: ""
+  apiRaidersUrl: ""

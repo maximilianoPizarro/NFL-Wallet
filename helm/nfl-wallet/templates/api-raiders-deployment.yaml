@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-raiders
+  labels:
+    app: api-raiders
+    app.kubernetes.io/component: api-raiders
+spec:
+  replicas: {{ .Values.apiRaiders.replicaCount }}
+  selector:
+    matchLabels:
+      app: api-raiders
+  template:
+    metadata:
+      labels:
+        app: api-raiders
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: api-raiders
+          image: "{{ include "nfl-wallet.image" (dict "root" . "image" .Values.apiRaiders.image "tag" .Values.apiRaiders.tag) }}"
+          imagePullPolicy: Always
+          env:
+            - name: ASPNETCORE_URLS
+              value: "http://*:8080"
+            - name: ConnectionStrings__DefaultConnection
+              value: "Data Source=/app/data/lasvegasraiders.db"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          {{- if .Values.apiRaiders.persistence.enabled }}
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          {{- end }}
+          resources:
+            {{- toYaml .Values.apiRaiders.resources | nindent 12 }}
+      {{- if .Values.apiRaiders.persistence.enabled }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: api-raiders-data
+      {{- end }}

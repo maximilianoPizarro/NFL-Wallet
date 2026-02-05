@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  labels:
+    app: webapp
+    app.kubernetes.io/component: webapp
+spec:
+  replicas: {{ .Values.webapp.replicaCount }}
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: webapp
+          image: "{{ include "nfl-wallet.image" (dict "root" . "image" .Values.webapp.image "tag" .Values.webapp.tag) }}"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /var/www/html/config.json
+              subPath: config.json
+              readOnly: true
+          resources:
+            {{- toYaml .Values.webapp.resources | nindent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: webapp-config
