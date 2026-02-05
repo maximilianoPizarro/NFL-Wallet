@@ -165,7 +165,9 @@ The **devfile** (`devfile.yaml`) defines two components:
 
 **Suggested order:** Run **build-apis** then **run-apis** in the `apis` container; run **build** then **run** in the `webapp` container.
 
-**How the frontend reaches the APIs in Dev Spaces:** The browser cannot call `localhost:8080` (that would be the user’s machine). The devfile sets `VITE_API_*` to **relative paths** (`/api-customers`, `/api-bills`, `/api-raiders`) and `PROXY_API_HOST=apis`. The Vite dev server in the **webapp** container proxies those paths to the **apis** component using the cluster DNS name `apis` (ports 8080, 8081, 8082). So all API calls go to the webapp origin and are proxied to the apis pod. The three API endpoints are also declared with `exposure: public` and `path` so the platform can expose them with wildcard DNS if you want direct access (e.g. for Swagger). CORS on the apis component allows the webapp origin (`*` in the devfile).
+**How the frontend reaches the APIs in Dev Spaces:** The browser cannot call `localhost:8080` (that would be the user’s machine). The devfile sets `VITE_API_*` to **relative paths** (`/api-customers`, `/api-bills`, `/api-raiders`) and `PROXY_API_HOST=nfl-wallet-apis`. The Vite dev server proxies those paths to the **apis** component using that Kubernetes service name (ports 8080, 8081, 8082). If you see `getaddrinfo ENOTFOUND`, the service name may differ: in the **apis** terminal run `oc get svc` and set `PROXY_API_HOST` in the webapp component to that name (e.g. `kube-admin-nfl-wallet-apis`), then restart run-frontend. The three API endpoints use `exposure: public` and `path` for optional direct access. CORS on the apis component allows the webapp origin (`*` in the devfile).
+
+**If run-apis does not start the APIs:** The devfile uses `nohup` so the .NET processes keep running after the command exits. If they still do not start, run the same `dotnet run` commands manually in a terminal in the **apis** container (after build); start the three APIs on 8080, 8081, 8082.
 
 ---
 

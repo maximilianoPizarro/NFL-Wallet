@@ -1,11 +1,12 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-// In Dev Spaces, PROXY_API_HOST=apis (K8s service name). Locally use localhost with default ports.
+// Locally: no PROXY_API_HOST → localhost:5001,5002,5003. Dev Spaces: PROXY_API_HOST = K8s service name (e.g. nfl-wallet-apis) → host:8080,8081,8082
 const proxyHost = process.env.PROXY_API_HOST || 'localhost'
-const customersTarget = proxyHost === 'apis' ? 'http://apis:8080' : 'http://localhost:5001'
-const billsTarget = proxyHost === 'apis' ? 'http://apis:8081' : 'http://localhost:5002'
-const raidersTarget = proxyHost === 'apis' ? 'http://apis:8082' : 'http://localhost:5003'
+const isRemote = proxyHost !== 'localhost'
+const customersTarget = isRemote ? `http://${proxyHost}:8080` : 'http://localhost:5001'
+const billsTarget = isRemote ? `http://${proxyHost}:8081` : 'http://localhost:5002'
+const raidersTarget = isRemote ? `http://${proxyHost}:8082` : 'http://localhost:5003'
 
 export default defineConfig({
   plugins: [vue()],
