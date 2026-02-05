@@ -10,6 +10,17 @@ description: "NFL Stadium Wallet — Centralized digital wallet for use at NFL s
   <p>{{ site.description }}</p>
 </div>
 
+<p align="left">
+  <img src="https://img.shields.io/badge/redhat-CC0000?style=for-the-badge&logo=redhat&logoColor=white" alt="Red Hat">
+  <img src="https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white" alt="Kubernetes">
+  <img src="https://img.shields.io/badge/helm-0db7ed?style=for-the-badge&logo=helm&logoColor=white" alt="Helm">
+  <img src="https://img.shields.io/badge/shell_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white" alt="Shell">
+  <a href="{{ '/architecture.html#running-with-podman-compose' | relative_url }}"><img src="https://img.shields.io/badge/podman-892CA0?style=for-the-badge&logo=podman&logoColor=white" alt="Podman"></a>
+  <a href="{{ site.github_repo }}" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/Open%20in%20Dev%20Spaces-CC0000?style=for-the-badge&logo=redhatopenshift&logoColor=white" alt="Open in Dev Spaces"></a>
+  <a href="https://www.linkedin.com/in/maximiliano-gregorio-pizarro-consultor-it"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
+  <a href="https://artifacthub.io/packages/search?repo=nfl-wallet"><img src="https://artifacthub.io/badge/repository/nfl-wallet" alt="Artifact Hub" /></a>
+</p>
+
 ## Purpose
 
 **NFL Stadium Wallet** is a centralized digital wallet solution designed for use at NFL stadiums. It allows fans to:

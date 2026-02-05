@@ -207,7 +207,19 @@ After a short while, `kubectl get authconfig -n istio-system` should show the Au
 | `gateway.authPolicy.bills.enabled` | Apply AuthPolicy to the api-bills HTTPRoute | `false` |
 | `gateway.authPolicy.bills.unauthorizedBody` | JSON string for 403 response body | `{"error":"Forbidden","message":"Missing or invalid X-API-Key header."}` |
 
-**If you get 500 on `/api-bills/...` and the AuthPolicy status shows `Enforced: False`** ("waiting for AuthConfig to sync"):
+**If you get 500 on `/api-bills/...` (with or without X-API-Key)** and the AuthConfig in `istio-system` has `spec.hosts` set to a hash instead of your gateway host, patch it so Authorino can match the request:
+
+```bash
+# Find the AuthConfig that backs the bills AuthPolicy (name is a hash)
+kubectl get authconfig -n istio-system -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.hosts[0]}{"\n"}{end}' | head -20
+
+# Patch the one that has the hash as host (replace HASH with the name, e.g. d17c85a098a189a7f6e791f60c3fdeec93daaf45a9e4986b67391d9d24350ece)
+kubectl patch authconfig HASH -n istio-system --type=json -p='[{"op":"replace","path":"/spec/hosts","value":["nfl-gateway-nfl-wallet.apps.cluster-zrg7z.zrg7z.sandbox489.opentlc.com"]}]'
+```
+
+Use your actual gateway host in `value`. After the patch, requests without X-API-Key should return **403** and with the header **200** (or whatever the API returns).
+
+**If you get 500 and the AuthPolicy status shows `Enforced: False`** ("waiting for AuthConfig to sync"):
 
 1. The gateway may be calling Authorino before the AuthConfig is ready, which can result in 500. Wait a minute and check again: `kubectl get authpolicy nfl-wallet-api-bills-auth -n nfl-wallet -o jsonpath='{.status.conditions}'`.
 2. When `Enforced` is `True`, requests without `X-API-Key` should get **403** with your JSON body; with a valid header they should reach the backend (200 or 404/5 from the API).

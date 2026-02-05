@@ -171,6 +171,33 @@ helm upgrade nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
 
 Use the same key in the frontend (default in `client.js` is `nfl-wallet-raiders-key`) or set it in the webapp config. To require API key for all three APIs, omit the `requireFor*` overrides and set all three keys: `--set apiKeys.customers=... --set apiKeys.bills=... --set apiKeys.raiders=...`.
 
+### Testing the API (gateway + X-API-Key)
+
+When the gateway is enabled and api-bills is protected by Istio AuthorizationPolicy or Kuadrant AuthPolicy (X-API-Key required), you can verify behaviour with `curl`. Replace `GATEWAY_HOST` with your gateway host (e.g. from `kubectl get route -n nfl-wallet`).
+
+**Without API key** — expect **403** (Forbidden):
+
+```bash
+curl -s -o /dev/null -w "%{http_code}" "https://GATEWAY_HOST/api-bills/Wallet/balance/1"
+echo
+# Example output: 403
+```
+
+**With API key** — expect **200** (and JSON body if you omit `-o /dev/null`):
+
+```bash
+curl -s -o /dev/null -w "%{http_code}" -H "X-API-Key: test" "https://GATEWAY_HOST/api-bills/Wallet/balance/1"
+echo
+# Example output: 200
+```
+
+**Full response (with header):**
+
+```bash
+curl -s -H "X-API-Key: test" "https://GATEWAY_HOST/api-bills/Wallet/balance/1"
+# Example: {"id":1,"customerId":1,"currency":"USD","availableBalance":2847.25,...}
+```
+
 ## Uninstall
 
 ```bash
