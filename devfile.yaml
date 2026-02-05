@@ -83,7 +83,7 @@ commands:
     exec:
       component: apis
       workingDir: ${PROJECT_SOURCE}
-      commandLine: sh -c "nohup dotnet run --project ApiCustomers/ApiCustomers.csproj -c Debug --no-build --urls http://*:8080 > /tmp/api-customers.log 2>&1 & nohup dotnet run --project ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c Debug --no-build --urls http://*:8081 > /tmp/api-bills.log 2>&1 & nohup dotnet run --project ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c Debug --no-build --urls http://*:8082 > /tmp/api-raiders.log 2>&1 & sleep 2"
+      commandLine: sh -c "set -e && dotnet build ApiCustomers/ApiCustomers.csproj -c Debug --nologo -v q && dotnet build ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c Debug --nologo -v q && dotnet build ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c Debug --nologo -v q && ( dotnet run --project ApiCustomers/ApiCustomers.csproj -c Debug --no-build --urls http://*:8080 </dev/null >>/tmp/api-customers.log 2>&1 & ) && ( dotnet run --project ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c Debug --no-build --urls http://*:8081 </dev/null >>/tmp/api-bills.log 2>&1 & ) && ( dotnet run --project ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c Debug --no-build --urls http://*:8082 </dev/null >>/tmp/api-raiders.log 2>&1 & ) && sleep 3 && echo APIs started on 8080, 8081, 8082"
 
   - id: run-frontend
     exec:

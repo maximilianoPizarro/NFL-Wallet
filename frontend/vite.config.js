@@ -10,6 +10,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
+    allowedHosts: true,
     proxy: {
       '/api-customers': { target: 'http://localhost:5001', changeOrigin: true, rewrite: (p) => p.replace(/^\/api-customers/, '/api') },
       '/api-bills': { target: 'http://localhost:5002', changeOrigin: true, rewrite: (p) => p.replace(/^\/api-bills/, '/api') },
