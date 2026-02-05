@@ -5,7 +5,12 @@ metadata:
   labels:
     app: webapp
     app.kubernetes.io/component: webapp
+    app.kubernetes.io/name: webapp
+    app.kubernetes.io/instance: webapp
+    app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
     runtime: nodejs
+  annotations:
+    app.openshift.io/connects-to: '["api-customers","api-bills","api-raiders"]'
 spec:
   replicas: {{ .Values.webapp.replicaCount }}
   selector:
@@ -15,6 +20,9 @@ spec:
     metadata:
       labels:
         app: webapp
+        app.kubernetes.io/name: webapp
+        app.kubernetes.io/instance: webapp
+        app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
         runtime: nodejs
     spec:
       {{- with .Values.global.imagePullSecrets }}

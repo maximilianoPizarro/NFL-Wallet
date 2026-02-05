@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
+  <link rel="icon" type="image/x-icon" href="{{ '/favicon.ico' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/css/redhat-doc.css' | relative_url }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Text:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <a href="{{ '/' | relative_url }}" class="site-brand">
+      <img src="{{ '/National_Football_League_logo.png' | relative_url }}" alt="NFL" class="site-logo">
+    </a>
+    <h1 class="site-title"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
+    <nav class="site-nav">
+      <a href="{{ '/' | relative_url }}">Home</a>
+      <a href="{{ '/architecture.html' | relative_url }}">Architecture</a>
+      <a href="{{ '/deployment.html' | relative_url }}">Deployment</a>
+      <a href="{{ '/connectivity-link.html' | relative_url }}">Connectivity Link</a>
+      <a href="{{ '/security.html' | relative_url }}">Security</a>
+    </nav>
+  </header>
+  <main class="wrapper">
+    <div class="page-content">
+      {{ content }}
+    </div>
+  </main>
+  <footer class="site-footer">
+    NFL Stadium Wallet — Built with Vue 3 and .NET 8. Documentation styled with Red Hat branding.
+  </footer>
+</body>
+</html>

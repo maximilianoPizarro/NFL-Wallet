@@ -1,0 +1,17 @@
+# GitHub Pages Jekyll
+source "https://rubygems.org"
+gem "jekyll", "~> 3.9"
+gem "webrick", "~> 1.8"
+gem "jekyll-relative-links"
+gem "jekyll-optional-front-matter"
+gem "jekyll-seo-tag"
+gem "jekyll-sitemap"
+gem "jekyll-redirect-from"
+
+# Optional: run locally with bundle exec jekyll serve
+# group :jekyll_plugins do
+#   gem "jekyll-relative-links"
+#   gem "jekyll-optional-front-matter"
+#   gem "jekyll-seo-tag"
+#   gem "jekyll-sitemap"
+# end

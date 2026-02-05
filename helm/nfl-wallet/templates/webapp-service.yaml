@@ -4,6 +4,9 @@ metadata:
   name: webapp
   labels:
     app: webapp
+    app.kubernetes.io/name: webapp
+    app.kubernetes.io/instance: webapp
+    app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
     runtime: nodejs
 spec:
   type: ClusterIP

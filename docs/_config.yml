@@ -1,0 +1,54 @@
+# NFL Stadium Wallet - Documentation for GitHub Pages
+# Red Hat–inspired branding
+title: NFL Stadium Wallet
+description: "Centralized digital wallet for NFL stadiums. Pay, load balance, and manage your money at Buffalo Bills and Las Vegas Raiders venues."
+baseurl: ""  # Use "/NFL-Wallet" if the repo is GitHub Pages project site (user.github.io/NFL-Wallet)
+url: ""      # e.g. "https://youruser.github.io"
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# Theme / assets
+plugins:
+  - jekyll-relative-links
+  - jekyll-optional-front-matter
+  - jekyll-redirect-from
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Red Hat branding
+brand:
+  name: Red Hat
+  primary: "#cc0000"
+  text: "#333333"
+  background: "#ffffff"
+
+# Navigation
+header_pages:
+  - index.md
+  - architecture.md
+  - deployment.md
+  - connectivity-link.md
+  - security.md
+
+include:
+  - National_Football_League_logo.png
+  - favicon.ico
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - podman.png
+  - devspaces.png
+  - devspaces2.png
+  - devspaces3.png
+  - topology.png
+  - wallet.png
+  - wallet2.png
+  - wallet3.png
+  - wallet4.png
+  - walletlanding.png
+  - "connectivity link.png"

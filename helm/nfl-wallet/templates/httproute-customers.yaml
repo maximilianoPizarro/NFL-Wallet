@@ -14,6 +14,12 @@ spec:
         - path:
             type: PathPrefix
             value: /api-customers
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /api
       backendRefs:
         - name: api-customers
           port: {{ .Values.apiCustomers.service.port }}

@@ -5,6 +5,9 @@ metadata:
   labels:
     app: api-raiders
     app.kubernetes.io/component: api-raiders
+    app.kubernetes.io/name: api-raiders
+    app.kubernetes.io/instance: api-raiders
+    app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
     app.kubernetes.io/runtime: dotnet
     app.openshift.io/runtime: dotnet
     runtime: dotnet
@@ -17,6 +20,9 @@ spec:
     metadata:
       labels:
         app: api-raiders
+        app.kubernetes.io/name: api-raiders
+        app.kubernetes.io/instance: api-raiders
+        app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
         app.kubernetes.io/runtime: dotnet
         app.openshift.io/runtime: dotnet
         runtime: dotnet

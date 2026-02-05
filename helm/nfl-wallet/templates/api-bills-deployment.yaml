@@ -5,6 +5,9 @@ metadata:
   labels:
     app: api-bills
     app.kubernetes.io/component: api-bills
+    app.kubernetes.io/name: api-bills
+    app.kubernetes.io/instance: api-bills
+    app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
     app.kubernetes.io/runtime: dotnet
     app.openshift.io/runtime: dotnet
     runtime: dotnet
@@ -17,6 +20,9 @@ spec:
     metadata:
       labels:
         app: api-bills
+        app.kubernetes.io/name: api-bills
+        app.kubernetes.io/instance: api-bills
+        app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
         app.kubernetes.io/runtime: dotnet
         app.openshift.io/runtime: dotnet
         runtime: dotnet

@@ -1,0 +1,24 @@
+{{- if and .Values.gateway.enabled .Values.gateway.route.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: nfl-wallet-gateway
+  labels:
+    app.kubernetes.io/component: gateway
+spec:
+  to:
+    kind: Service
+    name: {{ .Values.gateway.route.serviceName | default (.Values.gateway.existingGatewayName | default "nfl-wallet-gateway") }}
+    weight: 100
+  port:
+    targetPort: {{ .Values.gateway.route.targetPort | default "http" }}
+  {{- if .Values.gateway.route.host }}
+  host: {{ .Values.gateway.route.host | quote }}
+  {{- end }}
+  tls:
+    termination: {{ .Values.gateway.route.tls.termination | default "edge" }}
+    {{- if .Values.gateway.route.tls.insecureEdgeTerminationPolicy }}
+    insecureEdgeTerminationPolicy: {{ .Values.gateway.route.tls.insecureEdgeTerminationPolicy }}
+    {{- end }}
+  wildcardPolicy: None
+{{- end }}

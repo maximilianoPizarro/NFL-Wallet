@@ -100,7 +100,7 @@ if (!string.IsNullOrWhiteSpace(apiKey))
 }
 app.UseCors();
 app.UseSwagger();
-app.UseSwaggerUI(c => { c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Las Vegas Raiders API v1"); });
+app.UseSwaggerUI(c => { c.SwaggerEndpoint("v1/swagger.json", "Las Vegas Raiders API v1"); });
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

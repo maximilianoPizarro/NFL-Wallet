@@ -4,6 +4,9 @@ metadata:
   name: api-bills
   labels:
     app: api-bills
+    app.kubernetes.io/name: api-bills
+    app.kubernetes.io/instance: api-bills
+    app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
     runtime: dotnet
 spec:
   type: ClusterIP

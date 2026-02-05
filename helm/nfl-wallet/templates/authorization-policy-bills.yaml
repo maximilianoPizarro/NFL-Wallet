@@ -1,4 +1,4 @@
-{{- if .Values.authorizationPolicy.enabled }}
+{{- if eq (include "nfl-wallet.authPolicy.requireFor" (dict "root" . "key" "requireForBills")) "true" }}
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:

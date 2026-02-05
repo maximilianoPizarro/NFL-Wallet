@@ -5,6 +5,9 @@ metadata:
   labels:
     app: api-customers
     app.kubernetes.io/component: api-customers
+    app.kubernetes.io/name: api-customers
+    app.kubernetes.io/instance: api-customers
+    app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
     app.kubernetes.io/runtime: dotnet
     app.openshift.io/runtime: dotnet
     runtime: dotnet
@@ -17,6 +20,9 @@ spec:
     metadata:
       labels:
         app: api-customers
+        app.kubernetes.io/name: api-customers
+        app.kubernetes.io/instance: api-customers
+        app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
         app.kubernetes.io/runtime: dotnet
         app.openshift.io/runtime: dotnet
         runtime: dotnet

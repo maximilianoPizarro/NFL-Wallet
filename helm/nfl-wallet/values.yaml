@@ -1,6 +1,11 @@
 # Default values for nfl-wallet
 # Service/port layout: api-customers 8080, api-bills 8081, api-raiders 8082, webapp 5173
 
+# Topology (OpenShift): application grouping and connectors in the Topology view
+topology:
+  applicationName: ""  # empty = nfl-wallet; set to override app.kubernetes.io/part-of
+  # webapp shows connectors to api-customers, api-bills, api-raiders
+
 global:
   imageRegistry: quay.io
   imagePullSecrets: []
@@ -78,7 +83,21 @@ gateway:
   className: istio
   # Optional: name of existing Gateway to attach HTTPRoutes to; if empty, a Gateway resource is created.
   existingGatewayName: ""
+  # OpenShift Route to expose the Gateway with Edge + Redirect (when gateway.enabled).
+  route:
+    enabled: true
+    host: ""
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
+    # Service name to target; empty = nfl-wallet-gateway or existingGatewayName
+    serviceName: ""
+    # targetPort: named port (e.g. http) or number (e.g. 80) of the Gateway Service
+    targetPort: http
 
-# Istio AuthorizationPolicy: require X-API-Key header when apiKeys.enabled.
+# Istio AuthorizationPolicy: require X-API-Key header. Enable per API to secure wallet/APIs.
 authorizationPolicy:
   enabled: false
+  requireForCustomers: true
+  requireForBills: true
+  requireForRaiders: true
