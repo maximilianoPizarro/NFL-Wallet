@@ -1,6 +1,7 @@
 using ApiWalletBuffaloBills.Data;
 using ApiWalletBuffaloBills.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,21 @@ builder.Services.AddDbContext<WalletDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=buffalobills.db"));
 
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "NFL Wallet - Buffalo Bills API", Version = "v1", Description = "Buffalo Bills wallet balance and transactions for NFL Stadium Wallet." });
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:5160", "http://localhost:5173", "http://127.0.0.1:5160", "http://127.0.0.1:5173")
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 // Keycloak/OpenID: uncomment and configure when using authentication
 // builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -55,6 +71,9 @@ using (var scope = app.Services.CreateScope())
 
 app.UsePathBase("/api");
 app.UseRouting();
+app.UseCors();
+app.UseSwagger();
+app.UseSwaggerUI(c => { c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Buffalo Bills API v1"); });
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

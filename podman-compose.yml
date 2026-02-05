@@ -40,8 +40,12 @@ services:
 
   webapp:
     build:
-      context: ./WebApp
+      context: ./frontend
       dockerfile: Containerfile
+      args:
+        VITE_API_CUSTOMERS_URL: http://localhost:5001/api
+        VITE_API_BILLS_URL: http://localhost:5002/api
+        VITE_API_RAIDERS_URL: http://localhost:5003/api
     container_name: nfl-wallet-webapp
     ports:
       - "5160:8080"
@@ -49,11 +53,6 @@ services:
       - api-customers
       - api-buffalo-bills
       - api-las-vegas-raiders
-    environment:
-      - ASPNETCORE_URLS=http://*:8080
-      - Api__CustomersBaseUrl=http://api-customers:8080/api
-      - Api__BuffaloBillsBaseUrl=http://api-buffalo-bills:8080/api
-      - Api__LasVegasRaidersBaseUrl=http://api-las-vegas-raiders:8080/api
 
 volumes:
   api-customers-data:

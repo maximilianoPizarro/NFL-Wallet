@@ -1,60 +1,53 @@
+# NFL Stadium Wallet - Devfile for Red Hat OpenShift Dev Spaces
+# Architecture: Vue 3 (frontend) + 3 .NET 8 APIs (ApiCustomers, ApiWalletBuffaloBills, ApiWalletLasVegasRaiders)
+# This devfile runs the frontend in the workspace; run the APIs locally or via podman-compose.
 schemaVersion: 2.2.2
 metadata:
   name: nfl-wallet
-  displayName: NFL Wallet - .NET 8.0
-  description: .NET 8.0 solution with ApiCustomers, Buffalo Bills & Las Vegas Raiders wallets, and WebApp
+  displayName: NFL Stadium Wallet
+  description: |
+    Full-stack NFL Stadium Wallet: Vue 3 + Vite frontend and three .NET 8.0 APIs.
+    - Frontend: Vue 3, Vite, vue-router (run in this workspace).
+    - APIs: ApiCustomers, ApiWalletBuffaloBills, ApiWalletLasVegasRaiders (run locally or via podman-compose).
+    Each API exposes Swagger at /api/swagger and allows CORS from the frontend origins.
   icon: https://raw.githubusercontent.com/dotnet/brand/main/logo/dotnet-logo.png
   tags:
-    - .NET
+    - Vue
     - .NET 8.0
-  projectType: dotnet
-  language: .NET
+    - NFL
+  projectType: fullstack
+  language: javascript
   version: 1.0.0
 
 components:
   - name: webapp
     container:
-      image: registry.access.redhat.com/ubi8/dotnet-80:8.0-13
+      image: registry.access.redhat.com/ubi8/nodejs-20:latest
       args: ["tail", "-f", "/dev/null"]
       mountSources: true
+      memoryLimit: 1Gi
       env:
-        - name: CONFIGURATION
-          value: Debug
-        - name: STARTUP_PROJECT
-          value: WebApp/WebApp.csproj
-        - name: ASPNETCORE_ENVIRONMENT
-          value: Development
-        - name: ASPNETCORE_URLS
-          value: http://*:8083
-        - name: Api__CustomersBaseUrl
+        # Frontend calls these API base URLs from the browser (same host as dev server or where APIs are exposed)
+        - name: VITE_API_CUSTOMERS_URL
           value: http://localhost:8080/api
-        - name: Api__BuffaloBillsBaseUrl
+        - name: VITE_API_BILLS_URL
           value: http://localhost:8081/api
-        - name: Api__LasVegasRaidersBaseUrl
+        - name: VITE_API_RAIDERS_URL
           value: http://localhost:8082/api
       endpoints:
         - name: webapp
-          targetPort: 8083
-          protocol: https
+          targetPort: 5173
+          protocol: http
 
 commands:
   - id: build
     exec:
       component: webapp
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: >
-        dotnet build ApiCustomers/ApiCustomers.csproj -c $CONFIGURATION /p:UseSharedCompilation=false &&
-        dotnet build ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c $CONFIGURATION /p:UseSharedCompilation=false &&
-        dotnet build ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c $CONFIGURATION /p:UseSharedCompilation=false &&
-        dotnet build WebApp/WebApp.csproj -c $CONFIGURATION /p:UseSharedCompilation=false
+      workingDir: ${PROJECT_SOURCE}/frontend
+      commandLine: npm install
 
   - id: run
     exec:
       component: webapp
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: >
-        ASPNETCORE_URLS=http://*:8080 dotnet ApiCustomers/bin/Debug/net8.0/ApiCustomers.dll &
-        ASPNETCORE_URLS=http://*:8081 dotnet ApiWalletBuffaloBills/bin/Debug/net8.0/ApiWalletBuffaloBills.dll &
-        ASPNETCORE_URLS=http://*:8082 dotnet ApiWalletLasVegasRaiders/bin/Debug/net8.0/ApiWalletLasVegasRaiders.dll &
-        Api__CustomersBaseUrl=http://localhost:8080/api Api__BuffaloBillsBaseUrl=http://localhost:8081/api Api__LasVegasRaidersBaseUrl=http://localhost:8082/api ASPNETCORE_URLS=http://*:8083 dotnet WebApp/bin/Debug/net8.0/WebApp.dll &
-        wait
+      workingDir: ${PROJECT_SOURCE}/frontend
+      commandLine: npm run dev

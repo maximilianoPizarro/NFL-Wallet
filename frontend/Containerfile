@@ -1,0 +1,30 @@
+# Build stage: Red Hat Node.js
+FROM registry.access.redhat.com/ubi8/nodejs-20:latest AS builder
+USER root
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+ARG VITE_API_CUSTOMERS_URL
+ARG VITE_API_BILLS_URL
+ARG VITE_API_RAIDERS_URL
+ENV VITE_API_CUSTOMERS_URL=${VITE_API_CUSTOMERS_URL}
+ENV VITE_API_BILLS_URL=${VITE_API_BILLS_URL}
+ENV VITE_API_RAIDERS_URL=${VITE_API_RAIDERS_URL}
+RUN npm run build
+
+# Runtime: Apache (Red Hat httpd-24)
+FROM registry.access.redhat.com/ubi8/httpd-24:latest
+USER root
+# DocumentRoot in ubi8/httpd-24 is /var/www/html
+RUN rm -rf /var/www/html/*
+COPY --from=builder /app/dist /var/www/html
+COPY httpd.conf /etc/httpd/conf.d/nfl-wallet.conf
+# UBI default user is 1001; use it so httpd can read content and write ModSecurity log
+RUN chown -R 1001:1001 /var/www/html
+RUN mkdir -p /var/log/httpd && touch /var/log/httpd/modsec_debug.log && chown 1001:1001 /var/log/httpd/modsec_debug.log
+# Disable SSL conf so httpd starts without certs (we serve HTTP only on 8080)
+RUN mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf.disabled 2>/dev/null || true
+USER 1001
+EXPOSE 8080
+CMD ["httpd", "-D", "FOREGROUND"]
