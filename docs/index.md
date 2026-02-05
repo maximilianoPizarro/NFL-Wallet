@@ -20,6 +20,23 @@ description: "NFL Stadium Wallet — Centralized digital wallet for use at NFL s
 
 A single front-end application talks to a **Customers API** (for identity and customer list) and to **per-team Wallet APIs** (Buffalo Bills and Las Vegas Raiders). This way, one wallet experience can be reused across stadiums that adopt the same APIs.
 
+### Wallet app (landing and flows)
+
+![Wallet landing]({{ '/walletlanding.png' | relative_url }}){: .doc-img .doc-img--s}
+*Landing page.*
+
+![Wallet customer list]({{ '/wallet.png' | relative_url }}){: .doc-img .doc-img--s}
+*Customer list.*
+
+![Wallet balances]({{ '/wallet2.png' | relative_url }}){: .doc-img .doc-img--s}
+*Customer wallets — Buffalo Bills and Las Vegas Raiders.*
+
+![Wallet pay flow]({{ '/wallet3.png' | relative_url }}){: .doc-img .doc-img--s}
+*Pay from QR flow.*
+
+![Wallet load]({{ '/wallet4.png' | relative_url }}){: .doc-img .doc-img--s}
+*Load balance.*
+
 ## What You Can Do With This Solution
 
 | Option | Description |

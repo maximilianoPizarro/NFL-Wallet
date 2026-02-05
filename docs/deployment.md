@@ -57,3 +57,10 @@ helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet --set webapp.route.enabl
 | `authorizationPolicy.enabled` | Istio AuthorizationPolicy for X-API-Key | `false` |
 
 For the full list and security/topology options, see the [Helm chart README](https://github.com/maximilianopizarro/NFL-Wallet/blob/main/helm/nfl-wallet/README.md) in the repo.
+
+### OpenShift Topology view
+
+When deployed to OpenShift, the chart adds labels and the `app.openshift.io/connects-to` annotation so the Developer Topology view groups the app and shows connectors from the webapp to the three APIs.
+
+![Topology view]({{ '/topology.png' | relative_url }}){: .doc-img}
+*NFL Wallet in OpenShift Topology (webapp → api-customers, api-bills, api-raiders).*

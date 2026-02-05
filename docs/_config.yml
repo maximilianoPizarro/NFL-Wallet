@@ -37,11 +37,6 @@ header_pages:
 include:
   - National_Football_League_logo.png
   - favicon.ico
-
-exclude:
-  - Gemfile
-  - Gemfile.lock
-  - README.md
   - podman.png
   - devspaces.png
   - devspaces2.png
@@ -53,3 +48,8 @@ exclude:
   - wallet4.png
   - walletlanding.png
   - "connectivity link.png"
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md

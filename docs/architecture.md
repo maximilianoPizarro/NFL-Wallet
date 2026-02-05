@@ -39,6 +39,9 @@ podman-compose up -d --build
 
 The webapp is built with build args so it points to `http://localhost:5001/api`, `http://localhost:5002/api`, and `http://localhost:5003/api` for the three APIs. Data is persisted in named volumes.
 
+![Podman Compose]({{ '/podman.png' | relative_url }}){: .doc-img}
+*Running the stack with Podman Compose.*
+
 ---
 
 ## Running With Red Hat OpenShift Dev Spaces
@@ -50,3 +53,12 @@ The repo includes a **devfile.yaml** for **Red Hat OpenShift Dev Spaces** (and c
 - **Flow:** Clone the repo into a Dev Spaces workspace, run the build step, then the run step; open the frontend URL and use the app as in the architecture diagram.
 
 This allows developing and testing the centralized wallet in a cloud IDE without installing .NET or Node locally.
+
+![OpenShift Dev Spaces]({{ '/devspaces.png' | relative_url }}){: .doc-img}
+*Dev Spaces workspace.*
+
+![Dev Spaces run]({{ '/devspaces2.png' | relative_url }}){: .doc-img}
+*Build and run in Dev Spaces.*
+
+![Dev Spaces app]({{ '/devspaces3.png' | relative_url }}){: .doc-img}
+*App running from Dev Spaces.*

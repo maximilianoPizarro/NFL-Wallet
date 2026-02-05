@@ -61,3 +61,8 @@ helm upgrade nfl-wallet ./helm/nfl-wallet -n nfl-wallet --set gateway.enabled=tr
 - **OpenShift Route** `nfl-wallet-gateway`: exposes the Gateway with TLS edge and HTTP→HTTPS redirect (when `gateway.route.enabled` is true).
 
 The frontend remains available via the webapp Route as before; the gateway Route provides an alternate entry point for the same backends.
+
+### Connectivity Link overview
+
+![Connectivity Link]({{ '/connectivity link.png' | relative_url | replace: ' ', '%20' }}){: .doc-img}
+*Gateway API and HTTPRoutes (Connectivity Link) exposing the webapp and APIs.*
