@@ -1,13 +1,12 @@
 # NFL Stadium Wallet - Red Hat OpenShift Dev Spaces
-# Two components: apis (UBI + .NET 8, git, oc) and webapp (Node 20 for Vue frontend)
+# Two components: apis (UBI + .NET 8) and webapp (Node 20). Two steps: build, run.
 schemaVersion: 2.2.2
 metadata:
   name: nfl-wallet
   displayName: NFL Stadium Wallet
   description: |
     Full-stack: Vue 3 + Vite frontend and three .NET 8.0 APIs.
-    - apis: UBI-based container with .NET 8, git, oc (build/run the 3 APIs).
-    - webapp: Node 20 (build/run the frontend).
+    Step 1: build (frontend + APIs). Step 2: run (APIs in background + frontend).
   icon: https://raw.githubusercontent.com/dotnet/brand/main/logo/dotnet-logo.png
   tags:
     - Vue
@@ -18,7 +17,6 @@ metadata:
   version: 1.0.0
 
 components:
-  # UBI-based: .NET 8, git, and standard tools (oc when running in OpenShift Dev Spaces)
   - name: apis
     container:
       image: registry.access.redhat.com/ubi8/dotnet-80:latest
@@ -26,8 +24,6 @@ components:
       mountSources: true
       memoryLimit: 2Gi
       env:
-        - name: ASPNETCORE_URLS
-          value: http://*:8080
         - name: CONFIGURATION
           value: Debug
       endpoints:
@@ -41,7 +37,6 @@ components:
           targetPort: 8082
           protocol: http
 
-  # Frontend: Node 20 (Vue 3 + Vite)
   - name: webapp
     container:
       image: registry.access.redhat.com/ubi8/nodejs-20:latest
@@ -61,35 +56,46 @@ components:
           protocol: http
 
 commands:
-  # ---- Frontend (webapp) ----
-  - id: build
+  # Step 1: build = frontend + APIs
+  - id: build-frontend
     exec:
       component: webapp
       workingDir: ${PROJECT_SOURCE}/frontend
       commandLine: sh -c "npm install && (chmod -R +x node_modules/.bin 2>/dev/null || true) && npm run build"
 
-  - id: run
+  - id: build-apis
+    exec:
+      component: apis
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: sh -c "dotnet build ApiCustomers/ApiCustomers.csproj -c Debug && dotnet build ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c Debug && dotnet build ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c Debug"
+
+  - id: build
+    composite:
+      commands:
+        - build-frontend
+        - build-apis
+      group:
+        kind: build
+        isDefault: true
+
+  # Step 2: run = APIs (background) + frontend (foreground)
+  - id: run-apis
+    exec:
+      component: apis
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: sh -c "nohup dotnet run --project ApiCustomers/ApiCustomers.csproj -c Debug --no-build --urls http://*:8080 > /tmp/api-customers.log 2>&1 & nohup dotnet run --project ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c Debug --no-build --urls http://*:8081 > /tmp/api-bills.log 2>&1 & nohup dotnet run --project ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c Debug --no-build --urls http://*:8082 > /tmp/api-raiders.log 2>&1 & sleep 2"
+
+  - id: run-frontend
     exec:
       component: webapp
       workingDir: ${PROJECT_SOURCE}/frontend
       commandLine: sh -c "(chmod -R +x node_modules/.bin 2>/dev/null || true); npx vite"
 
-  # ---- APIs (apis / UBI + .NET) ----
-  - id: build-apis
-    exec:
-      component: apis
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: >
-        dotnet build ApiCustomers/ApiCustomers.csproj -c $CONFIGURATION
-        && dotnet build ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c $CONFIGURATION
-        && dotnet build ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c $CONFIGURATION
-
-  - id: run-apis
-    exec:
-      component: apis
-      workingDir: ${PROJECT_SOURCE}
-      commandLine: >
-        sh -c "ASPNETCORE_URLS=http://*:8080 dotnet run --project ApiCustomers/ApiCustomers.csproj -c Debug --no-build &
-        ASPNETCORE_URLS=http://*:8081 dotnet run --project ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj -c Debug --no-build &
-        ASPNETCORE_URLS=http://*:8082 dotnet run --project ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj -c Debug --no-build &
-        wait"
+  - id: run
+    composite:
+      commands:
+        - run-apis
+        - run-frontend
+      group:
+        kind: run
+        isDefault: true
