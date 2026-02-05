@@ -44,10 +44,10 @@ components:
         - name: ASPNETCORE_ENVIRONMENT
           value: Development
         - name: ASPNETCORE_URLS
-          value: http://*:8080
+          value: http://*:8081
       endpoints:
         - name: bills
-          targetPort: 8080
+          targetPort: 8081
           protocol: http
 
   - name: api-las-vegas-raiders
@@ -63,10 +63,10 @@ components:
         - name: ASPNETCORE_ENVIRONMENT
           value: Development
         - name: ASPNETCORE_URLS
-          value: http://*:8080
+          value: http://*:8082
       endpoints:
         - name: raiders
-          targetPort: 8080
+          targetPort: 8082
           protocol: http
 
   - name: webapp
@@ -82,16 +82,16 @@ components:
         - name: ASPNETCORE_ENVIRONMENT
           value: Development
         - name: ASPNETCORE_URLS
-          value: http://*:8080
+          value: http://*:8083
         - name: Api__CustomersBaseUrl
           value: http://api-customers:8080/api
         - name: Api__BuffaloBillsBaseUrl
-          value: http://api-buffalo-bills:8080/api
+          value: http://api-buffalo-bills:8081/api
         - name: Api__LasVegasRaidersBaseUrl
-          value: http://api-las-vegas-raiders:8080/api
+          value: http://api-las-vegas-raiders:8082/api
       endpoints:
         - name: webapp
-          targetPort: 8080
+          targetPort: 8083
           protocol: http
 
 commands:
