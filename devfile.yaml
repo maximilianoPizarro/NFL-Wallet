@@ -26,6 +26,9 @@ components:
       env:
         - name: CONFIGURATION
           value: Debug
+        # Allow all origins so frontend (e.g. OpenShift webapp route) can call these APIs
+        - name: CORS__AllowedOrigins
+          value: "*"
       endpoints:
         - name: api-customers
           targetPort: 8080

@@ -15,13 +15,17 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "NFL Wallet - Customers API", Version = "v1", Description = "Customer data for NFL Stadium Wallet." });
 });
 
+var corsOrigins = builder.Configuration["Cors:AllowedOrigins"] ?? "http://localhost:5160,http://localhost:5173";
+var origins = corsOrigins.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:5160", "http://localhost:5173", "http://127.0.0.1:5160", "http://127.0.0.1:5173")
-            .AllowAnyMethod()
-            .AllowAnyHeader();
+        if (origins.Length == 1 && origins[0] == "*")
+            policy.AllowAnyOrigin();
+        else
+            policy.WithOrigins(origins);
+        policy.AllowAnyMethod().AllowAnyHeader();
     });
 });
 

@@ -190,13 +190,25 @@ The **devfile** (`devfile.yaml`) defines two components:
 
 ## Configuration
 
-- **Frontend API URLs** (build-time env or `podman-compose` build args):
-  - `VITE_API_CUSTOMERS_URL` (e.g. `http://localhost:5001/api`)
-  - `VITE_API_BILLS_URL` (e.g. `http://localhost:5002/api`)
-  - `VITE_API_RAIDERS_URL` (e.g. `http://localhost:5003/api`)
-- **CORS (APIs):** Allowed origins are `http://localhost:5160`, `http://localhost:5173`, and `http://127.0.0.1:5160`, `http://127.0.0.1:5173`. Change in each API’s `Program.cs` if the frontend runs elsewhere.
+- **Frontend API URLs:** The app reads base URLs in this order: (1) runtime **`/config.json`** (same origin), (2) build-time `VITE_API_*` env. Use **`frontend/public/config.json`** with `apiCustomersUrl`, `apiBillsUrl`, `apiRaidersUrl` when the frontend is served from a different host (e.g. OpenShift) so the browser can call the public API routes.
+- **CORS (APIs):** Configurable via **`Cors:AllowedOrigins`** in `appsettings.json` or env **`CORS__AllowedOrigins`** (comma-separated list). Use `*` to allow any origin (e.g. in the devfile the apis component sets `CORS__AllowedOrigins=*`).
 - **Databases:** Each API uses a **SQLite** file; connection string is configurable (e.g. `ConnectionStrings:DefaultConnection`). Seed data is applied on first run when the DB is empty.
 - **Authentication:** The solution is prepared for **OpenID Connect / Keycloak**; add and configure the authentication middleware in each project as needed.
+
+### OpenShift / Dev Spaces (public routes)
+
+When the frontend is at e.g. `http://kube-admin-nfl-wallet-webapp.apps.../` and the APIs at `http://kube-admin-nfl-wallet-api-customers.apps.../api`, etc.:
+
+1. **Frontend:** Edit **`frontend/public/config.json`** and set the public API base URLs (with `/api` at the end), then rebuild/run the frontend so the browser gets that config:
+   ```json
+   {
+     "apiCustomersUrl": "http://kube-admin-nfl-wallet-api-customers.apps.cluster-XXX.XXX.sandboxXXX.opentlc.com/api",
+     "apiBillsUrl": "http://kube-admin-nfl-wallet-api-bills.apps.cluster-XXX.XXX.sandboxXXX.opentlc.com/api",
+     "apiRaidersUrl": "http://kube-admin-nfl-wallet-api-raiders.apps.cluster-XXX.XXX.sandboxXXX.opentlc.com/api"
+   }
+   ```
+2. **CORS:** In the devfile the **apis** component has `CORS__AllowedOrigins=*` so the webapp origin is allowed. For production you can set `CORS__AllowedOrigins` to the exact webapp URL(s).
+3. **Swagger:** Each API serves Swagger UI at **`/api/swagger`** (e.g. `http://...-api-customers.../api/swagger`). If it does not load, check that the route for the API includes the `/api` prefix and that the pod is receiving the request.
 
 ---
 
