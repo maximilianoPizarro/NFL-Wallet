@@ -1,0 +1,92 @@
+@model WebApp.Models.CustomerWalletsViewModel
+@{
+    ViewData["Title"] = "Wallets - " + Model.Customer.FirstName + " " + Model.Customer.LastName;
+}
+
+<div class="container mt-4">
+    <a asp-action="Index" class="nfl-back-link">&larr; Back to Customers</a>
+
+    <div class="nfl-customer-header">
+        <h1>@Model.Customer.FirstName @Model.Customer.LastName</h1>
+        <p class="nfl-customer-meta mb-0">@Model.Customer.Email · Document: @Model.Customer.DocumentNumber</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card nfl-wallet-card nfl-card-bills mb-4">
+                <div class="card-header">
+                    Buffalo Bills
+                </div>
+                <div class="card-body">
+                    @if (Model.BuffaloBills.Balance != null)
+                    {
+                        <div class="nfl-balance-row">
+                            <span class="nfl-balance-label">Available</span>
+                            <span class="nfl-balance-value">@Model.BuffaloBills.Balance.Currency @Model.BuffaloBills.Balance.AvailableBalance.ToString("N2")</span>
+                        </div>
+                        <div class="nfl-balance-row">
+                            <span class="nfl-balance-label">Pending</span>
+                            <span class="nfl-balance-value">@Model.BuffaloBills.Balance.Currency @Model.BuffaloBills.Balance.PendingBalance.ToString("N2")</span>
+                        </div>
+                        <p class="small text-muted mt-2 mb-0">Updated: @Model.BuffaloBills.Balance.UpdatedAt.ToLocalTime()</p>
+                        <h3 class="nfl-transactions-title">Recent transactions</h3>
+                        <div>
+                            @foreach (var t in Model.BuffaloBills.Transactions.Take(10))
+                            {
+                                <div class="nfl-transaction-item">
+                                    <span class="nfl-transaction-desc">@t.Description — @t.Type</span>
+                                    <span class="nfl-transaction-amount @(t.Type == "Credit" ? "credit" : "debit")">
+                                        @(t.Type == "Credit" ? "+" : "-")@t.Amount.ToString("N2")
+                                        <span class="nfl-transaction-status">(@t.Status)</span>
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No wallet data for this customer.</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card nfl-wallet-card nfl-card-raiders mb-4">
+                <div class="card-header">
+                    Las Vegas Raiders
+                </div>
+                <div class="card-body">
+                    @if (Model.LasVegasRaiders.Balance != null)
+                    {
+                        <div class="nfl-balance-row">
+                            <span class="nfl-balance-label">Available</span>
+                            <span class="nfl-balance-value">@Model.LasVegasRaiders.Balance.Currency @Model.LasVegasRaiders.Balance.AvailableBalance.ToString("N2")</span>
+                        </div>
+                        <div class="nfl-balance-row">
+                            <span class="nfl-balance-label">Pending</span>
+                            <span class="nfl-balance-value">@Model.LasVegasRaiders.Balance.Currency @Model.LasVegasRaiders.Balance.PendingBalance.ToString("N2")</span>
+                        </div>
+                        <p class="small text-muted mt-2 mb-0">Updated: @Model.LasVegasRaiders.Balance.UpdatedAt.ToLocalTime()</p>
+                        <h3 class="nfl-transactions-title">Recent transactions</h3>
+                        <div>
+                            @foreach (var t in Model.LasVegasRaiders.Transactions.Take(10))
+                            {
+                                <div class="nfl-transaction-item">
+                                    <span class="nfl-transaction-desc">@t.Description — @t.Type</span>
+                                    <span class="nfl-transaction-amount @(t.Type == "Credit" ? "credit" : "debit")">
+                                        @(t.Type == "Credit" ? "+" : "-")@t.Amount.ToString("N2")
+                                        <span class="nfl-transaction-status">(@t.Status)</span>
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No wallet data for this customer.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

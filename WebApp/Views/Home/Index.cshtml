@@ -1,0 +1,17 @@
+@model List<WebApp.Models.CustomerViewModel>
+@{
+    ViewData["Title"] = "Customers";
+}
+
+<div class="container mt-4">
+    <h1 class="nfl-page-title">Customers</h1>
+    <p class="nfl-subtitle">Select a customer to view Buffalo Bills and Las Vegas Raiders wallets.</p>
+    <div class="list-group nfl-customer-list">
+        @foreach (var c in Model)
+        {
+            <a asp-action="CustomerWallets" asp-route-id="@c.Id" class="list-group-item list-group-item-action">
+                <strong>@c.LastName, @c.FirstName</strong> — @c.Email
+            </a>
+        }
+    </div>
+</div>

@@ -1,0 +1,61 @@
+services:
+  api-customers:
+    build:
+      context: ./ApiCustomers
+      dockerfile: Containerfile
+    container_name: nfl-wallet-api-customers
+    ports:
+      - "5001:8080"
+    volumes:
+      - api-customers-data:/app/data
+    environment:
+      - ASPNETCORE_URLS=http://*:8080
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/customers.db
+
+  api-buffalo-bills:
+    build:
+      context: ./ApiWalletBuffaloBills
+      dockerfile: Containerfile
+    container_name: nfl-wallet-api-buffalo-bills
+    ports:
+      - "5002:8080"
+    volumes:
+      - api-buffalo-bills-data:/app/data
+    environment:
+      - ASPNETCORE_URLS=http://*:8080
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/buffalobills.db
+
+  api-las-vegas-raiders:
+    build:
+      context: ./ApiWalletLasVegasRaiders
+      dockerfile: Containerfile
+    container_name: nfl-wallet-api-las-vegas-raiders
+    ports:
+      - "5003:8080"
+    volumes:
+      - api-raiders-data:/app/data
+    environment:
+      - ASPNETCORE_URLS=http://*:8080
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/lasvegasraiders.db
+
+  webapp:
+    build:
+      context: ./WebApp
+      dockerfile: Containerfile
+    container_name: nfl-wallet-webapp
+    ports:
+      - "5160:8080"
+    depends_on:
+      - api-customers
+      - api-buffalo-bills
+      - api-las-vegas-raiders
+    environment:
+      - ASPNETCORE_URLS=http://*:8080
+      - Api__CustomersBaseUrl=http://api-customers:8080/api
+      - Api__BuffaloBillsBaseUrl=http://api-buffalo-bills:8080/api
+      - Api__LasVegasRaidersBaseUrl=http://api-las-vegas-raiders:8080/api
+
+volumes:
+  api-customers-data:
+  api-buffalo-bills-data:
+  api-raiders-data:

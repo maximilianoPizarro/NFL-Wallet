@@ -1,0 +1,235 @@
+/* NFL Wallet - NFL-style theme */
+:root {
+  --nfl-navy: #013369;
+  --nfl-red: #d50a0a;
+  --nfl-white: #ffffff;
+  --bills-blue: #00338d;
+  --bills-red: #c60c30;
+  --raiders-black: #000000;
+  --raiders-silver: #a5acaf;
+  --field-green: #2d5016;
+  --body-bg: #f4f4f4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  background: var(--body-bg);
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header - NFL stripe */
+.nfl-header {
+  background: linear-gradient(180deg, var(--nfl-navy) 0%, #002244 100%);
+  border-bottom: 4px solid var(--nfl-red);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.nfl-header .navbar-brand {
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  color: var(--nfl-white) !important;
+  text-transform: uppercase;
+}
+
+.nfl-header .navbar-brand:hover {
+  color: var(--raiders-silver) !important;
+}
+
+/* Main content */
+main {
+  flex: 1;
+  padding-bottom: 2rem;
+}
+
+/* Page titles */
+.nfl-page-title {
+  color: var(--nfl-navy);
+  font-weight: 700;
+  border-bottom: 3px solid var(--nfl-red);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.nfl-subtitle {
+  color: #555;
+  font-size: 1.05rem;
+}
+
+/* Customer list - card style */
+.nfl-customer-list .list-group-item {
+  border-left: 4px solid var(--nfl-navy);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.nfl-customer-list .list-group-item:hover {
+  border-left-color: var(--nfl-red);
+  background-color: #e8eef5;
+  transform: translateX(4px);
+}
+
+.nfl-customer-list .list-group-item-action {
+  color: #333;
+}
+
+/* Wallet cards */
+.nfl-wallet-card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.nfl-wallet-card .card-header {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.03em;
+  padding: 1rem 1.25rem;
+  border: none;
+}
+
+/* Buffalo Bills card */
+.nfl-card-bills .card-header {
+  background: linear-gradient(135deg, var(--bills-blue) 0%, #002a5c 100%);
+  color: var(--nfl-white);
+  border-bottom: 3px solid var(--bills-red);
+}
+
+.nfl-card-bills .card-body {
+  background: #f8fafc;
+}
+
+/* Las Vegas Raiders card */
+.nfl-card-raiders .card-header {
+  background: linear-gradient(135deg, var(--raiders-black) 0%, #1a1a1a 100%);
+  color: var(--raiders-silver);
+  border-bottom: 3px solid var(--raiders-silver);
+}
+
+.nfl-card-raiders .card-body {
+  background: #f0f0f0;
+}
+
+/* Balance display */
+.nfl-balance-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.nfl-balance-row:last-of-type {
+  border-bottom: none;
+}
+
+.nfl-balance-label {
+  font-weight: 600;
+  color: #555;
+}
+
+.nfl-balance-value {
+  font-weight: 700;
+  color: var(--nfl-navy);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Transactions list */
+.nfl-transactions-title {
+  font-weight: 700;
+  color: var(--nfl-navy);
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.nfl-transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.9rem;
+}
+
+.nfl-transaction-item:last-child {
+  border-bottom: none;
+}
+
+.nfl-transaction-desc {
+  color: #333;
+}
+
+.nfl-transaction-amount {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.nfl-transaction-amount.credit {
+  color: #0d6e0d;
+}
+
+.nfl-transaction-amount.debit {
+  color: var(--bills-red);
+}
+
+.nfl-transaction-status {
+  font-size: 0.75rem;
+  color: #777;
+  margin-left: 0.25rem;
+}
+
+/* Back link */
+.nfl-back-link {
+  color: var(--nfl-navy);
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.nfl-back-link:hover {
+  color: var(--nfl-red);
+  text-decoration: underline;
+}
+
+/* Customer profile header on wallet page */
+.nfl-customer-header {
+  background: linear-gradient(135deg, var(--nfl-navy) 0%, #002244 100%);
+  color: var(--nfl-white);
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border-left: 6px solid var(--nfl-red);
+}
+
+.nfl-customer-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.nfl-customer-meta {
+  margin-top: 0.35rem;
+  opacity: 0.9;
+  font-size: 0.95rem;
+}
+
+/* Footer stripe */
+.nfl-footer {
+  background: var(--nfl-navy);
+  color: var(--raiders-silver);
+  padding: 0.75rem 0;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: auto;
+  border-top: 3px solid var(--nfl-red);
+}

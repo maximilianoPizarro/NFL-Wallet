@@ -1,0 +1,191 @@
+schemaVersion: 2.2.2
+metadata:
+  name: nfl-wallet
+  displayName: NFL Wallet - .NET 8.0
+  description: .NET 8.0 solution with ApiCustomers, Buffalo Bills & Las Vegas Raiders wallets, and WebApp
+  icon: https://raw.githubusercontent.com/dotnet/brand/main/logo/dotnet-logo.png
+  tags:
+    - .NET
+    - .NET 8.0
+  projectType: dotnet
+  language: .NET
+  version: 1.0.0
+
+components:
+  - name: api-customers
+    container:
+      image: registry.access.redhat.com/ubi8/dotnet-80:8.0-13
+      args: ["tail", "-f", "/dev/null"]
+      mountSources: true
+      env:
+        - name: CONFIGURATION
+          value: Debug
+        - name: STARTUP_PROJECT
+          value: ApiCustomers/ApiCustomers.csproj
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ASPNETCORE_URLS
+          value: http://*:8080
+      endpoints:
+        - name: api-customers
+          targetPort: 8080
+          protocol: http
+
+  - name: api-buffalo-bills
+    container:
+      image: registry.access.redhat.com/ubi8/dotnet-80:8.0-13
+      args: ["tail", "-f", "/dev/null"]
+      mountSources: true
+      env:
+        - name: CONFIGURATION
+          value: Debug
+        - name: STARTUP_PROJECT
+          value: ApiWalletBuffaloBills/ApiWalletBuffaloBills.csproj
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ASPNETCORE_URLS
+          value: http://*:8080
+      endpoints:
+        - name: api-buffalo-bills
+          targetPort: 8080
+          protocol: http
+
+  - name: api-las-vegas-raiders
+    container:
+      image: registry.access.redhat.com/ubi8/dotnet-80:8.0-13
+      args: ["tail", "-f", "/dev/null"]
+      mountSources: true
+      env:
+        - name: CONFIGURATION
+          value: Debug
+        - name: STARTUP_PROJECT
+          value: ApiWalletLasVegasRaiders/ApiWalletLasVegasRaiders.csproj
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ASPNETCORE_URLS
+          value: http://*:8080
+      endpoints:
+        - name: api-las-vegas-raiders
+          targetPort: 8080
+          protocol: http
+
+  - name: webapp
+    container:
+      image: registry.access.redhat.com/ubi8/dotnet-80:8.0-13
+      args: ["tail", "-f", "/dev/null"]
+      mountSources: true
+      env:
+        - name: CONFIGURATION
+          value: Debug
+        - name: STARTUP_PROJECT
+          value: WebApp/WebApp.csproj
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+        - name: ASPNETCORE_URLS
+          value: http://*:8080
+        - name: Api__CustomersBaseUrl
+          value: http://api-customers:8080/api
+        - name: Api__BuffaloBillsBaseUrl
+          value: http://api-buffalo-bills:8080/api
+        - name: Api__LasVegasRaidersBaseUrl
+          value: http://api-las-vegas-raiders:8080/api
+      endpoints:
+        - name: webapp
+          targetPort: 8080
+          protocol: http
+
+commands:
+  - id: build-api-customers
+    exec:
+      component: api-customers
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: kill $(pidof dotnet 2>/dev/null); dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
+    group:
+      kind: build
+      isDefault: false
+
+  - id: run-api-customers
+    exec:
+      component: api-customers
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: dotnet run -c $CONFIGURATION --no-build --project $STARTUP_PROJECT --no-launch-profile
+    group:
+      kind: run
+      isDefault: false
+
+  - id: build-api-buffalo-bills
+    exec:
+      component: api-buffalo-bills
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: kill $(pidof dotnet 2>/dev/null); dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
+    group:
+      kind: build
+      isDefault: false
+
+  - id: run-api-buffalo-bills
+    exec:
+      component: api-buffalo-bills
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: dotnet run -c $CONFIGURATION --no-build --project $STARTUP_PROJECT --no-launch-profile
+    group:
+      kind: run
+      isDefault: false
+
+  - id: build-api-las-vegas-raiders
+    exec:
+      component: api-las-vegas-raiders
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: kill $(pidof dotnet 2>/dev/null); dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
+    group:
+      kind: build
+      isDefault: false
+
+  - id: run-api-las-vegas-raiders
+    exec:
+      component: api-las-vegas-raiders
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: dotnet run -c $CONFIGURATION --no-build --project $STARTUP_PROJECT --no-launch-profile
+    group:
+      kind: run
+      isDefault: false
+
+  - id: build-webapp
+    exec:
+      component: webapp
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: kill $(pidof dotnet 2>/dev/null); dotnet build -c $CONFIGURATION $STARTUP_PROJECT /p:UseSharedCompilation=false
+    group:
+      kind: build
+      isDefault: true
+
+  - id: run-webapp
+    exec:
+      component: webapp
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: dotnet run -c $CONFIGURATION --no-build --project $STARTUP_PROJECT --no-launch-profile
+    group:
+      kind: run
+      isDefault: true
+
+  - id: build-all
+    composite:
+      commands:
+        - build-api-customers
+        - build-api-buffalo-bills
+        - build-api-las-vegas-raiders
+        - build-webapp
+      group:
+        kind: build
+        isDefault: false
+
+  - id: run-all
+    composite:
+      parallel: true
+      commands:
+        - run-api-customers
+        - run-api-buffalo-bills
+        - run-api-las-vegas-raiders
+        - run-webapp
+      group:
+        kind: run
+        isDefault: false
