@@ -18,7 +18,7 @@ description: "NFL Stadium Wallet — Centralized digital wallet for use at NFL s
   <a href="{{ '/architecture.html#running-with-podman-compose' | relative_url }}"><img src="https://img.shields.io/badge/podman-892CA0?style=for-the-badge&logo=podman&logoColor=white" alt="Podman"></a>
   <a href="{{ site.github_repo }}" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/Open%20in%20Dev%20Spaces-CC0000?style=for-the-badge&logo=redhatopenshift&logoColor=white" alt="Open in Dev Spaces"></a>
   <a href="https://www.linkedin.com/in/maximiliano-gregorio-pizarro-consultor-it"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
-  <a href="https://artifacthub.io/packages/search?repo=nfl-wallet"><img src="https://artifacthub.io/badge/repository/nfl-wallet" alt="Artifact Hub" /></a>
+  <a href="https://artifacthub.io/packages/search?repo=nfl-wallet" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/Artifact%20Hub-nfl--wallet-417598?style=for-the-badge&logo=artifacthub&logoColor=white" alt="Artifact Hub" /></a>
 </p>
 
 ## Purpose
