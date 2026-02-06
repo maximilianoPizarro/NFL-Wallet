@@ -1,5 +1,7 @@
 # NFL Stadium Wallet
 
+[![Build and push to Quay.io](https://github.com/maximilianopizarro/NFL-Wallet/actions/workflows/build-push-quay.yml/badge.svg)](https://github.com/maximilianopizarro/NFL-Wallet/actions/workflows/build-push-quay.yml)
+
 Web app to view customer data and two virtual wallets (**Buffalo Bills** and **Las Vegas Raiders**) per customer for use at NFL stadiums. Built with a **Vue 3 + Vite** frontend and three **.NET 8.0** backend APIs, each with its own SQLite database. APIs expose **Swagger** and are configured for **CORS** from the frontend.
 
 ---
