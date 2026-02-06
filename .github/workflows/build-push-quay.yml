@@ -22,6 +22,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check required secrets
+        run: |
+          missing=""
+          [ -z "$QUAY_USERNAME" ] && missing="$missing QUAY_USERNAME"
+          [ -z "$QUAY_PASSWORD" ] && missing="$missing QUAY_PASSWORD"
+          [ -z "$REDHAT_REGISTRY_USERNAME" ] && missing="$missing REDHAT_REGISTRY_USERNAME"
+          [ -z "$REDHAT_REGISTRY_PASSWORD" ] && missing="$missing REDHAT_REGISTRY_PASSWORD"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing or empty GitHub Actions secrets:$missing"
+            echo "Add them in: Repository Settings → Secrets and variables → Actions → New repository secret"
+            echo "Required secrets (exact names): QUAY_USERNAME, QUAY_PASSWORD, REDHAT_REGISTRY_USERNAME, REDHAT_REGISTRY_PASSWORD"
+            exit 1
+          fi
+          echo "All required secrets are set."
+        env:
+          QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
+          QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
+          REDHAT_REGISTRY_USERNAME: ${{ secrets.REDHAT_REGISTRY_USERNAME }}
+          REDHAT_REGISTRY_PASSWORD: ${{ secrets.REDHAT_REGISTRY_PASSWORD }}
+
       - name: Log in to Quay.io
         uses: docker/login-action@v3
         with:
