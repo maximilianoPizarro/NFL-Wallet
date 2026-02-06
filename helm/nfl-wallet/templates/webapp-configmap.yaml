@@ -5,4 +5,4 @@ metadata:
   labels:
     app: webapp
 data:
-  config.json: {{ dict "apiCustomersUrl" .Values.webapp.apiCustomersUrl "apiBillsUrl" .Values.webapp.apiBillsUrl "apiRaidersUrl" .Values.webapp.apiRaidersUrl | toJson | quote }}
+  config.json: {{ dict "apiCustomersUrl" .Values.webapp.apiCustomersUrl "apiBillsUrl" .Values.webapp.apiBillsUrl "apiRaidersUrl" .Values.webapp.apiRaidersUrl "mobileAppDownloadUrl" (default "" .Values.webapp.mobileAppDownloadUrl) | toJson | quote }}

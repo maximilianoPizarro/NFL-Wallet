@@ -67,6 +67,8 @@ webapp:
   apiCustomersUrl: ""
   apiBillsUrl: ""
   apiRaidersUrl: ""
+  # Optional: URL for "Download mobile app" in the browser (e.g. APK file or app store link). Leave empty to hide the link.
+  mobileAppDownloadUrl: ""
 
 # API key security: one key per API. Leave empty to disable validation (e.g. local dev).
 apiKeys:

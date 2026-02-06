@@ -6,7 +6,7 @@ description: "Configure observability for NFL Stadium Wallet with the Cluster Ob
 
 ## Observability with Cluster Observability Operator
 
-This section describes how to configure **observability** for the NFL-Wallet gateway so you can view **Total Requests**, **Successful Requests**, and **Error Rate** (and other Istio/Envoy metrics) in the OpenShift observability UI. The configuration uses the **Cluster Observability Operator** (RHOBS) and resources from the repository’s `config/observability` folder.
+This section describes how to configure **observability** for the NFL-Wallet gateway so you can view **Total Requests**, **Successful Requests**, and **Error Rate** (and other Istio/Envoy metrics) in the OpenShift observability UI. The configuration uses the **Cluster Observability Operator** (RHOBS) and is managed via the **Helm chart** (ThanosQuerier, PodMonitor/ServiceMonitor for the gateway, and UIPlugin).
 
 ---
 
@@ -28,73 +28,71 @@ This section describes how to configure **observability** for the NFL-Wallet gat
 
 ---
 
-## How to Configure Observability
+## How to Configure Observability (Helm)
 
-All manifests are in the **`config/observability`** folder in the repository. Apply them with `kubectl apply -f config/observability/` (or apply each file as needed).
+Enable observability by upgrading the release with the RHOBS options. The chart renders ThanosQuerier, PodMonitor or ServiceMonitor for the gateway, and the Monitoring UIPlugin into the observability operator namespace.
 
-### 1. ThanosQuerier
+### Helm upgrade: enable full observability
 
-The ThanosQuerier is the query component used by the monitoring stack. The sample manifest uses a selector that matches a MonitoringStack labeled with `app.kubernetes.io/part-of: nfl-wallet`. Ensure your MonitoringStack has that label, or adjust `spec.selector.matchLabels` in the file to match your stack.
-
-```bash
-kubectl apply -f config/observability/thanos-querier-rhobs.yaml
-```
-
-### 2. Gateway monitors (nfl-wallet traffic)
-
-These monitors tell the operator’s Prometheus to scrape the **gateway proxy** (Istio/Envoy) in `nfl-wallet`, so metrics such as request count and response codes are collected.
-
-- **PodMonitor** (recommended): scrapes gateway **pods** on port 15020.
-
-  ```bash
-  kubectl apply -f config/observability/pod-monitor-gateway-rhobs.yaml
-  ```
-
-- **ServiceMonitor**: use if the gateway **Service** exposes the metrics port (e.g. 15090).
-
-  ```bash
-  kubectl apply -f config/observability/service-monitor-gateway-rhobs.yaml
-  ```
-
-After application, the operator’s Prometheus will scrape the gateway and you can query metrics (e.g. `istio_requests_total`) and view Total Requests, Successful Requests, and Error Rate in the observability UI.
-
-### 3. UIPlugin (enable the Monitoring UI)
-
-Enable the **Monitoring** UI plugin in the OpenShift console so you can use the observability UI (and optionally configure the monitoring datasource if required by your operator version).
+From the **repository root**, run:
 
 ```bash
-kubectl apply -f config/observability/ui-plugin.yaml
+helm upgrade nfl-wallet ./helm/nfl-wallet -n nfl-wallet --install \
+  --set gateway.enabled=true \
+  --set observability.rhobs.enabled=true \
+  --set observability.rhobs.thanosQuerier.enabled=true \
+  --set observability.rhobs.podMonitorGateway.enabled=true \
+  --set observability.rhobs.uiPlugin.enabled=true
 ```
 
-The UIPlugin resource must have `metadata.name: monitoring` and `spec.type: Monitoring` (as in the provided `ui-plugin.yaml`). If the operator reports that “monitoring configuration can not be empty”, refer to the Cluster Observability Operator documentation for any required `spec` fields (e.g. reference to a MonitoringStack or ThanosQuerier).
+- **`observability.rhobs.enabled=true`** — Enables rendering of RHOBS resources (ThanosQuerier, gateway monitors, UIPlugin).
+- **`observability.rhobs.thanosQuerier.enabled=true`** — Creates the ThanosQuerier (selector matches MonitoringStack with `app.kubernetes.io/part-of: nfl-wallet` by default).
+- **`observability.rhobs.podMonitorGateway.enabled=true`** — Creates a PodMonitor that scrapes the gateway pods on port 15020 (recommended when the gateway Service does not expose the metrics port).
+- **`observability.rhobs.uiPlugin.enabled=true`** — Creates the UIPlugin so the Monitoring UI appears in the OpenShift console.
+
+Resources are created in **`observability.rhobs.namespace`** (default: `openshift-cluster-observability-operator`). Ensure that namespace exists and the release has permission to create resources there.
+
+### Using ServiceMonitor instead of PodMonitor
+
+If the gateway **Service** exposes the metrics port (e.g. 15090), you can use ServiceMonitor instead:
+
+```bash
+helm upgrade nfl-wallet ./helm/nfl-wallet -n nfl-wallet --install \
+  --set gateway.enabled=true \
+  --set observability.rhobs.enabled=true \
+  --set observability.rhobs.thanosQuerier.enabled=true \
+  --set observability.rhobs.podMonitorGateway.enabled=false \
+  --set observability.rhobs.serviceMonitorGateway.enabled=true \
+  --set observability.rhobs.uiPlugin.enabled=true
+```
+
+### Optional: custom observability namespace or part-of label
+
+```bash
+helm upgrade nfl-wallet ./helm/nfl-wallet -n nfl-wallet --install \
+  --set gateway.enabled=true \
+  --set observability.rhobs.enabled=true \
+  --set observability.rhobs.namespace=openshift-cluster-observability-operator \
+  --set observability.rhobs.thanosQuerier.partOfLabel=nfl-wallet \
+  --set observability.rhobs.thanosQuerier.enabled=true \
+  --set observability.rhobs.podMonitorGateway.enabled=true \
+  --set observability.rhobs.uiPlugin.enabled=true
+```
+
+After the upgrade, the operator’s Prometheus will scrape the gateway and you can query metrics (e.g. `istio_requests_total`) and view Total Requests, Successful Requests, and Error Rate in the observability UI.
 
 ---
 
-## Applying Everything from `config/observability`
+## Resources rendered by the chart (RHOBS)
 
-From the **repository root** you can apply all observability resources in one go:
+When `observability.rhobs.enabled=true`, the chart creates the following resources in the observability namespace:
 
-```bash
-kubectl apply -f config/observability/
-```
-
-If the UIPlugin fails validation (e.g. empty name or missing spec), fix the indicated field and re-apply only that file:
-
-```bash
-kubectl apply -f config/observability/ui-plugin.yaml
-```
-
----
-
-## Files in `config/observability`
-
-| File | Description |
-|------|-------------|
-| `thanos-querier-rhobs.yaml` | ThanosQuerier (monitoring.rhobs/v1alpha1). Selector should match your MonitoringStack labels. |
-| `pod-monitor-gateway-rhobs.yaml` | PodMonitor (monitoring.rhobs/v1) for the gateway in `nfl-wallet` (port 15020). |
-| `service-monitor-gateway-rhobs.yaml` | ServiceMonitor (monitoring.rhobs/v1) for the gateway in `nfl-wallet` (port 15090). |
-| `ui-plugin.yaml` | UIPlugin (observability.openshift.io/v1alpha1) for the Monitoring UI. |
-| `README.md` | Short reference for the same steps (in the repo). |
+| Resource | Helm flag | Description |
+|----------|-----------|-------------|
+| ThanosQuerier | `observability.rhobs.thanosQuerier.enabled=true` | Query component for the monitoring stack (monitoring.rhobs/v1alpha1). Selector matches MonitoringStack by part-of label. |
+| PodMonitor (gateway) | `observability.rhobs.podMonitorGateway.enabled=true` | Scrapes gateway pods in `nfl-wallet` on port 15020. |
+| ServiceMonitor (gateway) | `observability.rhobs.serviceMonitorGateway.enabled=true` | Scrapes gateway Service in `nfl-wallet` on port 15090. |
+| UIPlugin | `observability.rhobs.uiPlugin.enabled=true` | Enables the Monitoring UI in the OpenShift console (observability.openshift.io/v1alpha1). |
 
 ---
 

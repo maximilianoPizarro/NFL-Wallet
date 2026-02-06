@@ -45,6 +45,7 @@ helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet --set webapp.route.enabl
 | `webapp.apiCustomersUrl` | Base URL for Customers API (browser, end with /api) | `""` |
 | `webapp.apiBillsUrl` | Base URL for Bills API (browser, end with /api) | `""` |
 | `webapp.apiRaidersUrl` | Base URL for Raiders API (optional) | `""` |
+| `webapp.mobileAppDownloadUrl` | URL for downloading the mobile app (APK) from the browser. Shown in the header and on the landing hero. Use a path like `/nfl-wallet.apk` to serve the APK from the same site (place the file in the frontend `public/` folder); or an external URL. Empty = link hidden. | `""` |
 | `*.persistence.enabled` | Use PVC for SQLite data | `true` |
 | `apiKeys.enabled` | Create Secret and inject API keys into APIs | `false` |
 | `apiKeys.customers` / `bills` / `raiders` | API key per API (header `X-API-Key`) | `""` |

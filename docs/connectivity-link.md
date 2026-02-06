@@ -251,7 +251,7 @@ Adjust labels to match your mesh. In the observability UI (UIPlugin) you can que
 
 {% assign conn_img = '/connectivity link.png' | relative_url | replace: ' ', '%20' %}
 [![Connectivity Link]({{ conn_img }})]({{ conn_img }}){: .doc-img-link}
-*Gateway API and HTTPRoutes (Connectivity Link) exposing the webapp and APIs. Click to enlarge.*
+*Connectivity Link: Gateway API and HTTPRoutes exposing the webapp and APIs (Customers, Bills, Raiders). Click to enlarge.*
 
 {% assign conn_auth_img = '/connectivity link with auth and limit.png' | relative_url | replace: ' ', '%20' %}
 [![Connectivity Link with Auth and Rate Limit]({{ conn_auth_img }})]({{ conn_auth_img }}){: .doc-img-link}

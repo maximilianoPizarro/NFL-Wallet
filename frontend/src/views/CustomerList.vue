@@ -22,6 +22,16 @@
               and manage your Buffalo Bills and Las Vegas Raiders wallets—all in one place for use inside NFL venues.
             </p>
           </div>
+          <a
+            v-if="mobileAppDownloadUrl"
+            :href="mobileAppDownloadUrl"
+            :download="isSameOriginDownload ? downloadFilename : undefined"
+            :target="isSameOriginDownload ? undefined : '_blank'"
+            :rel="isSameOriginDownload ? undefined : 'noopener noreferrer'"
+            class="hero-download-apk"
+          >
+            Download mobile app (APK)
+          </a>
         </div>
       </div>
     </section>
@@ -48,14 +58,32 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { getCustomers } from '../api/client'
 
 const customers = ref([])
 const loading = ref(true)
 const error = ref('')
+const mobileAppDownloadUrl = ref('')
+
+const isSameOriginDownload = computed(() => {
+  const url = mobileAppDownloadUrl.value
+  if (!url) return false
+  return url.startsWith('/') || url.startsWith(window.location.origin)
+})
+
+const downloadFilename = computed(() => {
+  const url = mobileAppDownloadUrl.value
+  if (!url) return 'nfl-wallet.apk'
+  const name = url.split('/').pop() || url.split('\\').pop()
+  return name.includes('.') ? name : 'nfl-wallet.apk'
+})
 
 onMounted(async () => {
+  const config = window.__API_CONFIG__ || {}
+  if (config.mobileAppDownloadUrl) {
+    mobileAppDownloadUrl.value = config.mobileAppDownloadUrl
+  }
   try {
     customers.value = await getCustomers()
   } catch (e) {
@@ -111,6 +139,19 @@ onMounted(async () => {
 .hero-description strong,
 .hero-wallet strong { color: #fff; }
 .hero-wallet { margin-bottom: 0; }
+
+.hero-download-apk {
+  display: inline-block;
+  margin-top: 1.25rem;
+  padding: 0.6rem 1.25rem;
+  background: #e31837;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+.hero-download-apk:hover { background: #c41430; color: #fff; }
 
 .loading, .error { padding: 1rem; }
 .error { color: #e31837; }

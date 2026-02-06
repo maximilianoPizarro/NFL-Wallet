@@ -120,13 +120,54 @@ helm upgrade nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
 
 Set `gateway.hostnames[0]` to your gateway Route host if the AuthPolicy stays **Enforced: False** (e.g. get host with `kubectl get route -n nfl-wallet -l app.kubernetes.io/component=gateway -o jsonpath='{.items[0].spec.host}'`).
 
-### AuthPolicy resource (example)
+### AuthPolicy resource: YAML created by the chart
 
-The chart creates an **AuthPolicy** in the release namespace (e.g. `nfl-wallet-api-bills-auth`) that targets the api-bills HTTPRoute and configures Authorino to require the X-API-Key header and return the custom 403 body. You can inspect it with:
+The chart creates an **AuthPolicy** (Kuadrant `kuadrant.io/v1`) in the release namespace named **`nfl-wallet-api-bills-auth`**. It targets the HTTPRoute `nfl-wallet-api-bills` and configures Authorino to require the X-API-Key header (OPA Rego) and return a custom 403 JSON body when the header is missing or empty.
+
+**Example YAML** (equivalent to what the chart renders when `gateway.authPolicy.bills.enabled=true`):
+
+```yaml
+apiVersion: kuadrant.io/v1
+kind: AuthPolicy
+metadata:
+  name: nfl-wallet-api-bills-auth
+  labels:
+    app: api-bills
+    app.kubernetes.io/component: authpolicy
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: nfl-wallet-api-bills
+  rules:
+    authorization:
+      require-apikey:
+        opa:
+          rego: |
+            allow = true {
+              input.context.request.http.headers["x-api-key"] != ""
+            }
+            allow = true {
+              input.context.request.http.headers["X-Api-Key"] != ""
+            }
+    response:
+      unauthorized:
+        body:
+          value: '{"error":"Forbidden","message":"Missing or invalid X-API-Key header."}'
+        headers:
+          content-type:
+            value: application/json
+```
+
+- **targetRef** — Binds this policy to the HTTPRoute `nfl-wallet-api-bills`, so gateway traffic to `/api-bills` is subject to auth.
+- **authorization (OPA)** — Allows the request only if the `x-api-key` or `X-Api-Key` header is non-empty; otherwise Authorino denies it.
+- **response.unauthorized** — 403 response with the JSON body and `Content-Type: application/json` when the header is missing or invalid.
+
+You can inspect the live resource with:
 
 ```bash
 kubectl get authpolicy -n nfl-wallet
-kubectl describe authpolicy nfl-wallet-api-bills-auth -n nfl-wallet
+kubectl get authpolicy nfl-wallet-api-bills-auth -n nfl-wallet -o yaml
 ```
 
 When **Enforced** is True, requests to the gateway’s `/api-bills` path without the header get 403; with the header they reach the backend (and the .NET API can still validate the key value if `apiKeys.bills` is set).

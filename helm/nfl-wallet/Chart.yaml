@@ -2,7 +2,7 @@ apiVersion: v2
 name: nfl-wallet
 description: NFL Stadium Wallet - Vue frontend and three .NET 8 APIs (Customers, Bills, Raiders)
 type: application
-version: 0.1.0
+version: 0.1.1
 appVersion: "1.0.0"
 icon: https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/National_Football_League_logo.svg/250px-National_Football_League_logo.svg.png
 keywords:

@@ -15,7 +15,42 @@ entries:
           url: https://github.com/maximilianopizarro/NFL-Wallet
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-02-05T17:39:28.1440233-03:00"
+    created: "2026-02-06T14:50:40.4661539-03:00"
+    description: NFL Stadium Wallet - Vue frontend and three .NET 8 APIs (Customers,
+      Bills, Raiders)
+    digest: 33897623c782a7fd7eeb8aea098512a780fe28ee882083b41cf550db2cbf5d54
+    icon: https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/National_Football_League_logo.svg/250px-National_Football_League_logo.svg.png
+    keywords:
+    - nfl
+    - wallet
+    - vue
+    - dotnet
+    - gateway-api
+    - kuadrant
+    - istio
+    maintainers:
+    - email: mapizarr@redhat.com
+      name: Maximiliano Pizarro
+    name: nfl-wallet
+    type: application
+    urls:
+    - https://maximilianopizarro.github.io/NFL-Wallet/nfl-wallet-0.1.1.tgz
+    version: 0.1.1
+  - annotations:
+      artifacthub.io/category: integration-delivery
+      artifacthub.io/changes: |
+        - Gateway API HTTPRoutes with optional hostnames for all routes (webapp, api-customers, api-bills, api-raiders)
+        - Kuadrant AuthPolicy and RateLimitPolicy for /api-bills
+        - Optional single gateway route (gateway.route.enabled=false) when platform creates the route
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://maximilianopizarro.github.io/NFL-Wallet/
+        - name: Source
+          url: https://github.com/maximilianopizarro/NFL-Wallet
+    apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-02-06T14:50:40.4651079-03:00"
     description: NFL Stadium Wallet - Vue frontend and three .NET 8 APIs (Customers,
       Bills, Raiders)
     digest: 6ff557850c5a61a5599248b558c5a5ba92831a870d8d7076cf51b4f6d669678e
@@ -36,4 +71,4 @@ entries:
     urls:
     - https://maximilianopizarro.github.io/NFL-Wallet/nfl-wallet-0.1.0.tgz
     version: 0.1.0
-generated: "2026-02-05T17:39:28.1415662-03:00"
+generated: "2026-02-06T14:50:40.463559-03:00"

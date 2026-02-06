@@ -36,19 +36,19 @@ A single front-end application talks to a **Customers API** (for identity and cu
 <p class="doc-img-expand-hint">Click any image to open full size.</p>
 
 [![Wallet landing]({{ '/walletlanding.png' | relative_url }})]({{ '/walletlanding.png' | relative_url }}){: .doc-img-link}
-*Landing page.*
+*Wallet landing page: entry point of the NFL Stadium Wallet web app. Click to enlarge.*
 
 [![Wallet customer list]({{ '/wallet.png' | relative_url }})]({{ '/wallet.png' | relative_url }}){: .doc-img-link}
-*Customer list.*
+*Customer list: select a customer to view their team wallets. Click to enlarge.*
 
 [![Wallet balances]({{ '/wallet2.png' | relative_url }})]({{ '/wallet2.png' | relative_url }}){: .doc-img-link}
-*Customer wallets — Buffalo Bills and Las Vegas Raiders.*
+*Customer wallets: Buffalo Bills and Las Vegas Raiders balances and transactions. Click to enlarge.*
 
 [![Wallet pay flow]({{ '/wallet3.png' | relative_url }})]({{ '/wallet3.png' | relative_url }}){: .doc-img-link}
-*Pay from QR flow.*
+*Pay from QR: payment flow from a team wallet. Click to enlarge.*
 
 [![Wallet load]({{ '/wallet4.png' | relative_url }})]({{ '/wallet4.png' | relative_url }}){: .doc-img-link}
-*Load balance.*
+*Load balance: add funds to a team wallet. Click to enlarge.*
 
 ## What You Can Do With This Solution
 

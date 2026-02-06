@@ -16,6 +16,9 @@ The solution is built in three layers:
 
 The frontend calls the Customers API for the customer list and details, and the two Wallet APIs for balance and transactions per team. All APIs support CORS for the frontend origin.
 
+[![Architecture diagram]({{ '/architecture1.png' | relative_url }})]({{ '/architecture1.png' | relative_url }}){: .doc-img-link}
+*High-level architecture: Vue frontend, .NET APIs (Customers, Bills, Raiders), and SQLite data layer. Click to enlarge.*
+
 ---
 
 ## Running With Podman Compose
@@ -40,7 +43,7 @@ podman-compose up -d --build
 The webapp is built with build args so it points to `http://localhost:5001/api`, `http://localhost:5002/api`, and `http://localhost:5003/api` for the three APIs. Data is persisted in named volumes.
 
 [![Podman Compose]({{ '/podman.png' | relative_url }})]({{ '/podman.png' | relative_url }}){: .doc-img-link}
-*Running the stack with Podman Compose. Click to enlarge.*
+*Running the stack with Podman Compose: webapp and three APIs in local containers. Click to enlarge.*
 
 ---
 
@@ -55,10 +58,10 @@ The repo includes a **devfile.yaml** for **Red Hat OpenShift Dev Spaces** (and c
 This allows developing and testing the centralized wallet in a cloud IDE without installing .NET or Node locally.
 
 [![OpenShift Dev Spaces]({{ '/devspaces.png' | relative_url }})]({{ '/devspaces.png' | relative_url }}){: .doc-img-link}
-*Dev Spaces workspace. Click to enlarge.*
+*OpenShift Dev Spaces workspace: browser-based IDE with the NFL-Wallet project. Click to enlarge.*
 
 [![Dev Spaces run]({{ '/devspaces2.png' | relative_url }})]({{ '/devspaces2.png' | relative_url }}){: .doc-img-link}
-*Build and run in Dev Spaces.*
+*Build and run in Dev Spaces: compile and start the webapp and APIs from the workspace. Click to enlarge.*
 
 [![Dev Spaces app]({{ '/devspaces3.png' | relative_url }})]({{ '/devspaces3.png' | relative_url }}){: .doc-img-link}
-*App running from Dev Spaces.*
+*App running from Dev Spaces: frontend and APIs served from the cloud workspace. Click to enlarge.*
