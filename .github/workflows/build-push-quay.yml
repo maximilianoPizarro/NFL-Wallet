@@ -45,6 +45,9 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          # Use host Docker so registry logins (Quay, Red Hat) are available when pulling base images
+          driver: docker
 
       - name: Build and push nfl-wallet-api-customers
         uses: docker/build-push-action@v6
