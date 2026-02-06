@@ -1,0 +1,49 @@
+# MkDocs config for NFL Stadium Wallet (OpenShift Dev Spaces / local)
+site_name: NFL Stadium Wallet
+site_description: Documentación del proyecto NFL Stadium Wallet (Vue + .NET 8 APIs)
+site_url: https://github.com/maximilianoPizarro/NFL-Wallet
+repo_url: https://github.com/maximilianoPizarro/NFL-Wallet
+repo_name: NFL-Wallet
+edit_uri: edit/main/docs/
+docs_dir: docs
+strict: false
+
+theme:
+  name: material
+  language: es
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: red
+      toggle:
+        icon: material/brightness-7
+        name: Modo oscuro
+    - scheme: slate
+      primary: deep purple
+      accent: red
+      toggle:
+        icon: material/brightness-4
+        name: Modo claro
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - content.code.copy
+
+plugins:
+  - search
+
+nav:
+  - Inicio: index.md
+  - Arquitectura: architecture.md
+  - Despliegue: deployment.md
+  - Connectivity Link: connectivity-link.md
+  - Seguridad: security.md
+  - Observabilidad: observability.md
+  - Artifact Hub: artifact-hub.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - tables

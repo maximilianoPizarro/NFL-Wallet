@@ -1,0 +1,20 @@
+# Componente: API Customers (Backstage / Dev Spaces)
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: api-customers
+  title: API Customers
+  description: API .NET 8 de clientes; expone lista y detalle de clientes. Puerto 8080.
+  tags:
+    - dotnet
+    - api
+  annotations:
+    backstage.io/source-location: url:https://github.com/maximilianoPizarro/NFL-Wallet
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default
+  system: system:default/nfl-wallet
+  providesApis: []
+  consumesApis: []
+  dependsOn: []

@@ -1,0 +1,236 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NFL Stadium Wallet Helm chart values",
+  "description": "Values for nfl-wallet chart. Used by OpenShift Helm form and helm install/upgrade.",
+  "type": "object",
+  "properties": {
+    "topology": {
+      "type": "object",
+      "description": "OpenShift Topology: application grouping (app.kubernetes.io/part-of).",
+      "properties": {
+        "applicationName": {
+          "type": "string",
+          "description": "Override part-of label; empty = nfl-wallet.",
+          "default": ""
+        }
+      }
+    },
+    "global": {
+      "type": "object",
+      "description": "Global image registry and pull secrets.",
+      "properties": {
+        "imageRegistry": { "type": "string", "default": "quay.io" },
+        "imagePullSecrets": { "type": "array", "items": { "type": "object" }, "default": [] }
+      }
+    },
+    "imageNamespace": {
+      "type": "string",
+      "description": "Quay (or registry) namespace for images.",
+      "default": "maximilianopizarro"
+    },
+    "apiCustomers": {
+      "type": "object",
+      "description": "Customers API deployment.",
+      "properties": {
+        "image": { "type": "string", "default": "nfl-wallet-api-customers" },
+        "tag": { "type": "string", "default": "latest" },
+        "replicaCount": { "type": "integer", "minimum": 0, "default": 1 },
+        "service": { "type": "object", "properties": { "port": { "type": "integer", "default": 8080 } } },
+        "persistence": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "size": { "type": "string", "default": "1Gi" }
+          }
+        }
+      }
+    },
+    "apiBills": {
+      "type": "object",
+      "description": "Buffalo Bills wallet API deployment.",
+      "properties": {
+        "image": { "type": "string", "default": "nfl-api-bills" },
+        "tag": { "type": "string", "default": "latest" },
+        "replicaCount": { "type": "integer", "minimum": 0, "default": 1 },
+        "service": { "type": "object", "properties": { "port": { "type": "integer", "default": 8081 } } },
+        "persistence": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "size": { "type": "string", "default": "1Gi" }
+          }
+        }
+      }
+    },
+    "apiRaiders": {
+      "type": "object",
+      "description": "Las Vegas Raiders wallet API deployment.",
+      "properties": {
+        "image": { "type": "string", "default": "nfl-wallet-api-raiders" },
+        "tag": { "type": "string", "default": "latest" },
+        "replicaCount": { "type": "integer", "minimum": 0, "default": 1 },
+        "service": { "type": "object", "properties": { "port": { "type": "integer", "default": 8082 } } },
+        "persistence": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "size": { "type": "string", "default": "1Gi" }
+          }
+        }
+      }
+    },
+    "webapp": {
+      "type": "object",
+      "description": "Vue frontend deployment and OpenShift Route.",
+      "properties": {
+        "image": { "type": "string", "default": "nfl-wallet-webapp" },
+        "tag": { "type": "string", "default": "latest" },
+        "replicaCount": { "type": "integer", "minimum": 0, "default": 1 },
+        "route": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "host": { "type": "string", "default": "" },
+            "tls": {
+              "type": "object",
+              "properties": {
+                "termination": { "type": "string", "enum": ["edge", "passthrough", "reencrypt"], "default": "edge" },
+                "insecureEdgeTerminationPolicy": { "type": "string", "enum": ["Redirect", "Allow", "None"], "default": "Redirect" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "apiKeys": {
+      "type": "object",
+      "description": "API key validation (X-API-Key). Leave empty to disable.",
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "customers": { "type": "string", "default": "" },
+        "bills": { "type": "string", "default": "" },
+        "raiders": { "type": "string", "default": "" }
+      }
+    },
+    "gateway": {
+      "type": "object",
+      "description": "Gateway API: HTTPRoutes, Kuadrant AuthPolicy/RateLimitPolicy, metrics.",
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "className": { "type": "string", "description": "e.g. istio, openshift-gateway", "default": "istio" },
+        "existingGatewayName": { "type": "string", "default": "" },
+        "hostnames": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Gateway hostnames for Kuadrant (e.g. Route host).",
+          "default": []
+        },
+        "rateLimitBills": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "permitLimit": { "type": "integer", "minimum": 1, "default": 100 },
+            "fillIntervalSeconds": { "type": "integer", "minimum": 1, "default": 60 }
+          }
+        },
+        "rateLimitPolicy": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "bills": {
+              "type": "object",
+              "properties": {
+                "limit": { "type": "integer", "default": 100 },
+                "window": { "type": "string", "default": "1m" }
+              }
+            }
+          }
+        },
+        "authPolicy": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "bills": {
+              "type": "object",
+              "properties": {
+                "enabled": { "type": "boolean", "default": false },
+                "unauthorizedBody": { "type": "string" }
+              }
+            }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "podMonitor": {
+              "type": "object",
+              "properties": {
+                "enabled": { "type": "boolean", "default": true },
+                "port": { "type": "integer", "default": 15020 },
+                "path": { "type": "string", "default": "/stats/prometheus" },
+                "interval": { "type": "string", "default": "30s" }
+              }
+            },
+            "serviceMonitor": {
+              "type": "object",
+              "properties": {
+                "enabled": { "type": "boolean", "default": false },
+                "port": { "type": "integer", "default": 15090 },
+                "path": { "type": "string", "default": "/stats/prometheus" },
+                "interval": { "type": "string", "default": "30s" }
+              }
+            }
+          }
+        },
+        "route": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "name": { "type": "string", "default": "" },
+            "host": { "type": "string", "default": "" },
+            "tls": {
+              "type": "object",
+              "properties": {
+                "termination": { "type": "string", "default": "edge" },
+                "insecureEdgeTerminationPolicy": { "type": "string", "default": "Redirect" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "authorizationPolicy": {
+      "type": "object",
+      "description": "Istio AuthorizationPolicy: require X-API-Key per API.",
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "requireForCustomers": { "type": "boolean", "default": true },
+        "requireForBills": { "type": "boolean", "default": true },
+        "requireForRaiders": { "type": "boolean", "default": true }
+      }
+    },
+    "observability": {
+      "type": "object",
+      "description": "Red Hat OpenShift Observability (RHOBS): ThanosQuerier, PodMonitor/ServiceMonitor gateway, UIPlugin.",
+      "properties": {
+        "rhobs": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "namespace": { "type": "string", "default": "openshift-cluster-observability-operator" },
+            "thanosQuerier": {
+              "type": "object",
+              "properties": {
+                "enabled": { "type": "boolean", "default": false },
+                "partOfLabel": { "type": "string", "default": "" }
+              }
+            },
+            "podMonitorGateway": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": false } } },
+            "serviceMonitorGateway": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": false } } },
+            "uiPlugin": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": false } } }
+          }
+        }
+      }
+    }
+  }
+}

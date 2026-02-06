@@ -225,6 +225,28 @@ Use your actual gateway host in `value`. After the patch, requests without X-API
 2. When `Enforced` is `True`, requests without `X-API-Key` should get **403** with your JSON body; with a valid header they should reach the backend (200 or 404/5 from the API).
 3. To see why the policy is not enforced, list and describe the AuthConfig that Kuadrant creates: `kubectl get authconfig -n nfl-wallet` and `kubectl describe authconfig <name> -n nfl-wallet`. Check the AuthConfig status and any Authorino/Kuadrant operator logs.
 
+### Gateway metrics (Total Requests, Successful Requests, Error Rate)
+
+The gateway is implemented by **Istio** (or OpenShift Gateway, which uses Envoy/Istio). The proxy exposes metrics that Prometheus can scrape; from these you get **Total Requests**, **Successful Requests**, and **Error Rate**.
+
+For observability with the **Cluster Observability Operator** (ThanosQuerier, PodMonitor/ServiceMonitor for the gateway, UIPlugin), see [config/observability/README.md]({{ site.github_repo }}/blob/main/config/observability/README.md) in the repository.
+
+**Configuration (Cluster Observability Operator)**
+
+Apply the YAMLs in `config/observability/`: ThanosQuerier, PodMonitor or ServiceMonitor for the gateway, and UIPlugin. The operator will then scrape the gateway traffic and metrics will appear in the observability UI.
+
+**Prometheus queries (reference)**
+
+Once metrics are scraped, use these in Prometheus (or Grafana / OpenShift Metrics):
+
+| Metric | Prometheus query (example for namespace `nfl-wallet`) |
+|--------|------------------------------------------------------|
+| **Total Requests** (rate) | `sum(rate(istio_requests_total{connection_security_policy="none"}[5m]))` or filter by `destination_workload_namespace="nfl-wallet"` |
+| **Successful Requests** (2xx rate) | `sum(rate(istio_requests_total{response_code=~"2.."}[5m]))` (add same namespace filter if needed) |
+| **Error Rate** | `sum(rate(istio_requests_total{response_code=~"5.."}[5m])) / sum(rate(istio_requests_total[5m]))` or use `response_code=~"4.."` for client errors |
+
+Adjust labels to match your mesh. In the observability UI (UIPlugin) you can query `istio_requests_total` and the expressions above.
+
 ### Connectivity Link overview
 
 {% assign conn_img = '/connectivity link.png' | relative_url | replace: ' ', '%20' %}

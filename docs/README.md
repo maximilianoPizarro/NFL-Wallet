@@ -25,5 +25,6 @@ Open `http://localhost:4000` (or the URL Jekyll prints). For a project site, set
 - **Architecture** — Components, Podman Compose, Red Hat OpenShift Dev Spaces.
 - **Deployment** — Helm chart install and main values.
 - **Connectivity Link** — Gateway API, HTTPRoutes, hostnames, Kuadrant AuthPolicy and RateLimitPolicy, and diagram (connectivity link with auth and limit).
-- **Security** — API keys and Istio AuthorizationPolicy (e.g. `api-raiders-require-apikey` YAML and scenario).
+- **Security** — API keys and two policy types: Istio AuthorizationPolicy and AuthPolicy with Authorino (Connectivity Link).
+- **Observability** — Cluster Observability Operator, gateway metrics, and applying `config/observability/`.
 - **Publish to Artifact Hub** — Steps to package the Helm chart and add the repo to Artifact Hub.

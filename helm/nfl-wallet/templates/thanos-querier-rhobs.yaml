@@ -1,0 +1,15 @@
+{{- if and .Values.observability.rhobs.enabled .Values.observability.rhobs.thanosQuerier.enabled }}
+---
+# ThanosQuerier (RHOBS): selector must match MonitoringStack so this Querier is used for nfl-wallet.
+apiVersion: monitoring.rhobs/v1alpha1
+kind: ThanosQuerier
+metadata:
+  name: {{ .Release.Name }}-thanos
+  namespace: {{ .Values.observability.rhobs.namespace }}
+  labels:
+    app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: {{ .Values.observability.rhobs.thanosQuerier.partOfLabel | default (include "nfl-wallet.partOf" .) }}
+{{- end }}

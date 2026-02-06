@@ -1,0 +1,20 @@
+# Componente: API Las Vegas Raiders (Backstage / Dev Spaces)
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: api-raiders
+  title: API Las Vegas Raiders
+  description: API .NET 8 billetera Las Vegas Raiders; balance y transacciones. Puerto 8082.
+  tags:
+    - dotnet
+    - api
+  annotations:
+    backstage.io/source-location: url:https://github.com/maximilianoPizarro/NFL-Wallet
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default
+  system: system:default/nfl-wallet
+  providesApis: []
+  consumesApis: []
+  dependsOn: []

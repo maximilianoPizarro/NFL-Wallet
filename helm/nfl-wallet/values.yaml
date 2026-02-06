@@ -113,6 +113,25 @@ gateway:
       enabled: false
       # JSON body for 403 when X-API-Key is missing or empty
       unauthorizedBody: '{"error":"Forbidden","message":"Missing or invalid X-API-Key header."}'
+  # Metrics: Prometheus scraping for gateway proxy (Total Requests, Success, Error Rate).
+  # Prefer PodMonitor when the gateway Service does not expose the metrics port (15020/15090).
+  metrics:
+    # Scrapes gateway Pods directly (port 15020 on pod). Use when ServiceMonitor target is DOWN.
+    podMonitor:
+      enabled: true
+      # Port on the gateway pod (Istio: 15020 = telemetry, 15090 = Envoy Prometheus)
+      port: 15020
+      path: /stats/prometheus
+      interval: 30s
+      selector: {}  # default: gateway.networking.k8s.io/gateway-name=nfl-wallet-gateway
+    serviceMonitor:
+      enabled: false
+      serviceName: ""
+      port: 15090
+      path: /stats/prometheus
+      interval: 30s
+      selector: {}
+
   # OpenShift Route to expose the Gateway with Edge + Redirect (when gateway.enabled).
   # Set enabled: false if the platform already creates a gateway route (e.g. nfl-gateway -> nfl-wallet-gateway-istio)
   # so you only have one gateway URL.
@@ -134,3 +153,21 @@ authorizationPolicy:
   requireForCustomers: true
   requireForBills: true
   requireForRaiders: true
+
+# Red Hat OpenShift Observability (RHOBS): optional templates deployed to the observability operator namespace.
+# When enabled, ThanosQuerier, PodMonitor/ServiceMonitor for the gateway, and UIPlugin are rendered.
+# Prerequisites: Cluster Observability Operator, namespace below must exist.
+observability:
+  rhobs:
+    enabled: false
+    namespace: openshift-cluster-observability-operator
+    thanosQuerier:
+      enabled: false
+      # partOf label for selector; empty = use topology.applicationName or "nfl-wallet"
+      partOfLabel: ""
+    podMonitorGateway:
+      enabled: false
+    serviceMonitorGateway:
+      enabled: false
+    uiPlugin:
+      enabled: false

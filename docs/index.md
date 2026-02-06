@@ -58,14 +58,16 @@ A single front-end application talks to a **Customers API** (for identity and cu
 | **Develop in the cloud** | Use **Red Hat OpenShift Dev Spaces** (or CodeReady Workspaces) to build and run the app from a browser with a single workspace. |
 | **Deploy to Kubernetes** | Use the provided **Helm chart** to deploy the webapp and APIs to any Kubernetes or OpenShift cluster. |
 | **Expose via Gateway** | Enable the **Connectivity Link** (Gateway API + HTTPRoutes) and an OpenShift Route for the gateway with TLS edge and redirect. |
-| **Secure with API keys** | Optionally enable **API key** validation in the apps and **Istio AuthorizationPolicy** (e.g. require `X-API-Key` for the Raiders wallet API). |
+| **Secure with API keys** | Optionally enable **API key** validation and **Istio AuthorizationPolicy** or **Kuadrant AuthPolicy** (Authorino) for X-API-Key at the mesh or gateway. |
+| **Observability** | Use the **Cluster Observability Operator** and manifests in `config/observability/` to scrape gateway metrics and view Total Requests, Success, and Error Rate in the observability UI. |
 
 ## Quick Links
 
 - [Architecture]({{ '/architecture.html' | relative_url }}) — Components, Podman Compose, and Dev Spaces
 - [Deployment]({{ '/deployment.html' | relative_url }}) — Helm chart install and values
 - [Connectivity Link]({{ '/connectivity-link.html' | relative_url }}) — Gateway, HTTPRoutes, Kuadrant AuthPolicy and RateLimitPolicy
-- [Security]({{ '/security.html' | relative_url }}) — API keys and Istio AuthorizationPolicy (e.g. `api-raiders-require-apikey`)
+- [Security]({{ '/security.html' | relative_url }}) — API keys and two policy types: Istio AuthorizationPolicy and AuthPolicy with Authorino (Connectivity Link)
+- [Observability]({{ '/observability.html' | relative_url }}) — Cluster Observability Operator, gateway metrics, and applying `config/observability/`
 - [Publish to Artifact Hub]({{ '/artifact-hub.html' | relative_url }}) — Package the chart and list it on Artifact Hub
 - [**GitHub repository**]({{ site.github_repo }}) — Source code
 

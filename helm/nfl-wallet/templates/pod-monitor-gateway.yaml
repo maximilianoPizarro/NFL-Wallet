@@ -1,0 +1,26 @@
+{{- if and .Values.gateway.enabled .Values.gateway.metrics.podMonitor.enabled }}
+---
+# PodMonitor scrapes gateway proxy Pods directly (no need for metrics port on the Service).
+# Use this when ServiceMonitor target is DOWN because the gateway Service doesn't expose 15020/15090.
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ .Release.Name }}-gateway-pod-metrics
+  labels:
+    app.kubernetes.io/component: gateway
+spec:
+  selector:
+    matchLabels:
+      {{- if .Values.gateway.metrics.podMonitor.selector }}
+      {{- toYaml .Values.gateway.metrics.podMonitor.selector | nindent 6 }}
+      {{- else }}
+      gateway.networking.k8s.io/gateway-name: {{ .Values.gateway.existingGatewayName | default "nfl-wallet-gateway" }}
+      {{- end }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  podMetricsEndpoints:
+    - port: {{ .Values.gateway.metrics.podMonitor.port | default 15020 | quote }}
+      path: {{ .Values.gateway.metrics.podMonitor.path | default "/stats/prometheus" }}
+      interval: {{ .Values.gateway.metrics.podMonitor.interval | default "30s" }}
+{{- end }}

@@ -1,0 +1,23 @@
+{{- if and .Values.observability.rhobs.enabled .Values.observability.rhobs.serviceMonitorGateway.enabled .Values.gateway.enabled }}
+---
+# ServiceMonitor (RHOBS): gateway metrics via Service port 15090.
+apiVersion: monitoring.rhobs/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-gateway-metrics
+  namespace: {{ .Values.observability.rhobs.namespace }}
+  labels:
+    app.kubernetes.io/component: gateway
+    app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: {{ .Values.gateway.existingGatewayName | default "nfl-wallet-gateway" }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  endpoints:
+    - port: "15090"
+      path: /stats/prometheus
+      interval: 30s
+{{- end }}

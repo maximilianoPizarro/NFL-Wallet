@@ -34,6 +34,7 @@ header_pages:
   - deployment.md
   - connectivity-link.md
   - security.md
+  - observability.md
   - artifact-hub.md
 
 include:
@@ -51,6 +52,10 @@ include:
   - walletlanding.png
   - "connectivity link.png"
   - "connectivity link with auth and limit.png"
+  - obvservability.png
+  - obvservability2.png
+  - obvservability3.png
+  - "traffic analysis.png"
 
 exclude:
   - Gemfile

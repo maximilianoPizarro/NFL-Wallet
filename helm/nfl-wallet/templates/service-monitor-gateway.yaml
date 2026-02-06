@@ -1,0 +1,28 @@
+{{- if and .Values.gateway.enabled .Values.gateway.metrics.serviceMonitor.enabled }}
+---
+# ServiceMonitor so Prometheus scrapes the gateway proxy for Total Requests, Success, Error Rate.
+# Requires Prometheus Operator (e.g. OpenShift Monitoring). The gateway Service must expose the
+# metrics port (default 15090) or you may need to patch the Service / use the selector to match your setup.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-gateway-metrics
+  labels:
+    app.kubernetes.io/component: gateway
+spec:
+  selector:
+    matchLabels:
+      {{- if .Values.gateway.metrics.serviceMonitor.selector }}
+      {{- toYaml .Values.gateway.metrics.serviceMonitor.selector | nindent 6 }}
+      {{- else }}
+      # Common label from Gateway API implementations; override via gateway.metrics.serviceMonitor.selector if needed
+      gateway.networking.k8s.io/gateway-name: {{ .Values.gateway.existingGatewayName | default "nfl-wallet-gateway" }}
+      {{- end }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  endpoints:
+    - port: {{ .Values.gateway.metrics.serviceMonitor.port | default 15090 | quote }}
+      path: {{ .Values.gateway.metrics.serviceMonitor.path | default "/stats/prometheus" }}
+      interval: {{ .Values.gateway.metrics.serviceMonitor.interval | default "30s" }}
+{{- end }}

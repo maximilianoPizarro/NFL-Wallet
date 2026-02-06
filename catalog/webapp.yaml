@@ -1,0 +1,24 @@
+# Componente: Webapp (Backstage / Dev Spaces)
+# Depende de api-customers, api-bills y api-raiders.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: webapp
+  title: NFL Wallet Webapp
+  description: Frontend Vue 3 + Vite; SPA que consume las tres APIs (customers, bills, raiders). Puerto 5173.
+  tags:
+    - vue
+    - frontend
+  annotations:
+    backstage.io/source-location: url:https://github.com/maximilianoPizarro/NFL-Wallet
+spec:
+  type: website
+  lifecycle: production
+  owner: group:default
+  system: system:default/nfl-wallet
+  providesApis: []
+  consumesApis: []
+  dependsOn:
+    - component:default/api-customers
+    - component:default/api-bills
+    - component:default/api-raiders

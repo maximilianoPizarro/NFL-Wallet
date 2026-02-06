@@ -1,0 +1,26 @@
+# Catálogo global: Sistema NFL Stadium Wallet (Backstage / OpenShift Dev Spaces)
+# Agrupa los componentes de la arquitectura y su documentación.
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: nfl-wallet
+  title: NFL Stadium Wallet
+  description: |
+    Sistema billetera de estadio NFL: frontend Vue 3 + Vite y tres APIs .NET 8
+    (Customers, Bills, Raiders). Incluye Gateway API, Kuadrant, observabilidad y Helm.
+  tags:
+    - vue
+    - dotnet
+    - nfl
+    - openshift
+    - devspaces
+  annotations:
+    backstage.io/source-location: url:https://github.com/maximilianoPizarro/NFL-Wallet
+    app.openshift.io/devfile-path: devfile.yaml
+  links:
+    - url: https://github.com/maximilianoPizarro/NFL-Wallet
+      title: Repositorio
+      icon: github
+spec:
+  owner: group:default
+  domain: default

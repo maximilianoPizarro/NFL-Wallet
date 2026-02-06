@@ -1,7 +1,16 @@
 ---
 layout: default
-title: Security (API Keys and Istio)
-description: "API key validation and Istio AuthorizationPolicy for NFL Stadium Wallet (e.g. api-raiders-require-apikey)."
+title: Security (API Keys and Policies)
+description: "API key validation and two policy types: Istio AuthorizationPolicy and Kuadrant AuthPolicy with Authorino (Connectivity Link)."
+---
+
+This page describes two ways to enforce **API key** (X-API-Key) at the infrastructure layer, in addition to optional application-level validation:
+
+1. **Istio AuthorizationPolicy** — Policy applied at the service mesh (workload). The chart creates `AuthorizationPolicy` resources (e.g. `api-raiders-require-apikey`) when the gateway is not using Kuadrant AuthPolicy for that route.
+2. **AuthPolicy with Authorino (Connectivity Link)** — Policy applied at the **gateway** via Kuadrant/Authorino. The chart can create an **AuthPolicy** that requires the X-API-Key header for a given HTTPRoute (e.g. `/api-bills`), with a custom 403 body. This demonstrates gateway-level auth with Red Hat Connectivity Link.
+
+Both approaches allow only requests that present the `X-API-Key` header; the difference is where the check runs (mesh vs. gateway) and which CRDs are used.
+
 ---
 
 ## API Key and Istio Security Scenario
@@ -85,3 +94,39 @@ helm upgrade nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
 ```
 
 The chart will then create three AuthorizationPolicies: `api-customers-require-apikey`, `api-bills-require-apikey`, and `api-raiders-require-apikey`, each requiring the `x-api-key` header for the corresponding workload.
+
+---
+
+## AuthPolicy with API Key (Authorino / Connectivity Link)
+
+When the **Kuadrant operator** (Connectivity Link) is installed and the gateway is enabled, you can secure a route with an **AuthPolicy** that requires the **X-API-Key** header. Authorization is enforced at the **gateway** by **Authorino**, not at the workload by Istio. This is the second policy type: gateway-level auth with a custom 403 body when the header is missing.
+
+### How It Works
+
+- **AuthPolicy** (Kuadrant `kuadrant.io` API) targets an HTTPRoute (e.g. `nfl-wallet-api-bills`). Kuadrant creates an **AuthConfig** that Authorino uses to check the request.
+- Requests without a valid X-API-Key header receive **403 Forbidden** with a configurable JSON body (e.g. `{"error":"Forbidden","message":"Missing or invalid X-API-Key header."}`).
+- When AuthPolicy is enabled for a route (e.g. api-bills), the chart does **not** create the Istio `AuthorizationPolicy` for that API (Kuadrant enforces at the gateway instead).
+
+### Enabling AuthPolicy for /api-bills
+
+Prerequisites: gateway enabled, Kuadrant operator installed, and `gateway.hostnames` set to the gateway’s public host (so the AuthConfig links correctly). See [Connectivity Link]({{ '/connectivity-link.html' | relative_url }}#kuadrant-authpolicy-for-apibills-optional) for hostname setup and troubleshooting.
+
+```bash
+helm upgrade nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
+  --set gateway.enabled=true \
+  --set gateway.authPolicy.enabled=true \
+  --set gateway.authPolicy.bills.enabled=true
+```
+
+Set `gateway.hostnames[0]` to your gateway Route host if the AuthPolicy stays **Enforced: False** (e.g. get host with `kubectl get route -n nfl-wallet -l app.kubernetes.io/component=gateway -o jsonpath='{.items[0].spec.host}'`).
+
+### AuthPolicy resource (example)
+
+The chart creates an **AuthPolicy** in the release namespace (e.g. `nfl-wallet-api-bills-auth`) that targets the api-bills HTTPRoute and configures Authorino to require the X-API-Key header and return the custom 403 body. You can inspect it with:
+
+```bash
+kubectl get authpolicy -n nfl-wallet
+kubectl describe authpolicy nfl-wallet-api-bills-auth -n nfl-wallet
+```
+
+When **Enforced** is True, requests to the gateway’s `/api-bills` path without the header get 403; with the header they reach the backend (and the .NET API can still validate the key value if `apiKeys.bills` is set).

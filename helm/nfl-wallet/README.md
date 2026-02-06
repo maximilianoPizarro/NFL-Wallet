@@ -62,6 +62,27 @@ helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet --set webapp.route.enabl
 | `authorizationPolicy.enabled` | Istio AuthorizationPolicy: require `X-API-Key` header | `false` |
 | `authorizationPolicy.requireForCustomers` / `requireForBills` / `requireForRaiders` | Apply policy only to these APIs (when enabled) | `true` each |
 | `topology.applicationName` | Application name for OpenShift Topology grouping (`app.kubernetes.io/part-of`) | `nfl-wallet` |
+| `observability.rhobs.enabled` | Deploy RHOBS resources (ThanosQuerier, PodMonitor/ServiceMonitor gateway, UIPlugin) | `false` |
+| `observability.rhobs.namespace` | Namespace for RHOBS resources (e.g. `openshift-cluster-observability-operator`) | `openshift-cluster-observability-operator` |
+| `observability.rhobs.thanosQuerier.enabled` | Create ThanosQuerier for the stack | `false` |
+| `observability.rhobs.podMonitorGateway.enabled` | Create PodMonitor (RHOBS) for gateway metrics (port 15020) | `false` |
+| `observability.rhobs.serviceMonitorGateway.enabled` | Create ServiceMonitor (RHOBS) for gateway metrics (port 15090) | `false` |
+| `observability.rhobs.uiPlugin.enabled` | Create UIPlugin to enable Monitoring UI in OpenShift console | `false` |
+
+### Observability (RHOBS)
+
+When using **Red Hat OpenShift Observability** (Cluster Observability Operator), you can render ThanosQuerier, PodMonitor/ServiceMonitor for the gateway, and the Monitoring UIPlugin from the chart instead of applying separate YAMLs:
+
+```bash
+helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
+  --set gateway.enabled=true \
+  --set observability.rhobs.enabled=true \
+  --set observability.rhobs.thanosQuerier.enabled=true \
+  --set observability.rhobs.podMonitorGateway.enabled=true \
+  --set observability.rhobs.uiPlugin.enabled=true
+```
+
+Resources are created in `observability.rhobs.namespace` (default `openshift-cluster-observability-operator`). Ensure that namespace exists and the release has permission to create resources there. The gateway monitors require `gateway.enabled=true`.
 
 ### Package chart and publish to docs (GitHub Pages Helm repo)
 

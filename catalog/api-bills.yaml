@@ -1,0 +1,20 @@
+# Componente: API Buffalo Bills (Backstage / Dev Spaces)
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: api-bills
+  title: API Buffalo Bills
+  description: API .NET 8 billetera Buffalo Bills; balance y transacciones. Puerto 8081.
+  tags:
+    - dotnet
+    - api
+  annotations:
+    backstage.io/source-location: url:https://github.com/maximilianoPizarro/NFL-Wallet
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default
+  system: system:default/nfl-wallet
+  providesApis: []
+  consumesApis: []
+  dependsOn: []
