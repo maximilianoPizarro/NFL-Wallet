@@ -24,6 +24,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "ApiKey" } }, Array.Empty<string>() }
     });
+    c.DocumentFilter<ApiWalletLasVegasRaiders.SwaggerServersDocumentFilter>();
 });
 
 var corsOrigins = builder.Configuration["Cors:AllowedOrigins"] ?? "http://localhost:5160,http://localhost:5173";
