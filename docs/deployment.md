@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Deployment
-description: "Deploy NFL Stadium Wallet with the Helm chart to Kubernetes or OpenShift."
+description: "Deploy Stadium Wallet with the Helm chart to Kubernetes or OpenShift."
 ---
 
 ## Deploying With the Helm Chart
@@ -107,4 +107,4 @@ For more details and security/topology options, see the [Helm chart README](http
 When deployed to OpenShift, the chart adds labels and the `app.openshift.io/connects-to` annotation so the Developer Topology view groups the app and shows connectors from the webapp to the three APIs.
 
 [![Topology view]({{ '/topology.png' | relative_url }})]({{ '/topology.png' | relative_url }}){: .doc-img-link}
-*NFL Wallet in OpenShift Topology (webapp → api-customers, api-bills, api-raiders). Click to enlarge.*
+*Stadium Wallet in OpenShift Topology (webapp → api-customers, api-bills, api-raiders). Click to enlarge.*

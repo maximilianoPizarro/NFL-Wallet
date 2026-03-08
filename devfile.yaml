@@ -1,9 +1,9 @@
-# NFL Stadium Wallet - Red Hat OpenShift Dev Spaces
+# Stadium Wallet - Red Hat OpenShift Dev Spaces
 # Two components: apis (UBI + .NET 8) and webapp (Node 20). Two steps: build, run.
 schemaVersion: 2.2.2
 metadata:
   name: nfl-wallet
-  displayName: NFL Stadium Wallet
+  displayName: Stadium Wallet
   description: |
     Full-stack: Vue 3 + Vite frontend and three .NET 8.0 APIs.
     Step 1: build (frontend + APIs). Step 2: run (APIs in background + frontend).

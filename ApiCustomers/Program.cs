@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "NFL Wallet - Customers API", Version = "v1", Description = "Customer data for NFL Stadium Wallet." });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Stadium Wallet - Customers API", Version = "v1", Description = "Customer data for Stadium Wallet." });
     c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,

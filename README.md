@@ -1,8 +1,8 @@
-# NFL Stadium Wallet
+# Stadium Wallet
 
 [![Build and push to Quay.io](https://github.com/maximilianopizarro/NFL-Wallet/actions/workflows/build-push-quay.yml/badge.svg)](https://github.com/maximilianopizarro/NFL-Wallet/actions/workflows/build-push-quay.yml)
 
-Web app to view customer data and two virtual wallets (**Buffalo Bills** and **Las Vegas Raiders**) per customer for use at NFL stadiums. Built with a **Vue 3 + Vite** frontend and three **.NET 8.0** backend APIs, each with its own SQLite database. APIs expose **Swagger** and are configured for **CORS** from the frontend.
+Digital wallet for football stadiums. View customer data and manage two virtual wallets (**Buffalo Bills** and **Las Vegas Raiders**) per customer—pay for food, drinks, and merchandise directly inside the venue. Built with a **Vue 3 + Vite** frontend and three **.NET 8.0** backend APIs, each with its own SQLite database. APIs expose **Swagger** and are configured for **CORS** from the frontend.
 
 ---
 
@@ -27,7 +27,7 @@ flowchart TB
     end
 
     subgraph WebApp["Frontend (Vue 3)"]
-        UI[Vue / NFL-themed UI]
+        UI[Vue / Stadium Wallet UI]
     end
 
     subgraph APIs["Backend APIs (path: /api)"]
@@ -137,7 +137,7 @@ From the repository root:
 From the repository root (same folder as `podman-compose.yml`):
 
 ```bash
-podman-compose up -d --build
+podman compose -f podman-compose.yml up -d --build
 ```
 
 - **Frontend (Apache):** http://localhost:5160  
@@ -208,7 +208,7 @@ See **`helm/nfl-wallet/README.md`** for values and setting API URLs for the brow
 ├── ApiCustomers/              # Customers API — path /api, Swagger, CORS, SQLite (customers.db)
 ├── ApiWalletBuffaloBills/     # Buffalo Bills wallet API — path /api, Swagger, CORS, SQLite (buffalobills.db)
 ├── ApiWalletLasVegasRaiders/  # Las Vegas Raiders wallet API — path /api, Swagger, CORS, SQLite (lasvegasraiders.db)
-├── frontend/                  # Vue 3 + Vite SPA (NFL Stadium Wallet UI)
+├── frontend/                  # Vue 3 + Vite SPA (Stadium Wallet UI)
 │   ├── Containerfile          # Multi-stage: UBI8 Node.js 20 build → UBI8 httpd-24 serve
 │   ├── httpd.conf             # Apache SPA routing (fallback to index.html)
 │   └── src/

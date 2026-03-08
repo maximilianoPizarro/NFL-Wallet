@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "NFL Stadium Wallet Helm chart values",
+  "title": "Stadium Wallet Helm chart values",
   "description": "Values for nfl-wallet chart. Used by OpenShift Helm form and helm install/upgrade.",
   "type": "object",
   "properties": {

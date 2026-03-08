@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Observability
-description: "Configure observability for NFL Stadium Wallet with the Cluster Observability Operator: gateway metrics, ThanosQuerier, PodMonitor, ServiceMonitor, and UIPlugin."
+description: "Configure observability for Stadium Wallet with the Cluster Observability Operator: gateway metrics, ThanosQuerier, PodMonitor, ServiceMonitor, and UIPlugin."
 ---
 
 ## Observability with Cluster Observability Operator

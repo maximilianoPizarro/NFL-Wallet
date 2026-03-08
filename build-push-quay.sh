@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build all NFL Wallet images and push to quay.io
+# Build all Stadium Wallet images and push to quay.io
 # Usage: ./build-push-quay.sh [quay-namespace]
 # Default namespace: maximilianopizarro
 # Requires: podman, logged in to quay.io (podman login quay.io)

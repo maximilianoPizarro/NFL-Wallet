@@ -1,4 +1,4 @@
-NFL Stadium Wallet has been installed.
+Stadium Wallet has been installed.
 
 Services (ClusterIP):
   api-customers : port 8080 (TCP)

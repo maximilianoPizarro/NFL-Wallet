@@ -3,8 +3,8 @@
     <header class="nfl-header">
       <div class="container header-inner">
         <router-link to="/" class="navbar-brand">
-          <img src="https://upload.wikimedia.org/wikipedia/en/a/a2/National_Football_League_logo.svg" alt="NFL" class="header-logo" />
-          NFL Stadium Wallet
+          <img src="/sw.svg" alt="Stadium Wallet" class="header-logo" />
+          Stadium Wallet
         </router-link>
         <a
           v-if="mobileAppDownloadUrl"
@@ -22,7 +22,7 @@
       <router-view />
     </main>
     <footer class="nfl-footer">
-      <div class="container">NFL Wallet — Buffalo Bills & Las Vegas Raiders</div>
+      <div class="container">Stadium Wallet — Buffalo Bills & Las Vegas Raiders</div>
     </footer>
   </div>
 </template>
@@ -40,9 +40,9 @@ const isSameOriginDownload = computed(() => {
 
 const downloadFilename = computed(() => {
   const url = mobileAppDownloadUrl.value
-  if (!url) return 'nfl-wallet.apk'
+  if (!url) return 'stadium-wallet.apk'
   const name = url.split('/').pop() || url.split('\\').pop()
-  return name.includes('.') ? name : 'nfl-wallet.apk'
+  return name.includes('.') ? name : 'stadium-wallet.apk'
 })
 
 onMounted(() => {

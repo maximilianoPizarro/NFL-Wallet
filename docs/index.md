@@ -1,12 +1,12 @@
 ---
 layout: default
 title: Home
-description: "NFL Stadium Wallet — Centralized digital wallet for use at NFL stadiums. Pay, load balance, and manage your money at Buffalo Bills and Las Vegas Raiders venues."
+description: "Stadium Wallet — Digital wallet for football stadiums. Pay for food, drinks, and merchandise inside the venue. Manage your Buffalo Bills and Las Vegas Raiders wallets."
 ---
 
 <div class="hero">
-  <img src="{{ '/National_Football_League_logo.png' | relative_url }}" alt="NFL" class="logo-hero">
-  <h1>NFL Stadium Wallet</h1>
+  <img src="{{ '/sw.svg' | relative_url }}" alt="Stadium Wallet" class="logo-hero">
+  <h1>Stadium Wallet</h1>
   <p>{{ site.description }}</p>
 </div>
 
@@ -23,7 +23,7 @@ description: "NFL Stadium Wallet — Centralized digital wallet for use at NFL s
 
 ## Purpose
 
-**NFL Stadium Wallet** is a centralized digital wallet solution designed for use at NFL stadiums. It allows fans to:
+**Stadium Wallet** is a digital wallet designed for fans attending football games. It lets you pay for food, drinks, merchandise, and more—directly from your phone, without cash or cards. A seamless in-stadium experience at every venue.
 
 - **View customer data** and link it to one or more team-specific wallets (e.g., Buffalo Bills, Las Vegas Raiders).
 - **Check balances and transactions** per wallet.
@@ -36,7 +36,7 @@ A single front-end application talks to a **Customers API** (for identity and cu
 <p class="doc-img-expand-hint">Click any image to open full size.</p>
 
 [![Wallet landing]({{ '/walletlanding.png' | relative_url }})]({{ '/walletlanding.png' | relative_url }}){: .doc-img-link}
-*Wallet landing page: entry point of the NFL Stadium Wallet web app. Click to enlarge.*
+*Wallet landing page: entry point of the Stadium Wallet web app. Click to enlarge.*
 
 [![Wallet customer list]({{ '/wallet.png' | relative_url }})]({{ '/wallet.png' | relative_url }}){: .doc-img-link}
 *Customer list: select a customer to view their team wallets. Click to enlarge.*

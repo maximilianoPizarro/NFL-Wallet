@@ -1,7 +1,7 @@
-# NFL Stadium Wallet - Documentation for GitHub Pages
+# Stadium Wallet - Documentation for GitHub Pages
 # Red Hat–inspired branding
-title: NFL Stadium Wallet
-description: "Centralized digital wallet for NFL stadiums. Pay, load balance, and manage your money at Buffalo Bills and Las Vegas Raiders venues."
+title: Stadium Wallet
+description: "Digital wallet for football stadiums. Pay for food, drinks, and merchandise inside the venue. Manage your Buffalo Bills and Las Vegas Raiders wallets."
 # Required for GitHub Pages project site: https://maximilianopizarro.github.io/NFL-Wallet/
 baseurl: "/NFL-Wallet"
 url: "https://maximilianopizarro.github.io"
@@ -38,7 +38,7 @@ header_pages:
   - artifact-hub.md
 
 include:
-  - National_Football_League_logo.png
+  - sw.svg
   - favicon.ico
   - podman.png
   - devspaces.png

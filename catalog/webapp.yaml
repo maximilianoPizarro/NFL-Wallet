@@ -4,7 +4,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: webapp
-  title: NFL Wallet Webapp
+  title: Stadium Wallet Webapp
   description: Frontend Vue 3 + Vite; SPA que consume las tres APIs (customers, bills, raiders). Puerto 5173.
   tags:
     - vue

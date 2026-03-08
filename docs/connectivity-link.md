@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Connectivity Link (Gateway API)
-description: "Enable the Gateway API and HTTPRoutes (Connectivity Link) for NFL Stadium Wallet with Helm."
+description: "Enable the Gateway API and HTTPRoutes (Connectivity Link) for Stadium Wallet with Helm."
 ---
 
 ## Adding the Connectivity Link (Gateway Layer)

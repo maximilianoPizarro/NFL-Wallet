@@ -1,6 +1,6 @@
-# NFL Stadium Wallet — Documentation (Jekyll)
+# Stadium Wallet — Documentation (Jekyll)
 
-This folder is a **Jekyll** site for **GitHub Pages**. It documents the NFL Stadium Wallet solution with Red Hat–inspired branding and uses the repo logo and favicon.
+This folder is a **Jekyll** site for **GitHub Pages**. It documents the Stadium Wallet solution with Red Hat–inspired branding and uses the repo logo and favicon.
 
 ## Enable on GitHub Pages
 

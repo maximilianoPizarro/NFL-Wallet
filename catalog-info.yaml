@@ -1,13 +1,13 @@
-# Catálogo global: Sistema NFL Stadium Wallet (Backstage / OpenShift Dev Spaces)
-# Agrupa los componentes de la arquitectura y su documentación.
+# Global catalog: Stadium Wallet system (Backstage / OpenShift Dev Spaces)
+# Groups architecture components and documentation.
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   name: nfl-wallet
-  title: NFL Stadium Wallet
+  title: Stadium Wallet
   description: |
-    Sistema billetera de estadio NFL: frontend Vue 3 + Vite y tres APIs .NET 8
-    (Customers, Bills, Raiders). Incluye Gateway API, Kuadrant, observabilidad y Helm.
+    Stadium Wallet: Vue 3 + Vite frontend and three .NET 8 APIs
+    (Customers, Bills, Raiders). Includes Gateway API, Kuadrant, observability, and Helm.
   tags:
     - vue
     - dotnet

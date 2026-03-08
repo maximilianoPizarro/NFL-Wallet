@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Architecture
-description: "Architecture of NFL Stadium Wallet: Vue frontend, .NET APIs, Podman Compose, and Red Hat OpenShift Dev Spaces."
+description: "Architecture of Stadium Wallet: Vue frontend, .NET APIs, Podman Compose, and Red Hat OpenShift Dev Spaces."
 ---
 
 ## Architecture Overview

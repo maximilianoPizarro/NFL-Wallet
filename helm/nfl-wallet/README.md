@@ -1,6 +1,6 @@
-# NFL Wallet Helm Chart
+# Stadium Wallet Helm Chart
 
-Deploys the NFL Stadium Wallet stack: **webapp** (Vue frontend) and three APIs (**api-customers**, **api-bills**, **api-raiders**) with the following layout:
+Deploys the Stadium Wallet stack: **webapp** (Vue frontend) and three APIs (**api-customers**, **api-bills**, **api-raiders**) with the following layout:
 
 | Service        | Service Port | Pod (container) Port |
 |----------------|--------------|------------------------|

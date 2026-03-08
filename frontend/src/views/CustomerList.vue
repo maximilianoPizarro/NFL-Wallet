@@ -1,25 +1,24 @@
 <template>
   <div class="home">
-    <!-- Hero: NFL + product intro (ESPN-style) -->
     <section class="hero">
       <div class="container">
         <div class="hero-content">
           <img
-            src="https://upload.wikimedia.org/wikipedia/en/a/a2/National_Football_League_logo.svg"
-            alt="National Football League"
+            src="/sw.svg"
+            alt="Stadium Wallet"
             class="hero-logo"
           />
-          <h1 class="hero-title">NFL Stadium Wallet</h1>
-          <p class="hero-tagline">Your digital wallet for gameday at every NFL stadium.</p>
+          <h1 class="hero-title">Stadium Wallet</h1>
+          <p class="hero-tagline">Your digital wallet for gameday inside football stadiums.</p>
           <div class="hero-copy">
             <p class="hero-description">
-              The <strong>National Football League (NFL)</strong> is a professional American football league in the United States. 
-              Composed of 32 teams divided between the American Football Conference (AFC) and the National Football Conference (NFC), 
-              the NFL is the highest level of professional American football in the world.
+              <strong>Stadium Wallet</strong> is a digital wallet designed for fans attending football games.
+              Pay for food, drinks, merchandise, and more—directly from your phone, without cash or cards.
+              Built for a seamless in-stadium experience at every venue.
             </p>
             <p class="hero-wallet">
-              This app is your <strong>stadium wallet</strong>: load funds, pay at concessions and team stores, 
-              and manage your Buffalo Bills and Las Vegas Raiders wallets—all in one place for use inside NFL venues.
+              Load funds, pay at concessions and team stores, and manage your
+              Buffalo Bills and Las Vegas Raiders wallets—all in one place, ready to use inside the stadium.
             </p>
           </div>
           <a
@@ -74,9 +73,9 @@ const isSameOriginDownload = computed(() => {
 
 const downloadFilename = computed(() => {
   const url = mobileAppDownloadUrl.value
-  if (!url) return 'nfl-wallet.apk'
+  if (!url) return 'stadium-wallet.apk'
   const name = url.split('/').pop() || url.split('\\').pop()
-  return name.includes('.') ? name : 'nfl-wallet.apk'
+  return name.includes('.') ? name : 'stadium-wallet.apk'
 })
 
 onMounted(async () => {

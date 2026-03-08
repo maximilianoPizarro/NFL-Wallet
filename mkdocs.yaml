@@ -1,6 +1,6 @@
-# MkDocs config for NFL Stadium Wallet (OpenShift Dev Spaces / local)
-site_name: NFL Stadium Wallet
-site_description: Documentación del proyecto NFL Stadium Wallet (Vue + .NET 8 APIs)
+# MkDocs config for Stadium Wallet (OpenShift Dev Spaces / local)
+site_name: Stadium Wallet
+site_description: Stadium Wallet documentation (Vue + .NET 8 APIs)
 site_url: https://github.com/maximilianoPizarro/NFL-Wallet
 repo_url: https://github.com/maximilianoPizarro/NFL-Wallet
 repo_name: NFL-Wallet
