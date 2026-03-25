@@ -1,7 +1,7 @@
 {
   "name": "nfl-wallet-frontend",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "keycloak-js": "^26.2.3",
     "qrcode": "^1.5.4",
     "vue": "^3.4.0",
     "vue-router": "^4.2.5"

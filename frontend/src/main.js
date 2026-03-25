@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import './assets/style.css'
 import App from './App.vue'
 import router from './router'
+import { initKeycloak } from './auth/keycloak'
 
 async function init() {
   try {
@@ -11,6 +12,7 @@ async function init() {
       window.__API_CONFIG__ = config
     }
   } catch (_) {}
+  await initKeycloak()
   createApp(App).use(router).mount('#app')
 }
 init()

@@ -1,9 +1,9 @@
 apiVersion: v2
 name: nfl-wallet
-description: Stadium Wallet - Vue frontend and three .NET 8 APIs (Customers, Bills, Raiders)
+description: Stadium Wallet - Vue frontend, three .NET 8 APIs, ESPN scoreboard integration, and RHBK biometric authentication
 type: application
-version: 0.1.1
-appVersion: "1.0.0"
+version: 0.1.2
+appVersion: "1.0.1"
 icon: https://maximilianopizarro.github.io/NFL-Wallet/sw.svg
 keywords:
   - nfl
@@ -13,9 +13,18 @@ keywords:
   - gateway-api
   - kuadrant
   - istio
+  - espn
+  - rhbk
+  - keycloak
+  - biometric
 maintainers:
   - name: Maximiliano Pizarro
     email: mapizarr@redhat.com
+dependencies:
+  - name: rhbk-neuroface
+    version: "1.0.0"
+    repository: https://maximilianopizarro.github.io/rhbk-biometric-flow/
+    condition: rhbk-neuroface.enabled
 annotations:
   artifacthub.io/category: integration-delivery
   artifacthub.io/license: Apache-2.0
@@ -25,6 +34,16 @@ annotations:
     - name: Source
       url: https://github.com/maximilianopizarro/NFL-Wallet
   artifacthub.io/changes: |
-    - Gateway API HTTPRoutes with optional hostnames for all routes (webapp, api-customers, api-bills, api-raiders)
-    - Kuadrant AuthPolicy and RateLimitPolicy for /api-bills
-    - Optional single gateway route (gateway.route.enabled=false) when platform creates the route
+    - ESPN NFL Scoreboard integration with carousel banner (public API by default)
+    - RHBK (Red Hat Build of Keycloak) with NeuroFace biometric authentication as optional dependency
+    - Pre-configured realm with verified accounts matching mock customer data
+    - Wallet authentication flow: biometric enrollment + 2FA for wallet operations
+  artifacthub.io/images: |
+    - name: webapp
+      image: quay.io/maximilianopizarro/nfl-wallet-webapp:latest
+    - name: api-customers
+      image: quay.io/maximilianopizarro/nfl-wallet-api-customers:latest
+    - name: api-bills
+      image: quay.io/maximilianopizarro/nfl-api-bills:latest
+    - name: api-raiders
+      image: quay.io/maximilianopizarro/nfl-wallet-api-raiders:latest

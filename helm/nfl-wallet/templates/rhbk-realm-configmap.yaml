@@ -1,0 +1,187 @@
+{{- if (index .Values "rhbk-neuroface" "enabled") }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "nfl-wallet.partOf" . }}-realm
+  labels:
+    app: rhbk-neuroface
+    app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
+data:
+  nfl-wallet-realm.json: |
+    {
+      "realm": {{ (index .Values "rhbk-neuroface" "realm" "name") | default "neuroface" | quote }},
+      "displayName": {{ (index .Values "rhbk-neuroface" "realm" "displayName") | default "NeuroFace Biometric" | quote }},
+      "enabled": true,
+      "sslRequired": "external",
+      "registrationAllowed": false,
+      "loginWithEmailAllowed": true,
+      "duplicateEmailsAllowed": false,
+      "resetPasswordAllowed": true,
+      "editUsernameAllowed": false,
+      "bruteForceProtected": true,
+      "verifyEmail": false,
+      "roles": {
+        "realm": [
+          { "name": "biometric-user", "description": "User with biometric enrollment" },
+          { "name": "biometric-admin", "description": "Admin for biometric management" },
+          { "name": "wallet-user", "description": "User authorized to operate wallets" }
+        ]
+      },
+      "groups": [
+        { "name": "biometric-enrolled", "realmRoles": ["biometric-user", "wallet-user"] }
+      ],
+      "clients": [
+        {
+          "clientId": "neuroface-app",
+          "name": "NeuroFace App",
+          "enabled": true,
+          "publicClient": true,
+          "standardFlowEnabled": true,
+          "directAccessGrantsEnabled": true,
+          "redirectUris": ["*"],
+          "webOrigins": ["*"],
+          "attributes": {
+            "pkce.code.challenge.method": "S256"
+          }
+        },
+        {
+          "clientId": "neuroface-backend",
+          "name": "NeuroFace Backend",
+          "enabled": true,
+          "bearerOnly": true,
+          "publicClient": false
+        },
+        {
+          "clientId": "nfl-wallet-app",
+          "name": "Stadium Wallet",
+          "enabled": true,
+          "publicClient": true,
+          "standardFlowEnabled": true,
+          "directAccessGrantsEnabled": true,
+          "redirectUris": ["*"],
+          "webOrigins": ["*"],
+          "attributes": {
+            "pkce.code.challenge.method": "S256"
+          },
+          "defaultClientScopes": ["openid", "profile", "email"]
+        }
+      ],
+      "users": [
+        {
+          "username": "john.doe",
+          "email": "john.doe@example.com",
+          "firstName": "John",
+          "lastName": "Doe",
+          "enabled": true,
+          "emailVerified": true,
+          "attributes": {
+            "documentNumber": ["20123456"],
+            "biometric_enrolled": ["true"]
+          },
+          "credentials": [{ "type": "password", "value": "changeme", "temporary": true }],
+          "realmRoles": ["biometric-user", "wallet-user"],
+          "groups": ["biometric-enrolled"]
+        },
+        {
+          "username": "jane.smith",
+          "email": "jane.smith@example.com",
+          "firstName": "Jane",
+          "lastName": "Smith",
+          "enabled": true,
+          "emailVerified": true,
+          "attributes": {
+            "documentNumber": ["20876543"],
+            "biometric_enrolled": ["true"]
+          },
+          "credentials": [{ "type": "password", "value": "changeme", "temporary": true }],
+          "realmRoles": ["biometric-user", "wallet-user"],
+          "groups": ["biometric-enrolled"]
+        },
+        {
+          "username": "robert.johnson",
+          "email": "robert.johnson@example.com",
+          "firstName": "Robert",
+          "lastName": "Johnson",
+          "enabled": true,
+          "emailVerified": true,
+          "attributes": {
+            "documentNumber": ["30111222"],
+            "biometric_enrolled": ["true"]
+          },
+          "credentials": [{ "type": "password", "value": "changeme", "temporary": true }],
+          "realmRoles": ["biometric-user", "wallet-user"],
+          "groups": ["biometric-enrolled"]
+        },
+        {
+          "username": "maria.garcia",
+          "email": "maria.garcia@example.com",
+          "firstName": "Maria",
+          "lastName": "Garcia",
+          "enabled": true,
+          "emailVerified": true,
+          "attributes": {
+            "documentNumber": ["30333444"],
+            "biometric_enrolled": ["true"]
+          },
+          "credentials": [{ "type": "password", "value": "changeme", "temporary": true }],
+          "realmRoles": ["biometric-user", "wallet-user"],
+          "groups": ["biometric-enrolled"]
+        },
+        {
+          "username": "james.wilson",
+          "email": "james.wilson@example.com",
+          "firstName": "James",
+          "lastName": "Wilson",
+          "enabled": true,
+          "emailVerified": true,
+          "attributes": {
+            "documentNumber": ["40555666"],
+            "biometric_enrolled": ["true"]
+          },
+          "credentials": [{ "type": "password", "value": "changeme", "temporary": true }],
+          "realmRoles": ["biometric-user", "wallet-user"],
+          "groups": ["biometric-enrolled"]
+        },
+        {
+          "username": "emily.brown",
+          "email": "emily.brown@example.com",
+          "firstName": "Emily",
+          "lastName": "Brown",
+          "enabled": true,
+          "emailVerified": true,
+          "attributes": {
+            "documentNumber": ["40777888"],
+            "biometric_enrolled": ["true"]
+          },
+          "credentials": [{ "type": "password", "value": "changeme", "temporary": true }],
+          "realmRoles": ["biometric-user", "wallet-user"],
+          "groups": ["biometric-enrolled"]
+        },
+        {
+          "username": "maxpizarro",
+          "email": "mpizarro@redhat.com",
+          "firstName": "Max",
+          "lastName": "Pizarro",
+          "enabled": true,
+          "emailVerified": true,
+          "attributes": {
+            "documentNumber": ["50999001"],
+            "biometric_enrolled": ["true"]
+          },
+          "credentials": [{ "type": "password", "value": "neuroface", "temporary": false }],
+          "realmRoles": ["biometric-user", "biometric-admin", "wallet-user"],
+          "groups": ["biometric-enrolled"]
+        }
+      ],
+      "requiredActions": [
+        {
+          "alias": "biometric-enrollment",
+          "name": "NeuroFace Biometric Enrollment",
+          "providerId": "biometric-enrollment",
+          "enabled": true,
+          "defaultAction": false,
+          "priority": 100
+        }
+      ]
+    }
+{{- end }}

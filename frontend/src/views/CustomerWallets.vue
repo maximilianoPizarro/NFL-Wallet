@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-4">
-    <router-link to="/" class="nfl-back-link">← Back to Customers</router-link>
+    <router-link v-if="!auth.enabled" to="/" class="nfl-back-link">← Back to Customers</router-link>
     <div v-if="loading" class="loading">Loading...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
     <template v-else-if="customer">
@@ -105,7 +105,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import QRCode from 'qrcode'
 import {
   getCustomer,
@@ -115,9 +115,12 @@ import {
   getRaidersTransactions,
   loadBillsBalance,
   loadRaidersBalance,
+  getCustomers,
 } from '../api/client'
+import { authState as auth } from '../auth/keycloak'
 
 const route = useRoute()
+const router = useRouter()
 const customer = ref(null)
 const billsBalance = ref(null)
 const billsTransactions = ref([])
@@ -192,7 +195,20 @@ async function load() {
   loading.value = true
   error.value = ''
   try {
+    if (auth.enabled && !auth.authenticated) {
+      error.value = 'Please sign in to view your wallet.'
+      loading.value = false
+      return
+    }
+
     customer.value = await getCustomer(id.value)
+
+    if (auth.enabled && auth.authenticated && customer.value.email !== auth.email) {
+      error.value = 'Access denied. You can only view your own wallet.'
+      customer.value = null
+      loading.value = false
+      return
+    }
     const [billsBal, billsTx, raidersBal, raidersTx] = await Promise.all([
       getBillsBalance(id.value).catch(() => null),
       getBillsTransactions(id.value).catch(() => []),

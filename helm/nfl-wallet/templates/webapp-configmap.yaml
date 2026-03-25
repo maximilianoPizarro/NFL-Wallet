@@ -5,4 +5,11 @@ metadata:
   labels:
     app: webapp
 data:
-  config.json: {{ dict "apiCustomersUrl" .Values.webapp.apiCustomersUrl "apiBillsUrl" .Values.webapp.apiBillsUrl "apiRaidersUrl" .Values.webapp.apiRaidersUrl "mobileAppDownloadUrl" (default "" .Values.webapp.mobileAppDownloadUrl) | toJson | quote }}
+  config.json: |
+    {{- $cfg := dict "apiCustomersUrl" .Values.webapp.apiCustomersUrl "apiBillsUrl" .Values.webapp.apiBillsUrl "apiRaidersUrl" .Values.webapp.apiRaidersUrl "mobileAppDownloadUrl" (default "" .Values.webapp.mobileAppDownloadUrl) "espnApiUrl" (ternary (default "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=18" .Values.espn.apiUrl) "" .Values.espn.enabled) }}
+    {{- if (index .Values "rhbk-neuroface" "enabled") }}
+    {{- $_ := set $cfg "keycloakUrl" (default "" .Values.webapp.keycloakUrl) }}
+    {{- $_ := set $cfg "keycloakRealm" (default "neuroface" .Values.webapp.keycloakRealm) }}
+    {{- $_ := set $cfg "keycloakClientId" (default "nfl-wallet-app" .Values.webapp.keycloakClientId) }}
+    {{- end }}
+    {{ $cfg | toJson }}

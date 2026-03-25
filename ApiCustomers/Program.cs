@@ -60,7 +60,8 @@ using (var scope = app.Services.CreateScope())
             new Customer { DocumentNumber = "30111222", FirstName = "Robert", LastName = "Johnson", Email = "robert.johnson@example.com", CreatedAt = now.AddMonths(-3) },
             new Customer { DocumentNumber = "30333444", FirstName = "Maria", LastName = "Garcia", Email = "maria.garcia@example.com", CreatedAt = now.AddMonths(-2) },
             new Customer { DocumentNumber = "40555666", FirstName = "James", LastName = "Wilson", Email = "james.wilson@example.com", CreatedAt = now.AddMonths(-1) },
-            new Customer { DocumentNumber = "40777888", FirstName = "Emily", LastName = "Brown", Email = "emily.brown@example.com", CreatedAt = now });
+            new Customer { DocumentNumber = "40777888", FirstName = "Emily", LastName = "Brown", Email = "emily.brown@example.com", CreatedAt = now },
+            new Customer { DocumentNumber = "50999001", FirstName = "Maximiliano", LastName = "Pizarro", Email = "mpizarro@redhat.com", CreatedAt = now });
         db.SaveChanges();
     }
 }

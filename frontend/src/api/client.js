@@ -4,6 +4,7 @@ function getBaseUrls() {
     customers: c.apiCustomersUrl || import.meta.env.VITE_API_CUSTOMERS_URL || '/api-customers',
     bills: c.apiBillsUrl || import.meta.env.VITE_API_BILLS_URL || '/api-bills',
     raiders: c.apiRaidersUrl || import.meta.env.VITE_API_RAIDERS_URL || '/api-raiders',
+    espn: c.espnApiUrl || import.meta.env.VITE_ESPN_API_URL || 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard',
   }
 }
 // One API key per API; overridable via window.__API_CONFIG__.apiKeys (e.g. config.json)
@@ -87,4 +88,12 @@ export async function payBills(customerId, amount) {
 
 export async function payRaiders(customerId, amount) {
   return post(`${raidersBase()}/Wallet/pay/${customerId}`, { amount: Number(amount) }, apiKeys().raiders)
+}
+
+export async function getEspnScoreboard() {
+  const url = getBaseUrls().espn
+  if (!url) return { events: [] }
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(res.statusText)
+  return res.json()
 }

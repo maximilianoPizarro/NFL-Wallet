@@ -1,0 +1,149 @@
+{{- if and .Values.gateway.enabled .Values.gateway.oidcPolicy.enabled }}
+{{- $issuerUrl := .Values.gateway.oidcPolicy.issuerUrl }}
+{{- $clientId := .Values.gateway.oidcPolicy.clientId }}
+{{- $unauthorizedBody := .Values.gateway.oidcPolicy.unauthorizedBody | default "{\"error\":\"Unauthorized\",\"message\":\"A valid Bearer token is required. Authenticate via the OIDC provider.\"}" }}
+---
+# OIDC AuthPolicy for api-customers (Connectivity Link 1.3 / Kuadrant)
+apiVersion: kuadrant.io/v1
+kind: AuthPolicy
+metadata:
+  name: nfl-wallet-api-customers-oidc
+  labels:
+    app: api-customers
+    app.kubernetes.io/component: authpolicy-oidc
+    app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: nfl-wallet-api-customers
+  rules:
+    authentication:
+      oidc-jwt:
+        jwt:
+          issuerUrl: {{ $issuerUrl }}
+        credentials:
+          authorizationHeader:
+            prefix: Bearer
+    {{- if .Values.gateway.oidcPolicy.authorization.enabled }}
+    authorization:
+      require-wallet-user:
+        opa:
+          rego: |
+            allow {
+              some role
+              role := input.auth.identity.realm_access.roles[_]
+              role == "wallet-user"
+            }
+    {{- end }}
+    response:
+      unauthenticated:
+        body:
+          value: {{ $unauthorizedBody | quote }}
+        headers:
+          content-type:
+            value: application/json
+      {{- if .Values.gateway.oidcPolicy.injectHeaders }}
+      success:
+        headers:
+          x-auth-user:
+            plain:
+              value: "\\{auth.identity.preferred_username\\}"
+      {{- end }}
+---
+# OIDC AuthPolicy for api-bills (Connectivity Link 1.3 / Kuadrant)
+apiVersion: kuadrant.io/v1
+kind: AuthPolicy
+metadata:
+  name: nfl-wallet-api-bills-oidc
+  labels:
+    app: api-bills
+    app.kubernetes.io/component: authpolicy-oidc
+    app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: nfl-wallet-api-bills
+  rules:
+    authentication:
+      oidc-jwt:
+        jwt:
+          issuerUrl: {{ $issuerUrl }}
+        credentials:
+          authorizationHeader:
+            prefix: Bearer
+    {{- if .Values.gateway.oidcPolicy.authorization.enabled }}
+    authorization:
+      require-wallet-user:
+        opa:
+          rego: |
+            allow {
+              some role
+              role := input.auth.identity.realm_access.roles[_]
+              role == "wallet-user"
+            }
+    {{- end }}
+    response:
+      unauthenticated:
+        body:
+          value: {{ $unauthorizedBody | quote }}
+        headers:
+          content-type:
+            value: application/json
+      {{- if .Values.gateway.oidcPolicy.injectHeaders }}
+      success:
+        headers:
+          x-auth-user:
+            plain:
+              value: "\\{auth.identity.preferred_username\\}"
+      {{- end }}
+---
+# OIDC AuthPolicy for api-raiders (Connectivity Link 1.3 / Kuadrant)
+apiVersion: kuadrant.io/v1
+kind: AuthPolicy
+metadata:
+  name: nfl-wallet-api-raiders-oidc
+  labels:
+    app: api-raiders
+    app.kubernetes.io/component: authpolicy-oidc
+    app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: nfl-wallet-api-raiders
+  rules:
+    authentication:
+      oidc-jwt:
+        jwt:
+          issuerUrl: {{ $issuerUrl }}
+        credentials:
+          authorizationHeader:
+            prefix: Bearer
+    {{- if .Values.gateway.oidcPolicy.authorization.enabled }}
+    authorization:
+      require-wallet-user:
+        opa:
+          rego: |
+            allow {
+              some role
+              role := input.auth.identity.realm_access.roles[_]
+              role == "wallet-user"
+            }
+    {{- end }}
+    response:
+      unauthenticated:
+        body:
+          value: {{ $unauthorizedBody | quote }}
+        headers:
+          content-type:
+            value: application/json
+      {{- if .Values.gateway.oidcPolicy.injectHeaders }}
+      success:
+        headers:
+          x-auth-user:
+            plain:
+              value: "\\{auth.identity.preferred_username\\}"
+      {{- end }}
+{{- end }}

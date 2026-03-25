@@ -15,7 +15,7 @@ imageNamespace: maximilianopizarro
 
 apiCustomers:
   image: nfl-wallet-api-customers
-  tag: latest
+  tag: "1.0.1"
   replicaCount: 1
   service:
     port: 8080  # Service port 8080, Pod targetPort 8080
@@ -26,7 +26,7 @@ apiCustomers:
 
 apiBills:
   image: nfl-api-bills
-  tag: latest
+  tag: "1.0.1"
   replicaCount: 1
   service:
     port: 8081  # Service port 8081, Pod targetPort 8080
@@ -37,7 +37,7 @@ apiBills:
 
 apiRaiders:
   image: nfl-wallet-api-raiders
-  tag: latest
+  tag: "1.0.1"
   replicaCount: 1
   service:
     port: 8082  # Service port 8082, Pod targetPort 8080
@@ -48,7 +48,7 @@ apiRaiders:
 
 webapp:
   image: nfl-wallet-webapp
-  tag: latest
+  tag: "1.0.1"
   replicaCount: 1
   service:
     port: 5173  # Service port 5173, Pod targetPort 8080
@@ -69,6 +69,18 @@ webapp:
   apiRaidersUrl: ""
   # Optional: URL for "Download mobile app" in the browser (e.g. APK file or app store link). Leave empty to hide the link.
   mobileAppDownloadUrl: ""
+  # Keycloak OIDC (auto-enabled when rhbk-neuroface.enabled=true). Set keycloakUrl to the RHBK route URL.
+  keycloakUrl: ""
+  keycloakRealm: "neuroface"
+  keycloakClientId: "nfl-wallet-app"
+
+# ESPN NFL Scoreboard: carousel banner with live/recent scores from the public ESPN API.
+espn:
+  enabled: true
+  # Public ESPN endpoint (no API key needed). Override to /public/nfl when using the gateway ESPN HTTPRoute proxy.
+  # Uses seasontype=2&week=18 (last regular season week) by default to ensure the carousel always shows multiple games.
+  # Remove the query params to show the current/live scoreboard instead.
+  apiUrl: "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=18"
 
 # API key security: one key per API. Leave empty to disable validation (e.g. local dev).
 apiKeys:
@@ -115,6 +127,24 @@ gateway:
       enabled: false
       # JSON body for 403 when X-API-Key is missing or empty
       unauthorizedBody: '{"error":"Forbidden","message":"Missing or invalid X-API-Key header."}'
+  # OIDC AuthPolicy (Connectivity Link 1.3 / Kuadrant): protect all wallet APIs with OpenID Connect JWT validation.
+  # Creates one AuthPolicy per HTTPRoute (api-customers, api-bills, api-raiders) + a Secret with the OIDC client credentials.
+  # Requires: Kuadrant operator, Gateway API, and an OIDC provider (e.g. RHBK deployed via rhbk-neuroface).
+  oidcPolicy:
+    enabled: false
+    # OIDC issuer URL (Keycloak realm). Authorino fetches JWKS automatically from .well-known/openid-configuration.
+    # Example: https://rhbk-neuroface-<namespace>.apps.<cluster>/realms/neuroface
+    issuerUrl: ""
+    # OIDC client credentials (public client for the webapp; Secret is created for the app to obtain tokens).
+    clientId: "nfl-wallet-app"
+    clientSecret: ""
+    # Custom JSON body for 401 Unauthenticated responses.
+    unauthorizedBody: '{"error":"Unauthorized","message":"A valid Bearer token is required. Authenticate via the OIDC provider."}'
+    # Authorization: require the "wallet-user" realm role (from the JWT realm_access.roles claim).
+    authorization:
+      enabled: true
+    # Inject x-auth-user header with the authenticated username into backend requests.
+    injectHeaders: true
   # Metrics: Prometheus scraping for gateway proxy (Total Requests, Success, Error Rate).
   # Prefer PodMonitor when the gateway Service does not expose the metrics port (15020/15090).
   metrics:
@@ -173,3 +203,67 @@ observability:
       enabled: false
     uiPlugin:
       enabled: false
+
+# RHBK (Red Hat Build of Keycloak) with NeuroFace biometric authentication.
+# Deploys Keycloak 26 + NeuroFace SPI + facial recognition backend/frontend.
+# The realm is pre-configured with all mock customer accounts (verified).
+rhbk-neuroface:
+  enabled: false
+  admin:
+    username: admin
+    password: admin
+    temporary: true
+  realm:
+    name: neuroface
+    displayName: "NeuroFace Biometric"
+  rhbk:
+    image:
+      repository: registry.redhat.io/rhbk/keycloak-rhel9
+      tag: "26.0"
+    replicas: 1
+    resources:
+      limits:
+        cpu: "1"
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+  spi:
+    image:
+      repository: quay.io/maximilianopizarro/rhbk-neuroface-spi
+      tag: latest
+  biometric:
+    confidenceThreshold: 65.0
+    maxEnrollmentImages: 5
+  neuroface:
+    enabled: true
+    backendService: neuroface-backend
+    backendPort: 8080
+    backend:
+      image:
+        repository: quay.io/maximilianopizarro/neuroface-backend
+        tag: latest
+      replicas: 1
+      aiModel: lbph
+    frontend:
+      image:
+        repository: quay.io/maximilianopizarro/neuroface-frontend
+        tag: latest
+      replicas: 1
+    chat:
+      enabled: false
+    persistence:
+      enabled: true
+      size: 1Gi
+    route:
+      enabled: true
+  route:
+    enabled: true
+    host: ""
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
+  service:
+    type: ClusterIP
+    port: 8443
+    httpPort: 8080

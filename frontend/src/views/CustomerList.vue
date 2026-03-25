@@ -36,30 +36,46 @@
     </section>
 
     <div class="container mt-4">
-      <h2 class="nfl-page-title">Select a customer</h2>
-      <p class="nfl-subtitle">Choose a customer to view Buffalo Bills and Las Vegas Raiders wallets.</p>
-      <div v-if="loading" class="loading">Loading...</div>
-      <div v-else-if="error" class="error">{{ error }}</div>
-      <div v-else class="nfl-customer-list">
-        <router-link
-          v-for="c in customers"
-          :key="c.id"
-          :to="{ name: 'wallets', params: { id: c.id } }"
-          class="list-group-item list-group-item-action"
-        >
-          <span class="nfl-customer-name"><strong>{{ c.lastName }}, {{ c.firstName }}</strong></span>
-          <span class="nfl-customer-email">{{ c.email }}</span>
-          <span class="nfl-customer-action">View wallets →</span>
-        </router-link>
-      </div>
+      <template v-if="auth.enabled && !auth.authenticated">
+        <div class="nfl-login-prompt">
+          <h2 class="nfl-page-title">Welcome to Stadium Wallet</h2>
+          <p class="nfl-subtitle">Sign in to access your wallet and manage your funds.</p>
+          <button class="nfl-login-cta" @click="handleLogin">Sign in with NeuroFace</button>
+        </div>
+      </template>
+      <template v-else-if="auth.enabled && auth.authenticated">
+        <div v-if="loading" class="loading">Finding your wallet...</div>
+        <div v-else-if="error" class="error">{{ error }}</div>
+      </template>
+      <template v-else>
+        <h2 class="nfl-page-title">Select a customer</h2>
+        <p class="nfl-subtitle">Choose a customer to view Buffalo Bills and Las Vegas Raiders wallets.</p>
+        <div v-if="loading" class="loading">Loading...</div>
+        <div v-else-if="error" class="error">{{ error }}</div>
+        <div v-else class="nfl-customer-list">
+          <router-link
+            v-for="c in customers"
+            :key="c.id"
+            :to="{ name: 'wallets', params: { id: c.id } }"
+            class="list-group-item list-group-item-action"
+          >
+            <span class="nfl-customer-name"><strong>{{ c.lastName }}, {{ c.firstName }}</strong></span>
+            <span class="nfl-customer-email">{{ c.email }}</span>
+            <span class="nfl-customer-action">View wallets →</span>
+          </router-link>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { getCustomers } from '../api/client'
+import { authState as auth, login as handleLogin } from '../auth/keycloak'
 
+const router = useRouter()
 const customers = ref([])
 const loading = ref(true)
 const error = ref('')
@@ -83,8 +99,25 @@ onMounted(async () => {
   if (config.mobileAppDownloadUrl) {
     mobileAppDownloadUrl.value = config.mobileAppDownloadUrl
   }
+
+  if (auth.enabled && !auth.authenticated) {
+    loading.value = false
+    return
+  }
+
   try {
-    customers.value = await getCustomers()
+    const all = await getCustomers()
+
+    if (auth.enabled && auth.authenticated) {
+      const myCustomer = all.find(c => c.email === auth.email)
+      if (myCustomer) {
+        router.replace({ name: 'wallets', params: { id: myCustomer.id } })
+        return
+      }
+      error.value = `No wallet found for ${auth.email}. Contact support.`
+    } else {
+      customers.value = all
+    }
   } catch (e) {
     error.value = e.message || 'Failed to load customers'
   } finally {
@@ -154,4 +187,19 @@ onMounted(async () => {
 
 .loading, .error { padding: 1rem; }
 .error { color: #e31837; }
+.nfl-login-prompt { text-align: center; padding: 2rem 0; }
+.nfl-login-cta {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 2rem;
+  background: #e31837;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.nfl-login-cta:hover { background: #c41430; }
 </style>

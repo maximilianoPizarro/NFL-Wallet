@@ -102,6 +102,18 @@
         }
       }
     },
+    "espn": {
+      "type": "object",
+      "description": "ESPN NFL Scoreboard: carousel banner with live/recent scores.",
+      "properties": {
+        "enabled": { "type": "boolean", "default": true, "description": "Show ESPN scores carousel in the webapp header." },
+        "apiUrl": {
+          "type": "string",
+          "default": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard",
+          "description": "ESPN API URL. Use /public/nfl for gateway proxy or the direct ESPN URL."
+        }
+      }
+    },
     "apiKeys": {
       "type": "object",
       "description": "API key validation (X-API-Key). Leave empty to disable.",
@@ -157,6 +169,24 @@
                 "unauthorizedBody": { "type": "string" }
               }
             }
+          }
+        },
+        "oidcPolicy": {
+          "type": "object",
+          "description": "OIDC AuthPolicy (Connectivity Link 1.3): protect wallet APIs with OpenID Connect JWT validation.",
+          "properties": {
+            "enabled": { "type": "boolean", "default": false, "description": "Create OIDC AuthPolicies for all wallet API HTTPRoutes." },
+            "issuerUrl": { "type": "string", "default": "", "description": "OIDC issuer URL (e.g. https://rhbk-host/realms/neuroface). Authorino fetches JWKS automatically." },
+            "clientId": { "type": "string", "default": "nfl-wallet-app", "description": "OIDC client ID for the wallet webapp." },
+            "clientSecret": { "type": "string", "default": "", "description": "OIDC client secret. Stored in a Kubernetes Secret." },
+            "unauthorizedBody": { "type": "string", "description": "Custom JSON body for 401 Unauthenticated responses." },
+            "authorization": {
+              "type": "object",
+              "properties": {
+                "enabled": { "type": "boolean", "default": true, "description": "Require wallet-user realm role in the JWT." }
+              }
+            },
+            "injectHeaders": { "type": "boolean", "default": true, "description": "Inject x-auth-user header with the authenticated username." }
           }
         },
         "metrics": {
@@ -228,6 +258,32 @@
             "podMonitorGateway": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": false } } },
             "serviceMonitorGateway": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": false } } },
             "uiPlugin": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": false } } }
+          }
+        }
+      }
+    },
+    "rhbk-neuroface": {
+      "type": "object",
+      "description": "RHBK (Red Hat Build of Keycloak) with NeuroFace biometric authentication.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Deploy RHBK with biometric authentication. Includes NeuroFace SPI and facial recognition services."
+        },
+        "admin": {
+          "type": "object",
+          "properties": {
+            "username": { "type": "string", "default": "admin" },
+            "password": { "type": "string", "default": "admin" },
+            "temporary": { "type": "boolean", "default": true }
+          }
+        },
+        "realm": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string", "default": "neuroface", "description": "Realm name (original from rhbk-neuroface)." },
+            "displayName": { "type": "string", "default": "NeuroFace Biometric" }
           }
         }
       }

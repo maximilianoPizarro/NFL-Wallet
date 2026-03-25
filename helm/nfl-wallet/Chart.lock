@@ -1,0 +1,6 @@
+dependencies:
+- name: rhbk-neuroface
+  repository: https://maximilianopizarro.github.io/rhbk-biometric-flow/
+  version: 1.0.0
+digest: sha256:d15d3082ad5c7ba90cd7cd636cf0af98bb794f3f22c0101bad5779ef3b1c7202
+generated: "2026-03-25T18:54:50.1455848-03:00"

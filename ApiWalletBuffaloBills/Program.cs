@@ -81,6 +81,15 @@ using (var scope = app.Services.CreateScope())
             new WalletTransaction { WalletBalanceId = b3.Id, Type = "Credit", Amount = 500, Description = "Cash load", Status = "Completed", CreatedAt = now.AddDays(-10) },
             new WalletTransaction { WalletBalanceId = b3.Id, Type = "Credit", Amount = 400.50m, Description = "Refund", Status = "Completed", CreatedAt = now.AddDays(-3) });
 
+        // Customer 7 - Maximiliano Pizarro
+        var b7 = new WalletBalance { CustomerId = 7, Currency = "USD", AvailableBalance = 15750.00m, PendingBalance = 0, UpdatedAt = now };
+        db.Balances.Add(b7);
+        db.SaveChanges();
+        db.Transactions.AddRange(
+            new WalletTransaction { WalletBalanceId = b7.Id, Type = "Credit", Amount = 10000, Description = "Initial deposit", Status = "Completed", CreatedAt = now.AddDays(-15) },
+            new WalletTransaction { WalletBalanceId = b7.Id, Type = "Credit", Amount = 6000, Description = "Payroll deposit", Status = "Completed", CreatedAt = now.AddDays(-7) },
+            new WalletTransaction { WalletBalanceId = b7.Id, Type = "Debit", Amount = 250, Description = "Concession purchase", Status = "Completed", CreatedAt = now.AddDays(-1) });
+
         db.SaveChanges();
     }
 }

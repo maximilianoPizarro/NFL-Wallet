@@ -1,38 +1,49 @@
 #!/usr/bin/env bash
 # Build all Stadium Wallet images and push to quay.io
-# Usage: ./build-push-quay.sh [quay-namespace]
-# Default namespace: maximilianopizarro
+# Usage: ./build-push-quay.sh [version] [quay-namespace]
+#   version      : image tag (e.g. 1.0.1). If omitted, only :latest is pushed.
+#   quay-namespace: Quay org/user (default: maximilianopizarro)
 # Requires: podman, logged in to quay.io (podman login quay.io)
 
 set -e
-QUAY_NS="${1:-maximilianopizarro}"
+VERSION="${1:-}"
+QUAY_NS="${2:-maximilianopizarro}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-echo "Using Quay namespace: $QUAY_NS"
+echo "Quay namespace : $QUAY_NS"
+echo "Version tag    : ${VERSION:-<none, latest only>}"
+echo ""
 
-# api-customers -> nfl-wallet-api-customers
-echo "=== Building api-customers (nfl-wallet-api-customers) ==="
-podman build -t "quay.io/${QUAY_NS}/nfl-wallet-api-customers:latest" -f ApiCustomers/Containerfile ApiCustomers
-podman push "quay.io/${QUAY_NS}/nfl-wallet-api-customers:latest"
+IMAGES=(
+  "nfl-wallet-api-customers:ApiCustomers:ApiCustomers/Containerfile"
+  "nfl-api-bills:ApiWalletBuffaloBills:ApiWalletBuffaloBills/Containerfile"
+  "nfl-wallet-api-raiders:ApiWalletLasVegasRaiders:ApiWalletLasVegasRaiders/Containerfile"
+  "nfl-wallet-webapp:frontend:frontend/Containerfile"
+)
 
-# api-bills -> nfl-api-bills
-echo "=== Building api-bills (nfl-api-bills) ==="
-podman build -t "quay.io/${QUAY_NS}/nfl-api-bills:latest" -f ApiWalletBuffaloBills/Containerfile ApiWalletBuffaloBills
-podman push "quay.io/${QUAY_NS}/nfl-api-bills:latest"
+for entry in "${IMAGES[@]}"; do
+  IFS=: read -r NAME CONTEXT CONTAINERFILE <<< "$entry"
+  FULL="quay.io/${QUAY_NS}/${NAME}"
 
-# api-raiders -> nfl-wallet-api-raiders
-echo "=== Building api-raiders (nfl-wallet-api-raiders) ==="
-podman build -t "quay.io/${QUAY_NS}/nfl-wallet-api-raiders:latest" -f ApiWalletLasVegasRaiders/Containerfile ApiWalletLasVegasRaiders
-podman push "quay.io/${QUAY_NS}/nfl-wallet-api-raiders:latest"
+  echo "=== Building ${NAME} ==="
+  TAG_ARGS="-t ${FULL}:latest"
+  if [[ -n "$VERSION" ]]; then
+    TAG_ARGS="${TAG_ARGS} -t ${FULL}:${VERSION}"
+  fi
 
-# webapp -> nfl-wallet-webapp (API URLs overridden at runtime via config.json or Ingress)
-echo "=== Building webapp (nfl-wallet-webapp) ==="
-podman build -t "quay.io/${QUAY_NS}/nfl-wallet-webapp:latest" -f frontend/Containerfile frontend
-podman push "quay.io/${QUAY_NS}/nfl-wallet-webapp:latest"
+  podman build ${TAG_ARGS} -f "${CONTAINERFILE}" "${CONTEXT}"
+
+  echo "=== Pushing ${NAME} ==="
+  podman push "${FULL}:latest"
+  if [[ -n "$VERSION" ]]; then
+    podman push "${FULL}:${VERSION}"
+  fi
+  echo ""
+done
 
 echo "=== All images built and pushed to quay.io/${QUAY_NS} ==="
-echo "  - nfl-wallet-api-customers:latest"
-echo "  - nfl-api-bills:latest"
-echo "  - nfl-wallet-api-raiders:latest"
-echo "  - nfl-wallet-webapp:latest"
+echo "  - nfl-wallet-api-customers:latest${VERSION:+ / $VERSION}"
+echo "  - nfl-api-bills:latest${VERSION:+ / $VERSION}"
+echo "  - nfl-wallet-api-raiders:latest${VERSION:+ / $VERSION}"
+echo "  - nfl-wallet-webapp:latest${VERSION:+ / $VERSION}"
