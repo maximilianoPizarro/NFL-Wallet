@@ -1,6 +1,17 @@
 # Stadium Wallet Helm Chart
 
-Deploys the Stadium Wallet stack: **webapp** (Vue frontend) and three APIs (**api-customers**, **api-bills**, **api-raiders**) with the following layout:
+Deploys the **Stadium Wallet** stack on OpenShift / Kubernetes:
+
+- **webapp** — Vue 3 frontend with ESPN NFL score carousel, Keycloak OIDC login, and private wallets per user
+- **api-customers** — .NET 8 REST API (customer registry)
+- **api-bills** — .NET 8 REST API (Buffalo Bills wallet)
+- **api-raiders** — .NET 8 REST API (Las Vegas Raiders wallet)
+
+Optional dependencies:
+
+- **rhbk-neuroface** — Red Hat Build of Keycloak with NeuroFace biometric authentication
+- **ESPN NFL Scoreboard** — live/recent score carousel from the public ESPN API
+- **Connectivity Link (Kuadrant)** — Gateway API HTTPRoutes, OIDC AuthPolicy, RateLimitPolicy
 
 | Service        | Service Port | Pod (container) Port |
 |----------------|--------------|------------------------|
@@ -12,18 +23,27 @@ Deploys the Stadium Wallet stack: **webapp** (Vue frontend) and three APIs (**ap
 ## Prerequisites
 
 - Images built and pushed to Quay (see repo root `build-push-quay.sh`)
-- Kubernetes 1.19+
+- Kubernetes 1.19+ / OpenShift 4.x
 - Helm 3
 
-## Install
+## Quick Start
 
 ```bash
-# Add namespace if needed
-kubectl create namespace nfl-wallet
+helm repo add nfl-wallet https://maximilianopizarro.github.io/NFL-Wallet
+helm repo update
+helm install nfl-wallet nfl-wallet/nfl-wallet -n nfl-wallet --create-namespace
+```
 
-# Install with default values (Quay namespace: maximilianopizarro).
-# Only the webapp gets an OpenShift Route. The webapp proxies /api-customers, /api-bills, /api-raiders to the internal API services.
-helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet
+## Install from source
+
+```bash
+# Install with default values
+helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet --create-namespace
+
+# With RHBK authentication enabled
+helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
+  --set rhbk-neuroface.enabled=true \
+  --set webapp.keycloakUrl=https://<rhbk-route-host>
 
 # Disable the webapp Route
 helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet --set webapp.route.enabled=false
@@ -31,22 +51,58 @@ helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet --set webapp.route.enabl
 
 ## Values
 
+### Images
+
 | Key | Description | Default |
 |-----|-------------|---------|
 | `imageNamespace` | Quay.io namespace for images | `maximilianopizarro` |
-| `apiCustomers.image` / `tag` | api-customers image | `nfl-wallet-api-customers:latest` |
-| `apiBills.image` / `tag` | api-bills image | `nfl-api-bills:latest` |
-| `apiRaiders.image` / `tag` | api-raiders image | `nfl-wallet-api-raiders:latest` |
-| `webapp.image` / `tag` | webapp image | `nfl-wallet-webapp:latest` |
+| `apiCustomers.image` / `tag` | api-customers image | `nfl-wallet-api-customers:1.0.1` |
+| `apiBills.image` / `tag` | api-bills image | `nfl-api-bills:1.0.1` |
+| `apiRaiders.image` / `tag` | api-raiders image | `nfl-wallet-api-raiders:1.0.1` |
+| `webapp.image` / `tag` | webapp image | `nfl-wallet-webapp:1.0.1` |
+| `*.persistence.enabled` | Use PVC for SQLite data | `true` |
+
+### Webapp & Route
+
+| Key | Description | Default |
+|-----|-------------|---------|
 | `webapp.route.enabled` | Create OpenShift Route for webapp | `true` |
 | `webapp.route.host` | Override Route host | `""` |
-| `webapp.route.tls.termination` | Route TLS: `edge`, `passthrough`, `reencrypt`; empty = no TLS | `edge` |
-| `webapp.route.tls.insecureEdgeTerminationPolicy` | With edge: `Redirect` (HTTP→HTTPS), `Allow`, `None` | `Redirect` |
-| `webapp.apiCustomersUrl` | Base URL for Customers API (browser, end with /api) | `""` |
-| `webapp.apiBillsUrl` | Base URL for Bills API (browser, end with /api) | `""` |
-| `webapp.apiRaidersUrl` | Base URL for Raiders API (optional) | `""` |
-| `webapp.mobileAppDownloadUrl` | URL for downloading the mobile app (APK) from the browser. Shown in the header and on the landing hero. Use a path like `/nfl-wallet.apk` to serve the APK from the same site (place the file in the frontend `public/` folder); or an external URL. Empty = link hidden. | `""` |
-| `*.persistence.enabled` | Use PVC for SQLite data | `true` |
+| `webapp.route.tls.termination` | Route TLS mode | `edge` |
+| `webapp.route.tls.insecureEdgeTerminationPolicy` | HTTP redirect policy | `Redirect` |
+| `webapp.apiCustomersUrl` | Base URL for Customers API | `""` |
+| `webapp.apiBillsUrl` | Base URL for Bills API | `""` |
+| `webapp.apiRaidersUrl` | Base URL for Raiders API | `""` |
+| `webapp.mobileAppDownloadUrl` | URL for mobile app download (APK). Empty = hidden. | `""` |
+| `webapp.keycloakUrl` | RHBK/Keycloak base URL for OIDC login (auto-enabled with rhbk-neuroface) | `""` |
+| `webapp.keycloakRealm` | Keycloak realm name | `neuroface` |
+| `webapp.keycloakClientId` | OIDC client ID | `nfl-wallet-app` |
+
+### ESPN NFL Scoreboard
+
+| Key | Description | Default |
+|-----|-------------|---------|
+| `espn.enabled` | Enable ESPN score carousel in header | `true` |
+| `espn.apiUrl` | ESPN API URL (public, no key needed) | `https://site.api.espn.com/.../scoreboard?seasontype=2&week=18` |
+
+### RHBK (Red Hat Build of Keycloak)
+
+| Key | Description | Default |
+|-----|-------------|---------|
+| `rhbk-neuroface.enabled` | Deploy RHBK with NeuroFace biometric auth | `false` |
+| `rhbk-neuroface.admin.username` | Keycloak admin username | `admin` |
+| `rhbk-neuroface.admin.password` | Keycloak admin password | `admin` |
+| `rhbk-neuroface.realm.name` | Realm name | `neuroface` |
+
+### OIDC Policy (Connectivity Link / Kuadrant)
+
+| Key | Description | Default |
+|-----|-------------|---------|
+| `gateway.oidcPolicy.enabled` | Enable OIDC AuthPolicy on API HTTPRoutes | `false` |
+| `gateway.oidcPolicy.issuerUrl` | OIDC issuer URL | `""` |
+| `gateway.oidcPolicy.clientId` | OIDC client ID | `nfl-wallet-app` |
+| `gateway.oidcPolicy.clientSecret` | OIDC client secret | `""` |
+| `gateway.oidcPolicy.authorization.enabled` | Require `wallet-user` realm role | `true` |
 | `apiKeys.enabled` | Create Secret and inject API keys into APIs | `false` |
 | `apiKeys.customers` / `bills` / `raiders` | API key per API (header `X-API-Key`) | `""` |
 | `gateway.enabled` | Create Gateway API Gateway + HTTPRoutes | `false` |
@@ -69,6 +125,30 @@ helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet --set webapp.route.enabl
 | `observability.rhobs.podMonitorGateway.enabled` | Create PodMonitor (RHOBS) for gateway metrics (port 15020) | `false` |
 | `observability.rhobs.serviceMonitorGateway.enabled` | Create ServiceMonitor (RHOBS) for gateway metrics (port 15090) | `false` |
 | `observability.rhobs.uiPlugin.enabled` | Create UIPlugin to enable Monitoring UI in OpenShift console | `false` |
+
+### Authentication with RHBK (Keycloak OIDC)
+
+When `rhbk-neuroface.enabled=true`, the chart deploys **Red Hat Build of Keycloak** with the **NeuroFace** biometric authentication theme. The webapp automatically shows Login/Logout buttons and enforces private wallets per user.
+
+```bash
+helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
+  --set rhbk-neuroface.enabled=true \
+  --set webapp.keycloakUrl=https://rhbk-neuroface-route-host
+```
+
+The `neuroface` realm includes pre-verified accounts matching the customer mock data. After login, each user sees only their own wallet — the customer list is no longer public.
+
+To configure the realm with additional users or the `nfl-wallet-app` OIDC client, use the Keycloak admin API or admin console at `/admin`.
+
+### ESPN NFL Scoreboard Carousel
+
+Enabled by default (`espn.enabled: true`). The header displays a scrolling ticker with team logos, abbreviations, and scores from the public ESPN API. No API key is required.
+
+To disable:
+
+```bash
+helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet --set espn.enabled=false
+```
 
 ### Observability (RHOBS)
 
