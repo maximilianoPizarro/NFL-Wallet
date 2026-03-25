@@ -34,10 +34,14 @@ annotations:
     - name: Source
       url: https://github.com/maximilianopizarro/NFL-Wallet
   artifacthub.io/changes: |
-    - ESPN NFL Scoreboard integration with carousel banner (public API by default)
-    - RHBK (Red Hat Build of Keycloak) with NeuroFace biometric authentication as optional dependency
-    - Pre-configured realm with verified accounts matching mock customer data
-    - Wallet authentication flow: biometric enrollment + 2FA for wallet operations
+    - kind: added
+      description: "ESPN NFL Scoreboard integration with carousel banner (public API by default)"
+    - kind: added
+      description: "RHBK (Red Hat Build of Keycloak) with NeuroFace biometric authentication as optional dependency"
+    - kind: added
+      description: "Pre-configured realm with verified accounts matching mock customer data"
+    - kind: added
+      description: "Wallet authentication flow with OIDC login and private wallets per user"
   artifacthub.io/images: |
     - name: webapp
       image: quay.io/maximilianopizarro/nfl-wallet-webapp:latest
