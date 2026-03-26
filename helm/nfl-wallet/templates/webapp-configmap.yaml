@@ -7,6 +7,9 @@ metadata:
 data:
   config.json: |
     {{- $cfg := dict "apiCustomersUrl" .Values.webapp.apiCustomersUrl "apiBillsUrl" .Values.webapp.apiBillsUrl "apiRaidersUrl" .Values.webapp.apiRaidersUrl "mobileAppDownloadUrl" (default "" .Values.webapp.mobileAppDownloadUrl) "espnApiUrl" (ternary (default "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=18" .Values.espn.apiUrl) "" .Values.espn.enabled) }}
+    {{- if .Values.espn.apiKey }}
+    {{- $_ := set $cfg "espnApiKey" .Values.espn.apiKey }}
+    {{- end }}
     {{- if (index .Values "rhbk-neuroface" "enabled") }}
     {{- $_ := set $cfg "keycloakUrl" (default "" .Values.webapp.keycloakUrl) }}
     {{- $_ := set $cfg "keycloakRealm" (default "neuroface" .Values.webapp.keycloakRealm) }}

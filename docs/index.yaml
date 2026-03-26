@@ -29,7 +29,65 @@ entries:
           url: https://github.com/maximilianopizarro/NFL-Wallet
     apiVersion: v2
     appVersion: 1.0.1
-    created: "2026-03-25T20:55:58.2851561-03:00"
+    created: "2026-03-26T11:27:17.9668669-03:00"
+    dependencies:
+    - condition: rhbk-neuroface.enabled
+      name: rhbk-neuroface
+      repository: https://maximilianopizarro.github.io/rhbk-biometric-flow/
+      version: 1.0.1
+    description: Stadium Wallet - Vue frontend, three .NET 8 APIs, ESPN scoreboard
+      integration, and RHBK biometric authentication
+    digest: b38b2e8353e468066d99fbe0cd89aba6cd1504cdcca930534ba6b5d71b7f4f30
+    icon: https://maximilianopizarro.github.io/NFL-Wallet/sw.svg
+    keywords:
+    - nfl
+    - wallet
+    - vue
+    - dotnet
+    - gateway-api
+    - kuadrant
+    - istio
+    - espn
+    - rhbk
+    - keycloak
+    - biometric
+    maintainers:
+    - email: mapizarr@redhat.com
+      name: Maximiliano Pizarro
+    name: nfl-wallet
+    type: application
+    urls:
+    - https://maximilianopizarro.github.io/NFL-Wallet/nfl-wallet-0.1.3.tgz
+    version: 0.1.3
+  - annotations:
+      artifacthub.io/category: integration-delivery
+      artifacthub.io/changes: |
+        - kind: added
+          description: "ESPN NFL Scoreboard integration with carousel banner (public API by default)"
+        - kind: added
+          description: "RHBK (Red Hat Build of Keycloak) with NeuroFace biometric authentication as optional dependency"
+        - kind: added
+          description: "Pre-configured realm with verified accounts matching mock customer data"
+        - kind: added
+          description: "Wallet authentication flow with OIDC login and private wallets per user"
+      artifacthub.io/images: |
+        - name: webapp
+          image: quay.io/maximilianopizarro/nfl-wallet-webapp:latest
+        - name: api-customers
+          image: quay.io/maximilianopizarro/nfl-wallet-api-customers:latest
+        - name: api-bills
+          image: quay.io/maximilianopizarro/nfl-api-bills:latest
+        - name: api-raiders
+          image: quay.io/maximilianopizarro/nfl-wallet-api-raiders:latest
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://maximilianopizarro.github.io/NFL-Wallet/
+        - name: Source
+          url: https://github.com/maximilianopizarro/NFL-Wallet
+    apiVersion: v2
+    appVersion: 1.0.1
+    created: "2026-03-26T11:27:17.9629654-03:00"
     dependencies:
     - condition: rhbk-neuroface.enabled
       name: rhbk-neuroface
@@ -73,7 +131,7 @@ entries:
           url: https://github.com/maximilianopizarro/NFL-Wallet
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-03-25T20:55:58.2822498-03:00"
+    created: "2026-03-26T11:27:17.9603487-03:00"
     description: Stadium Wallet - Vue frontend and three .NET 8 APIs (Customers, Bills,
       Raiders)
     digest: 38c555c6bb5c1f2a47dd428bb308634d2045f267930977525d5db47d094d42bf
@@ -108,7 +166,7 @@ entries:
           url: https://github.com/maximilianopizarro/NFL-Wallet
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-03-25T20:55:58.2812442-03:00"
+    created: "2026-03-26T11:27:17.9593082-03:00"
     description: NFL Stadium Wallet - Vue frontend and three .NET 8 APIs (Customers,
       Bills, Raiders)
     digest: 6ff557850c5a61a5599248b558c5a5ba92831a870d8d7076cf51b4f6d669678e
@@ -129,4 +187,4 @@ entries:
     urls:
     - https://maximilianopizarro.github.io/NFL-Wallet/nfl-wallet-0.1.0.tgz
     version: 0.1.0
-generated: "2026-03-25T20:55:58.2795902-03:00"
+generated: "2026-03-26T11:27:17.9572124-03:00"

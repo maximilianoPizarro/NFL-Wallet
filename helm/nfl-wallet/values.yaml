@@ -69,7 +69,9 @@ webapp:
   apiRaidersUrl: ""
   # Optional: URL for "Download mobile app" in the browser (e.g. APK file or app store link). Leave empty to hide the link.
   mobileAppDownloadUrl: ""
-  # Keycloak OIDC (auto-enabled when rhbk-neuroface.enabled=true). Set keycloakUrl to the RHBK route URL.
+  # Keycloak OIDC (auto-enabled when rhbk-neuroface.enabled=true).
+  # IMPORTANT: Set keycloakUrl to the RHBK base URL WITHOUT /realms/<name> (keycloak-js adds it).
+  # Example: https://nfl-stadium-rhbk-neuroface-<namespace>.apps.<cluster>
   keycloakUrl: ""
   keycloakRealm: "neuroface"
   keycloakClientId: "nfl-wallet-app"
@@ -81,6 +83,8 @@ espn:
   # Uses seasontype=2&week=18 (last regular season week) by default to ensure the carousel always shows multiple games.
   # Remove the query params to show the current/live scoreboard instead.
   apiUrl: "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=18"
+  # Optional: API key sent as X-API-Key header (required when the ESPN endpoint is proxied via Connectivity Link).
+  apiKey: ""
 
 # API key security: one key per API. Leave empty to disable validation (e.g. local dev).
 apiKeys:
@@ -209,13 +213,15 @@ observability:
 # The realm is pre-configured with all mock customer accounts (verified).
 rhbk-neuroface:
   enabled: false
+  partOf: "nfl-wallet"
+  realm:
+    name: neuroface
+    displayName: "NeuroFace Biometric"
+    externalConfigMap: "nfl-wallet-realm"
   admin:
     username: admin
     password: admin
     temporary: true
-  realm:
-    name: neuroface
-    displayName: "NeuroFace Biometric"
   rhbk:
     image:
       repository: registry.redhat.io/rhbk/keycloak-rhel9
@@ -233,10 +239,16 @@ rhbk-neuroface:
       repository: quay.io/maximilianopizarro/rhbk-neuroface-spi
       tag: latest
   biometric:
+    # Minimum confidence (%) to accept a facial match during verification (0–100).
     confidenceThreshold: 65.0
+    # Number of images captured during biometric enrollment.
     maxEnrollmentImages: 5
+    # Camera resolution for facial capture (px). Presets: QVGA 320×240, VGA 640×480, HD 1280×720, FHD 1920×1080.
+    cameraWidth: 640
+    cameraHeight: 480
   neuroface:
     enabled: true
+    partOf: "nfl-wallet"
     backendService: neuroface-backend
     backendPort: 8080
     backend:

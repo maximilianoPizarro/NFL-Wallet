@@ -24,6 +24,8 @@ spec:
         app.kubernetes.io/instance: webapp
         app.kubernetes.io/part-of: {{ include "nfl-wallet.partOf" . }}
         runtime: nodejs
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/webapp-configmap.yaml") . | sha256sum }}
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets:

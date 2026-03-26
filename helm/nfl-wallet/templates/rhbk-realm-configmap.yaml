@@ -76,9 +76,10 @@ data:
           "emailVerified": true,
           "attributes": {
             "documentNumber": ["20123456"],
-            "biometric_enrolled": ["true"]
+            "biometric_enrolled": ["false"]
           },
           "credentials": [{ "type": "password", "value": "changeme", "temporary": true }],
+          "requiredActions": ["biometric-enrollment"],
           "realmRoles": ["biometric-user", "wallet-user"],
           "groups": ["biometric-enrolled"]
         },
@@ -91,9 +92,10 @@ data:
           "emailVerified": true,
           "attributes": {
             "documentNumber": ["20876543"],
-            "biometric_enrolled": ["true"]
+            "biometric_enrolled": ["false"]
           },
           "credentials": [{ "type": "password", "value": "changeme", "temporary": true }],
+          "requiredActions": ["biometric-enrollment"],
           "realmRoles": ["biometric-user", "wallet-user"],
           "groups": ["biometric-enrolled"]
         },
@@ -106,9 +108,10 @@ data:
           "emailVerified": true,
           "attributes": {
             "documentNumber": ["30111222"],
-            "biometric_enrolled": ["true"]
+            "biometric_enrolled": ["false"]
           },
           "credentials": [{ "type": "password", "value": "changeme", "temporary": true }],
+          "requiredActions": ["biometric-enrollment"],
           "realmRoles": ["biometric-user", "wallet-user"],
           "groups": ["biometric-enrolled"]
         },
@@ -121,9 +124,10 @@ data:
           "emailVerified": true,
           "attributes": {
             "documentNumber": ["30333444"],
-            "biometric_enrolled": ["true"]
+            "biometric_enrolled": ["false"]
           },
           "credentials": [{ "type": "password", "value": "changeme", "temporary": true }],
+          "requiredActions": ["biometric-enrollment"],
           "realmRoles": ["biometric-user", "wallet-user"],
           "groups": ["biometric-enrolled"]
         },
@@ -136,9 +140,10 @@ data:
           "emailVerified": true,
           "attributes": {
             "documentNumber": ["40555666"],
-            "biometric_enrolled": ["true"]
+            "biometric_enrolled": ["false"]
           },
           "credentials": [{ "type": "password", "value": "changeme", "temporary": true }],
+          "requiredActions": ["biometric-enrollment"],
           "realmRoles": ["biometric-user", "wallet-user"],
           "groups": ["biometric-enrolled"]
         },
@@ -151,9 +156,10 @@ data:
           "emailVerified": true,
           "attributes": {
             "documentNumber": ["40777888"],
-            "biometric_enrolled": ["true"]
+            "biometric_enrolled": ["false"]
           },
           "credentials": [{ "type": "password", "value": "changeme", "temporary": true }],
+          "requiredActions": ["biometric-enrollment"],
           "realmRoles": ["biometric-user", "wallet-user"],
           "groups": ["biometric-enrolled"]
         },
@@ -166,9 +172,10 @@ data:
           "emailVerified": true,
           "attributes": {
             "documentNumber": ["50999001"],
-            "biometric_enrolled": ["true"]
+            "biometric_enrolled": ["false"]
           },
           "credentials": [{ "type": "password", "value": "neuroface", "temporary": false }],
+          "requiredActions": ["biometric-enrollment"],
           "realmRoles": ["biometric-user", "biometric-admin", "wallet-user"],
           "groups": ["biometric-enrolled"]
         }
@@ -182,6 +189,123 @@ data:
           "defaultAction": false,
           "priority": 100
         }
-      ]
+      ],
+      "authenticationFlows": [
+        {
+          "alias": "biometric browser",
+          "description": "Browser login with biometric second factor via NeuroFace",
+          "providerId": "basic-flow",
+          "topLevel": true,
+          "builtIn": false,
+          "authenticationExecutions": [
+            {
+              "authenticator": "auth-cookie",
+              "authenticatorFlow": false,
+              "requirement": "ALTERNATIVE",
+              "priority": 10,
+              "userSetupAllowed": false,
+              "autheticatorFlow": false
+            },
+            {
+              "authenticatorFlow": true,
+              "requirement": "ALTERNATIVE",
+              "priority": 20,
+              "flowAlias": "biometric browser forms",
+              "userSetupAllowed": false,
+              "autheticatorFlow": true
+            }
+          ]
+        },
+        {
+          "alias": "biometric browser forms",
+          "description": "Username/password + biometric 2FA",
+          "providerId": "basic-flow",
+          "topLevel": false,
+          "builtIn": false,
+          "authenticationExecutions": [
+            {
+              "authenticator": "auth-username-password-form",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "userSetupAllowed": false,
+              "autheticatorFlow": false
+            },
+            {
+              "authenticator": "biometric-authenticator",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 20,
+              "userSetupAllowed": false,
+              "autheticatorFlow": false
+            }
+          ]
+        },
+        {
+          "alias": "biometric registration",
+          "description": "Delegated registration flow with biometric enrollment",
+          "providerId": "basic-flow",
+          "topLevel": true,
+          "builtIn": false,
+          "authenticationExecutions": [
+            {
+              "authenticatorFlow": true,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "flowAlias": "biometric registration form",
+              "userSetupAllowed": false,
+              "autheticatorFlow": true
+            }
+          ]
+        },
+        {
+          "alias": "biometric registration form",
+          "description": "Registration form with biometric capture",
+          "providerId": "form-flow",
+          "topLevel": false,
+          "builtIn": false,
+          "authenticationExecutions": [
+            {
+              "authenticator": "registration-user-creation",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 10,
+              "userSetupAllowed": false,
+              "autheticatorFlow": false
+            },
+            {
+              "authenticator": "registration-password-action",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 20,
+              "userSetupAllowed": false,
+              "autheticatorFlow": false
+            },
+            {
+              "authenticator": "registration-profile-action",
+              "authenticatorFlow": false,
+              "requirement": "REQUIRED",
+              "priority": 30,
+              "userSetupAllowed": false,
+              "autheticatorFlow": false
+            }
+          ]
+        }
+      ],
+      "browserFlow": "biometric browser",
+      "registrationFlow": "biometric registration",
+      "clientAuthenticationFlow": "clients",
+      "eventsEnabled": true,
+      "eventsExpiration": 604800,
+      "eventsListeners": ["jboss-logging"],
+      "adminEventsEnabled": true,
+      "adminEventsDetailsEnabled": true,
+      "attributes": {
+        "neuroface.api.url": "http://neuroface-backend:8080/api",
+        "neuroface.confidence.threshold": "{{ (index .Values "rhbk-neuroface" "biometric" "confidenceThreshold") | default 65.0 }}",
+        "neuroface.max.enrollment.images": "{{ (index .Values "rhbk-neuroface" "biometric" "maxEnrollmentImages") | default 5 }}",
+        "neuroface.camera.width": "{{ (index .Values "rhbk-neuroface" "biometric" "cameraWidth") | default 640 }}",
+        "neuroface.camera.height": "{{ (index .Values "rhbk-neuroface" "biometric" "cameraHeight") | default 480 }}"
+      }
     }
 {{- end }}

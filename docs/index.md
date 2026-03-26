@@ -58,6 +58,7 @@ A single front-end application talks to a **Customers API** (for identity and cu
 | **Develop in the cloud** | Use **Red Hat OpenShift Dev Spaces** (or CodeReady Workspaces) to build and run the app from a browser with a single workspace. |
 | **Deploy to Kubernetes** | Use the provided **Helm chart** to deploy the webapp and APIs to any Kubernetes or OpenShift cluster. |
 | **Expose via Gateway** | Enable the **Connectivity Link** (Gateway API + HTTPRoutes) and an OpenShift Route for the gateway with TLS edge and redirect. |
+| **Biometric login** | Enable **RHBK + NeuroFace** to add Keycloak authentication with facial biometric second factor (enrollment + verification). |
 | **Secure with API keys** | Optionally enable **API key** validation and **Istio AuthorizationPolicy** or **Kuadrant AuthPolicy** (Authorino) for X-API-Key at the mesh or gateway. |
 | **Observability** | Use the **Cluster Observability Operator** and manifests in `config/observability/` to scrape gateway metrics and view Total Requests, Success, and Error Rate in the observability UI. |
 
@@ -76,4 +77,5 @@ A single front-end application talks to a **Customers API** (for identity and cu
 - **Frontend:** Vue 3, Vite, vue-router; served by Apache (UBI8).
 - **Backend:** Three .NET 8.0 ASP.NET Core APIs (Customers, Buffalo Bills wallet, Las Vegas Raiders wallet).
 - **Data:** SQLite (one database per API).
+- **Auth:** Optional RHBK (Keycloak) + NeuroFace biometric 2FA.
 - **Containers:** Podman / OpenShift; images can be built and pushed to Quay.

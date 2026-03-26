@@ -2,7 +2,7 @@ apiVersion: v2
 name: nfl-wallet
 description: Stadium Wallet - Vue frontend, three .NET 8 APIs, ESPN scoreboard integration, and RHBK biometric authentication
 type: application
-version: 0.1.2
+version: 0.1.3
 appVersion: "1.0.1"
 icon: https://maximilianopizarro.github.io/NFL-Wallet/sw.svg
 keywords:
@@ -22,7 +22,7 @@ maintainers:
     email: mapizarr@redhat.com
 dependencies:
   - name: rhbk-neuroface
-    version: "1.0.0"
+    version: "1.0.1"
     repository: https://maximilianopizarro.github.io/rhbk-biometric-flow/
     condition: rhbk-neuroface.enabled
 annotations:

@@ -93,7 +93,9 @@ export async function payRaiders(customerId, amount) {
 export async function getEspnScoreboard() {
   const url = getBaseUrls().espn
   if (!url) return { events: [] }
-  const res = await fetch(url)
+  const c = window.__API_CONFIG__ || {}
+  const headers = c.espnApiKey ? { 'X-API-Key': c.espnApiKey } : {}
+  const res = await fetch(url, { headers })
   if (!res.ok) throw new Error(res.statusText)
   return res.json()
 }

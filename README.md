@@ -198,6 +198,41 @@ The **`helm/nfl-wallet`** chart deploys the four components with this layout:
 helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet
 ```
 
+#### Enable biometric authentication (RHBK + NeuroFace)
+
+Deploy with Keycloak and NeuroFace biometric 2FA. Users authenticate with username/password followed by facial recognition:
+
+```bash
+helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
+  --set "rhbk-neuroface.enabled=true" \
+  --set "webapp.keycloakUrl=https://<release>-rhbk-neuroface-<namespace>.apps.<cluster>"
+```
+
+> **Note:** `keycloakUrl` must be the RHBK **base URL** without `/realms/<name>` — keycloak-js appends the realm path automatically from `webapp.keycloakRealm` (default `neuroface`). The Keycloak URL is the OpenShift Route created for the RHBK deployment.
+
+The chart pre-loads the realm with 7 mock customer accounts (matching the Customers API seed data). On first login each user must complete biometric enrollment (facial capture). Subsequent logins use facial verification as second factor.
+
+Biometric parameters are tunable via Helm values:
+
+```bash
+--set "rhbk-neuroface.biometric.confidenceThreshold=75"   # match confidence % (default 65)
+--set "rhbk-neuroface.biometric.maxEnrollmentImages=8"     # enrollment captures (default 5)
+--set "rhbk-neuroface.biometric.cameraWidth=1280"          # camera width px (default 640)
+--set "rhbk-neuroface.biometric.cameraHeight=720"          # camera height px (default 480)
+```
+
+Camera resolution presets: **QVGA** 320×240 (low-bandwidth), **VGA** 640×480 (default), **HD 720p** 1280×720, **Full HD** 1920×1080. Higher resolution improves accuracy but increases processing time.
+
+#### ESPN API key (Connectivity Link)
+
+When the ESPN endpoint is proxied through a Gateway secured with Connectivity Link, pass the API key so the ticker can authenticate:
+
+```bash
+helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
+  --set "espn.apiKey=<your-api-key>" \
+  --set "espn.apiUrl=/public/nfl"
+```
+
 See **`helm/nfl-wallet/README.md`** for values and setting API URLs for the browser (e.g. when using Ingress).
 
 ---

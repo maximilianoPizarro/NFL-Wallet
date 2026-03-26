@@ -31,6 +31,77 @@ helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet
 
 Default values use the Quay namespace and image names defined in `values.yaml`. Only the webapp gets an OpenShift Route by default.
 
+### Enable biometric authentication (RHBK + NeuroFace)
+
+Deploy with Red Hat Build of Keycloak and NeuroFace biometric second factor. Users authenticate with username/password followed by facial recognition:
+
+```bash
+helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
+  --set "rhbk-neuroface.enabled=true" \
+  --set "webapp.keycloakUrl=https://<release>-rhbk-neuroface-<namespace>.apps.<cluster>"
+```
+
+> **Note:** `keycloakUrl` must be the RHBK **base URL** without `/realms/<name>` — keycloak-js appends the realm path automatically from `webapp.keycloakRealm` (default `neuroface`). The Keycloak URL is the OpenShift Route created for the RHBK deployment. You can retrieve it with:
+> ```bash
+> oc get route -l app.kubernetes.io/name=rhbk-neuroface -o jsonpath='{.items[0].spec.host}'
+> ```
+
+The chart pre-loads the realm with 7 mock customer accounts (matching the Customers API seed data). On first login each user must complete **biometric enrollment** (facial capture). Subsequent logins use facial verification as second factor.
+
+#### Tuning biometric parameters
+
+Override the confidence threshold, number of enrollment images, and camera resolution:
+
+```bash
+helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
+  --set "rhbk-neuroface.enabled=true" \
+  --set "webapp.keycloakUrl=https://<release>-rhbk-neuroface-<namespace>.apps.<cluster>" \
+  --set "rhbk-neuroface.biometric.confidenceThreshold=75" \
+  --set "rhbk-neuroface.biometric.maxEnrollmentImages=8" \
+  --set "rhbk-neuroface.biometric.cameraWidth=1280" \
+  --set "rhbk-neuroface.biometric.cameraHeight=720"
+```
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `confidenceThreshold` | Minimum confidence percentage (0–100) to accept a facial match during verification. Higher values are stricter. | `65.0` |
+| `maxEnrollmentImages` | Number of facial images captured during biometric enrollment. More images improve recognition accuracy. | `5` |
+| `cameraWidth` | Camera capture width in pixels. | `640` |
+| `cameraHeight` | Camera capture height in pixels. | `480` |
+
+**Camera resolution presets:**
+
+| Preset | Width × Height | Recommended for |
+|--------|---------------|-----------------|
+| QVGA | 320 × 240 | Low-bandwidth / embedded devices |
+| **VGA** (default) | **640 × 480** | Standard webcams, good balance of speed and quality |
+| HD 720p | 1280 × 720 | Higher accuracy, requires more processing |
+| Full HD 1080p | 1920 × 1080 | Maximum detail, higher CPU/memory usage |
+
+> **Tip:** Higher resolutions improve facial recognition accuracy but increase enrollment time and network payload. VGA (640×480) is recommended for most deployments.
+
+| Mock user | Password | Role |
+|-----------|----------|------|
+| `john.doe` | `changeme` (temporary) | wallet-user |
+| `jane.smith` | `changeme` (temporary) | wallet-user |
+| `robert.johnson` | `changeme` (temporary) | wallet-user |
+| `maria.garcia` | `changeme` (temporary) | wallet-user |
+| `james.wilson` | `changeme` (temporary) | wallet-user |
+| `emily.brown` | `changeme` (temporary) | wallet-user |
+| `maxpizarro` | `neuroface` | wallet-user, biometric-admin |
+
+### ESPN API key (Connectivity Link)
+
+When the ESPN endpoint is proxied through a Gateway secured with Connectivity Link, pass the API key so the scoreboard ticker can authenticate:
+
+```bash
+helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet \
+  --set "espn.apiKey=<your-api-key>" \
+  --set "espn.apiUrl=/public/nfl"
+```
+
+The `X-API-Key` header is sent with every ESPN API request when `espn.apiKey` is set.
+
 ### Override image registry / namespace
 
 ```bash
@@ -73,7 +144,18 @@ helm install nfl-wallet ./helm/nfl-wallet -n nfl-wallet --set webapp.route.enabl
 | `webapp.route.host` | Override Route host | `""` |
 | `webapp.route.tls.termination` | Route TLS (edge, passthrough, reencrypt) | `edge` |
 | `webapp.route.tls.insecureEdgeTerminationPolicy` | HTTP→HTTPS redirect | `Redirect` |
+| `webapp.keycloakUrl` | RHBK base URL (without `/realms/<name>`) | `""` |
+| `webapp.keycloakRealm` | Keycloak realm name | `neuroface` |
+| `webapp.keycloakClientId` | OIDC client ID | `nfl-wallet-app` |
 | `webapp.apiCustomersUrl`, `apiBillsUrl`, `apiRaidersUrl` | Override API base URLs (browser) | `""` |
+| `espn.enabled` | Enable ESPN scoreboard ticker | `true` |
+| `espn.apiUrl` | ESPN API endpoint URL | public ESPN API |
+| `espn.apiKey` | X-API-Key for ESPN proxy (Connectivity Link) | `""` |
+| `rhbk-neuroface.enabled` | Deploy RHBK + NeuroFace biometric auth | `false` |
+| `rhbk-neuroface.biometric.confidenceThreshold` | Minimum confidence % for facial match (0–100) | `65.0` |
+| `rhbk-neuroface.biometric.maxEnrollmentImages` | Images captured during enrollment | `5` |
+| `rhbk-neuroface.biometric.cameraWidth` | Camera capture width (px) | `640` |
+| `rhbk-neuroface.biometric.cameraHeight` | Camera capture height (px) | `480` |
 | `apiKeys.enabled` | Create Secret and inject API keys | `false` |
 | `apiKeys.customers`, `bills`, `raiders` | API key per API (X-API-Key) | `""` |
 | `gateway.enabled` | Create Gateway + HTTPRoutes | `false` |
